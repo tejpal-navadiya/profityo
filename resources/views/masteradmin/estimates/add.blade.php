@@ -48,7 +48,7 @@
           <div class="col-md-3 px-10">
           <div class="business_logo_uplod_box">
             @if($businessDetails && $businessDetails->bus_image)
-        <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+        <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
         class="elevation-2 img-box" target="_blank">
         <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
@@ -105,16 +105,16 @@
             </div>
           </div>
           <div class="px-10">
-            <p class="company_business_name text-right">{{ $businessDetails->bus_company_name }}</p>
-            <p class="company_details_text text-right">{{  $businessDetails->bus_address1 }}</p>
-            <p class="company_details_text text-right">{{  $businessDetails->bus_address2 }}</p>
+            <p class="company_business_name text-right">{{ $businessDetails->bus_company_name ?? '' }}</p>
+            <p class="company_details_text text-right">{{  $businessDetails->bus_address1 ?? '' }}</p>
+            <p class="company_details_text text-right">{{  $businessDetails->bus_address2 ?? '' }}</p>
             <p class="company_details_text text-right">{{ $businessDetails->state->name ?? '' }},
-            {{  $businessDetails->city_name }} {{ $businessDetails->zipcode }}
+            {{  $businessDetails->city_name ?? '' }} {{ $businessDetails->zipcode ?? '' }}
             </p>
             <p class="company_details_text text-right">{{  $businessDetails->country->name ?? '' }}</p>
-            <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone }}</p>
-            <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile }}</p>
-            <p class="company_details_text text-right">{{  $businessDetails->bus_website }}</p>
+            <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone ?? ''}}</p>
+            <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile ?? ''}}</p>
+            <p class="company_details_text text-right">{{  $businessDetails->bus_website ?? '' }}</p>
           </div>
           <h3 class="card-title float-sm-right px-10" data-toggle="modal"
             data-target="#editbusiness_companyaddress"><img src="{{url('public/dist/img/dot.png')}}"
@@ -1418,7 +1418,7 @@
 
       if (selectedProductId) {
       $.ajax({
-        url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/get-product-details/' + selectedProductId,
+        url: '{{ route('business.estimates.getProductDetails', '') }}/' + selectedProductId,
         method: 'GET',
         success: function (response) {
         $row.find('input[name="items[][sale_estim_item_price]"]').val(response.sale_product_price);

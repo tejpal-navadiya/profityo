@@ -165,7 +165,7 @@
                             <div class="col-md-3 ">
                                 <!-- <img src="{{url('public/dist/img/logo.png')}}" alt="Profityo Logo" class="estimate_logo_img"> -->
                                 @if($businessDetails && $businessDetails->bus_image)
-                                <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                                <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                                 class="elevation-2 img-box" target="_blank">
                                 @endif
                             </div>

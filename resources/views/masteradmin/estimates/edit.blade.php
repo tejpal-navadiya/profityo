@@ -63,7 +63,7 @@
           <div class="col-md-3 px-10">
           <div class="business_logo_uplod_box">
             @if($businessDetails && $businessDetails->bus_image)
-        <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+        <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
         class="elevation-2 img-box" target="_blank">
         <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
@@ -1787,7 +1787,7 @@
 
       if (selectedProductId) {
       $.ajax({
-        url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/get-product-details/' + selectedProductId,
+        url: '{{ route('business.estimates.getProductDetails', '') }}/' + selectedProductId,
         method: 'GET',
         success: function (response) {
         $row.find('input[name="items[][sale_estim_item_price]"]').val(response.sale_product_price);

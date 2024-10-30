@@ -404,7 +404,7 @@
 
                             @if($businessDetails && $businessDetails->bus_image)
 
-                            <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                            <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
 
                             class="elevation-2 img-box" target="_blank">
 

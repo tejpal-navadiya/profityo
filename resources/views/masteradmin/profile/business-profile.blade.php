@@ -157,7 +157,7 @@
                               <input type="file" name="image" accept="image/*" class="add_btn fileinput-button">
                               <span>Please upload a valid image file. Size of image should not be more than 2MB.</span>
                               @if ($BusinessDetails->bus_image ?? '')
-                                <a href="{{ url(env('IMAGE_URL').'masteradmin/business_profile/' . $BusinessDetails->bus_image) }}" target="_blank">
+                                <a href="{{ url(env('IMAGE_URL').'storage/app/masteradmin/business_profile/' . $BusinessDetails->bus_image) }}" target="_blank">
                                     <div title="{{ $BusinessDetails->bus_image }}" class="ptm pbm">{{ $BusinessDetails->bus_image }}</div>
                                 </a>
                               @endif

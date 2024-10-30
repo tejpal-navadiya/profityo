@@ -330,6 +330,11 @@ class Controller extends BaseController
                         $table->integer('archive_account')->nullable()->default(0);
                     }
                 });
+                Schema::table($storeId.'_py_chart_account', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_chart_account', 'amount')) {
+                        $table->string('amount')->nullable();
+                    }
+                });
             }
 
             // Purchases....product module..

@@ -241,16 +241,13 @@ Route::post('/userrole/{id}/update-status', [UserController::class, 'updateStatu
             Route::Patch('employees/{emp_id}', [EmployeesController::class, 'update'])->name('business.employee.update');
             Route::Patch('/employees/{id}/compensation', [EmployeesController::class, 'storeCompensation'])->name('employees.storeCompensation');
             Route::post('/employees/{emp_id}/taxdetails', [EmployeesController::class, 'storeTaxDetails'])->name('employees.storeTaxDetails');
-// routes/web.php
 
-Route::post('employee/{emp_id}/offboarding/store', [EmployeesController::class, 'storeOffboarding'])
-    ->name('employee.offboarding.store');
-// routes/web.php
+            Route::post('employee/{emp_id}/offboarding/store', [EmployeesController::class, 'storeOffboarding'])
+                ->name('employee.offboarding.store');
 
-// routes/web.php
-Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 'storeLeaveData'])
-    ->name('employee.offboarding.leave');
-    Route::delete('employee/{id}', [EmployeesController::class, 'destroy'])->name('business.employee.destroy');
+            Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 'storeLeaveData'])
+                ->name('employee.offboarding.leave');
+                Route::delete('employee/{id}', [EmployeesController::class, 'destroy'])->name('business.employee.destroy');
 
 
            
@@ -313,10 +310,10 @@ Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 
         Route::get('/add-bill/{id}', [BillsController::class, 'create'])->name('business.bill.add');
         Route::post('/paybill/store/{id}', [BillsController::class, 'paymentstore'])->name('business.bill.paymentsbillstore');
 
-//transection...
-Route::get('/transection-list', [TransectionController::class, 'index'])->name('business.transection.index');
-Route::get('/transactions/filter', [TransectionController::class, 'filterTransactions'])->name('transactions.filter');
-Route::get('/edit-transactions', [TransectionController::class, 'edit'])->name('business.transactions.edit');
+        //transection...
+        Route::get('/transection-list', [TransectionController::class, 'index'])->name('business.transection.index');
+        Route::get('/transactions/filter', [TransectionController::class, 'filterTransactions'])->name('transactions.filter');
+        Route::get('/edit-transactions', [TransectionController::class, 'edit'])->name('business.transactions.edit');
 
 
 });

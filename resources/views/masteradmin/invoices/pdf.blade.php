@@ -22,7 +22,7 @@
         <tr>
             <td class="w-half">
                 @if($businessDetails && $businessDetails->bus_image)
-                    <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                    <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                 class="elevation-2" target="_blank"  width="200">
                 @endif
             </td>

@@ -338,8 +338,7 @@ $(document).ready(function () {
       // alert(selectedProductId);
       if (selectedProductId) {
       $.ajax({
-        url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/bill/get-product-details/' + selectedProductId,
-        method: 'GET',
+        url: '{{ route('business.bill.getProductDetails', '') }}/' + selectedProductId,        method: 'GET',
         success: function (response) {
         $row.find('input[name="items[][sale_bill_item_price]"]').val(response.purchases_product_price);
         $row.find('input[name="items[][sale_bill_item_desc]"]').val(response.purchases_product_desc);

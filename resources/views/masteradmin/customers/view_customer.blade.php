@@ -1221,10 +1221,10 @@
                     <a href="#"><button class="add_btn_br">View related events</button></a>
 
                     @if($log->log_type == 1)
-            <a href="{{ route('business.estimates.view', $log->estimate->sale_estim_id) }}"><button
+            <a href="{{ route('business.estimates.view', $log->estimate->sale_estim_id ?? '') }}"><button
               class="add_btn">View Estimate</button></a>
           @elseif($log->log_type == 2 && $log->invoice)
-      <a href="{{ route('business.invoices.view', $log->invoice->sale_inv_id) }}">
+      <a href="{{ route('business.invoices.view', $log->invoice->sale_inv_id ?? '') }}">
       <button class="add_btn">View Invoice</button>
       </a>
     @endif

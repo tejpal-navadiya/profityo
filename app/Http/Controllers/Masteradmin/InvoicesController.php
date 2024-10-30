@@ -1317,7 +1317,7 @@ $dueString = "$dueDays|$dueMessage";
    ->sum('sale_inv_due_amount'); // Sum the overdue amounts
 // dd($overdueTotal); 
 // Fetch unpaid invoices to display in the table
-$unpaidInvoices = InvoicesDetails::where('sale_inv_due_amount', '>', 0)->get();
+// $unpaidInvoices = InvoicesDetails::where('sale_inv_due_amount', '>', 0)->get();
 
     // dd($overdueTotal);
 // dd($totalDueNext30Days);
