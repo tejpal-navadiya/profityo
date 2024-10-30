@@ -131,7 +131,7 @@
                                 class="invoice_report_icon icon_cr1"></div>
                             <div class="mar_15">
                               <p class="in_contact_title">Paid last 12 Months</p>
-                              <p class="in_contact_total text_color1">$0.00</p>
+                              <p class="in_contact_total text_color1">${{ number_format($totalPaidLast12Months, 2) }}</p>
                             </div>
                           </div>
                         </div>
@@ -145,7 +145,7 @@
                                 class="invoice_report_icon icon_cr4"></div>
                             <div class="mar_15">
                               <p class="in_contact_title">Total Unpaid</p>
-                              <p class="in_contact_total text_color4">$88.50</p>
+                              <p class="in_contact_total text_color4">${{ number_format($totalUnpaid, 2) }}</p>
                             </div>
                           </div>
                         </div>
@@ -193,44 +193,83 @@
                       <td>{{ $value->sale_inv_final_amount }}</td>
                       <td>{{ $value->sale_inv_due_amount }}</td>
                       <td>
-            @php
-          // Calculate the due date
-          $dueDate = \Carbon\Carbon::parse($value->sale_inv_valid_date);
-          $currentDate = \Carbon\Carbon::now();
-          $daysDifference = $dueDate->diffInDays($currentDate, false);
+                      @php
+            // Calculate the due date
+            $dueDate = \Carbon\Carbon::parse($value->sale_inv_valid_date);
+            $currentDate = \Carbon\Carbon::now();
+            $daysDifference = $dueDate->diffInDays($currentDate, false);
 
-          if ($daysDifference == 0) {
-          $dueMessage = 'Today'; // Message for today
-          $dueMessageColor = 'black'; // Set default color
-          } elseif ($daysDifference < 0) {
-          $dueMessage = 'Due in ' . $daysDifference . ' Days'; // Upcoming message
-          $dueMessageColor = 'black'; // Set default color
+            if ($daysDifference == 0) {
+            $dueMessage = 'Today'; // Message for today
+            $dueMessageColor = 'black'; // Set default color
+            } elseif ($daysDifference < 0) {
+            $dueMessage = 'Due in ' . $daysDifference . ' Days'; // Upcoming message
+            $dueMessageColor = 'black'; // Set default color
 
-          } else {
-          $dueMessage = abs($daysDifference) . ' Days ago'; // Overdue message
-          $dueMessageColor = 'red'; // Overdue color
-          }
-      @endphp
-            <span style="color: {{ $dueMessageColor }};">
-            {{ $dueMessage }}
-            </span>
-            </td>
-                      <td>@php
-            $nextStatus = '';
-            $nextStatusColor = '';
-            if ($value->sale_status == 'Draft') {
-            $nextStatusColor = '';
-            } elseif ($value->sale_status == 'Unsent') {
-            $nextStatusColor = '';
-            } elseif ($value->sale_status == 'Sent') {
-            $nextStatusColor = '';
-            } elseif ($value->sale_status == 'Partlal') {
-            $nextStatusColor = 'overdue_status';
-            } elseif ($value->sale_status == 'Paid') {
-            $nextStatusColor = 'Paid_status';
+            } else {
+            $dueMessage = abs($daysDifference) . ' Days ago'; // Overdue message
+            $dueMessageColor = 'red'; // Overdue color
             }
-            @endphp
-                      <span class="status_btn {{ $nextStatusColor }}">{{ $value->sale_status }}</span>
+          @endphp
+                      <span style="color: {{ $dueMessageColor }};">
+                      {{ $dueMessage }}
+                      </span>
+                      </td>
+                      <td>
+                      @php
+            // Fetch the current due amount and original amount for this specific record
+            $remainingDueAmount = $value->sale_inv_due_amount; // Current due amount
+            $originalDueAmount = $value->sale_inv_final_amount;  // Total amount before payment
+
+            // Set default status and color
+            $nextStatus = $value->sale_status;
+            $nextStatusColor = '';
+
+            // Check if the due date has passed and the invoice is unpaid
+            if ($daysDifference > 0 && $remainingDueAmount > 0) {
+            // Overdue status
+            $nextStatus = 'Overdue';
+            $nextStatusColor = 'overdue_status'; // Class for overdue status
+            }
+
+            // Check the remaining due amount to determine if fully or partially paid
+            elseif ($remainingDueAmount == 0) {
+            // Fully paid status
+            //$nextStatus = 'Paid';
+            $nextStatusColor = 'Paid_status'; // Set class for paid status
+            } elseif ($remainingDueAmount < $originalDueAmount) {
+            // Partially paid status
+            // $nextStatus = 'Partial';
+            $nextStatusColor = 'partial_status'; // Set class for partially paid
+            } else {
+            // If none of the payment conditions match, fallback to the existing sale status
+            switch ($value->sale_status) {
+            case 'Draft':
+              $nextStatusColor = ''; // Draft status class (if needed)
+              break;
+            case 'Unsent':
+              $nextStatusColor = ''; // Unsent status class (if needed)
+              break;
+            case 'Sent':
+              $nextStatusColor = ''; // Sent status class (if needed)
+              break;
+            case 'Partial':
+              $nextStatusColor = 'partial_status'; // Class for partial payments
+              break;
+            case 'Paid':
+              $nextStatusColor = 'Paid_status'; // Class for fully paidOver Paid
+              break;
+            case 'Over Paid':
+              $nextStatusColor = 'OverPaid_status'; // Class for fully paidOver Paid
+              break;
+            default:
+              $nextStatusColor = ''; // Default to no specific color
+            }
+            }
+          @endphp
+
+                      <!-- Display status with corresponding CSS class -->
+                      <span class="status_btn {{ $nextStatusColor }}">{{ $nextStatus }}</span>
                       </td>
                       <!-- Actions Dropdown -->
                       <td>
@@ -244,7 +283,7 @@
             $nextStatus = 'Send';
             } elseif ($value->sale_status == 'Sent') {
             $nextStatus = 'Record Payment';
-            } elseif ($value->sale_status == 'Partlal') {
+            } elseif ($value->sale_status == 'Partial') {
             $nextStatus = 'Record Payment';
             } elseif ($value->sale_status == 'Paid') {
             $nextStatus = 'View';
@@ -252,119 +291,132 @@
             @endphp
 
                       @if($nextStatus == 'Record Payment')
-                      <a href="javascript:void(0);" data-toggle="modal" data-target="#recordpaymentpopup{{ $value->sale_inv_id }}" >
-                                Record Payment
-                                </a>
-              <div class="modal fade" id="recordpaymentpopup{{ $value->sale_inv_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                                  <div class="modal-content">
-                                                    <div class="modal-header">
-                                                      <h5 class="modal-title" id="exampleModalLongTitle">Record A Payment For This Invoice</h5>
-                                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                      </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                    <form method="POST" action="{{ route('business.customerdetails.paymentsstore', $value->sale_inv_id ) }}">
-                                                @csrf
-                                                <input type="hidden" name="invoice_id" value="{{ $value->sale_inv_id }}">
+              <a href="javascript:void(0);" data-toggle="modal"
+              data-target="#recordpaymentpopup{{ $value->sale_inv_id }}">
+              Record Payment
+              </a>
+              <div class="modal fade" id="recordpaymentpopup{{ $value->sale_inv_id }}" tabindex="-1"
+              role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+              <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+              <div class="modal-content">
+              <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Record A Payment For This
+                Invoice</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              </div>
+              <div class="modal-body">
+              <form method="POST"
+                action="{{ route('business.customerdetails.paymentsstore', $value->sale_inv_id) }}">
+                @csrf
+                <input type="hidden" name="invoice_id" value="{{ $value->sale_inv_id }}">
 
-                                                <div class="row pxy-15 px-10">
-                                                    <div class="col-md-12">
-                                                        <p>Record a Payment you've Already Received, Such As Cash, Check, or Bank Payment.</p>
-                                                    </div>
-                                                    <!-- <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Date</label>
-                                                            <div class="input-group date" id="estimatedate" data-target-input="nearest">
-                                                                <input type="text" name="payment_date" class="form-control datetimepicker-input" placeholder="" data-target="#estimatedate">
-                                                                <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
-                                                                    <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div> -->
-                                                    <div class="col-md-3">
-                                                      <div class="form-group">
-                                                        <label>Date</label>
-                                                        <div class="input-group date" id="estimatedate" data-target-input="nearest">
-                                                        <input type="hidden" id="from-datepickerp-hidden" value="{{ $value->sale_inv_date }}" />
-                                                        <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
-                                                          data-target="#estimatedate" />
-                                                        <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
-                                                          <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                                                        </div> -->
-                                                          <x-flatpickr 
-                                                                id="from-datepickerp" 
-                                                                name="payment_date" 
-                                                                placeholder="Select a date" 
-                                                                value="{{ old('payment_date', $value->sale_inv_date) }}"
-                                                            />
-                                                          <div class="input-group-append">
-                                                            <div class="input-group-text" id="from-calendar-iconp">
-                                                                <i class="fa fa-calendar-alt"></i>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                        <span class="error-message" id="error_payment_date" style="color: red;"></span>
-                                                      </div>
-                                                      </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Amount</label>
-                                                            <div class="d-flex">
-                                                                <select class="form-select amount_currency_input" name="payment_amount" >
-                                                                    <option>$</option>
-                                                                    <option>€</option>
-                                                                    <option>(CFA)</option>
-                                                                    <option>£</option>
-                                                                </select>
-                                                                <input type="text" name="payment_amount" class="form-control amount_input" value="{{ $value->sale_inv_final_amount }}" aria-describedby="inputGroupPrepend">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Method</label>
-                                                            <select class="form-control form-select" name="payment_method">
-                                                                <option>Select a Payment Method...</option>
-                                                                <option value="Bank Payment">Bank Payment</option>
-                                                                <option value="Cash">Cash</option>
-                                                                <option value="Check">Check</option>
-                                                                <option value="Credit Card">Credit Card</option>
-                                                                <option value="PayPal">PayPal</option>
-                                                                <option value="Other Payment Method">Other Payment Method</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label>Account <span class="text-danger">*</span></label>
-                                                        <select class="form-control form-select" name="payment_account" placeholder="Enter your text here">
-                                                            <option>Select a Payment Account...</option>
-                                                            @foreach($accounts as $account)
-                                                                <option>{{ $account->chart_acc_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.</p>
-                                                   </div>
+                <div class="row pxy-15 px-10">
+                <div class="col-md-12">
+                <p>Record a Payment you've Already Received, Such As Cash, Check, or Bank
+                Payment.</p>
+                </div>
+                <!-- <div class="col-md-6">
+                <div class="form-group">
+                  <label>Date</label>
+                  <div class="input-group date" id="estimatedate" data-target-input="nearest">
+                  <input type="text" name="payment_date" class="form-control datetimepicker-input" placeholder="" data-target="#estimatedate">
+                  <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                  </div>
+                  </div>
+                </div>
+                </div> -->
+                <div class="col-md-3">
+                <div class="form-group">
+                <label>Date</label>
+                <div class="input-group date" id="estimatedate"
+                data-target-input="nearest">
+                <input type="hidden" id="from-datepickerp-hidden"
+                value="{{ $value->sale_inv_date }}" />
+                <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+                  data-target="#estimatedate" />
+                <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                </div> -->
+                <x-flatpickr id="from-datepickerp" name="payment_date"
+                placeholder="Select a date"
+                value="{{ old('payment_date', $value->sale_inv_date) }}" />
+                <div class="input-group-append">
+                <div class="input-group-text" id="from-calendar-iconp">
+                <i class="fa fa-calendar-alt"></i>
+                </div>
+                </div>
+                </div>
+                <span class="error-message" id="error_payment_date"
+                style="color: red;"></span>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label>Amount</label>
+                <div class="d-flex">
+                <select class="form-select amount_currency_input"
+                name="payment_amount">
+                <option>$</option>
+                <option>€</option>
+                <option>(CFA)</option>
+                <option>£</option>
+                </select>
+                <input type="text" name="payment_amount"
+                class="form-control amount_input"
+                value="{{ $value->sale_inv_due_amount }}"
+                aria-describedby="inputGroupPrepend">
+                </div>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label>Method</label>
+                <select class="form-control form-select" name="payment_method">
+                <option>Select a Payment Account...</option>
+                @foreach($paymethod as $pay)
+          <option value="{{ $pay->m_id }}">{{ $pay->method_name }}</option>
+          <!-- Store ID -->
+        @endforeach
+                </select>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <label>Account <span class="text-danger">*</span></label>
+                <select class="form-control form-select" name="payment_account"
+                placeholder="Enter your text here">
+                <option>Select a Payment Account...</option>
+                @foreach($accounts as $account)
+          <option value="{{ $account->chart_acc_id }}">
+          {{ $account->chart_acc_name }}</option> <!-- Store ID -->
+        @endforeach
+                </select>
+                <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds
+                From.
+                </p>
+                </div>
 
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="recordpaymentmemonotes">Memo / Notes</label>
-                                                            <textarea id="recordpaymentmemonotes" class="form-control" name="notes" rows="3" placeholder="Enter your text here"></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="add_btn">Save</button>
-                                                </div>
-                                            </form>
+                <div class="col-md-12">
+                <div class="form-group">
+                <label for="recordpaymentmemonotes">Memo / Notes</label>
+                <textarea id="recordpaymentmemonotes" class="form-control" name="notes"
+                rows="3" placeholder="Enter your text here"></textarea>
+                </div>
+                </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="add_btn_br"
+                data-dismiss="modal">Cancel</button>
+                <button type="submit" class="add_btn">Save</button>
+                </div>
+              </form>
 
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
+              </div>
+              </div>
+              </div>
+              </div>
 
             @else
           <a href="javascript:void(0);"
@@ -466,7 +518,7 @@
                                 class="invoice_report_icon icon_cr1"></div>
                             <div class="mar_15">
                               <p class="in_contact_title">Total Unpaid</p>
-                              <p class="in_contact_total text_color1">$88.50</p>
+                              <p class="in_contact_total text_color1">${{ number_format($totalUnpaid, 2) }}</p>
                             </div>
                           </div>
                         </div>
@@ -480,7 +532,7 @@
                                 class="invoice_report_icon icon_cr4"></div>
                             <div class="mar_15">
                               <p class="in_contact_title">Overdue</p>
-                              <p class="in_contact_total text_color4">$88.50</p>
+                              <p class="in_contact_total text_color4">${{ number_format($overdueTotal, 2) }}</p>
                             </div>
                           </div>
                         </div>
@@ -598,46 +650,85 @@
                       <td>{{ $value->sale_inv_number }}</td>
                       <td>{{ $value->sale_inv_date }}</td>
                       <td>{{ $value->sale_inv_final_amount }}</td>
-                      <td>{{ $value->sale_inv_final_amount }}</td>
+                      <td>{{ $value->sale_inv_due_amount }}</td>
                       <td>
-            @php
-          // Calculate the due date
-          $dueDate = \Carbon\Carbon::parse($value->sale_inv_valid_date);
-          $currentDate = \Carbon\Carbon::now();
-          $daysDifference = $dueDate->diffInDays($currentDate, false);
+                      @php
+            // Calculate the due date
+            $dueDate = \Carbon\Carbon::parse($value->sale_inv_valid_date);
+            $currentDate = \Carbon\Carbon::now();
+            $daysDifference = $dueDate->diffInDays($currentDate, false);
 
-          if ($daysDifference == 0) {
-          $dueMessage = 'Today'; // Message for today
-          $dueMessageColor = 'black'; // Set default color
-          } elseif ($daysDifference < 0) {
-          $dueMessage = 'Due in ' . $daysDifference . ' Days'; // Upcoming message
-          $dueMessageColor = 'black'; // Set default color
+            if ($daysDifference == 0) {
+            $dueMessage = 'Today'; // Message for today
+            $dueMessageColor = 'black'; // Set default color
+            } elseif ($daysDifference < 0) {
+            $dueMessage = 'Due in ' . $daysDifference . ' Days'; // Upcoming message
+            $dueMessageColor = 'black'; // Set default color
 
-          } else {
-          $dueMessage = abs($daysDifference) . ' Days ago'; // Overdue message
-          $dueMessageColor = 'red'; // Overdue color
-          }
-      @endphp
-            <span style="color: {{ $dueMessageColor }};">
-            {{ $dueMessage }}
-            </span>
-            </td>
-                      <td>@php
-            $nextStatus = '';
-            $nextStatusColor = '';
-            if ($value->sale_status == 'Draft') {
-            $nextStatusColor = '';
-            } elseif ($value->sale_status == 'Unsent') {
-            $nextStatusColor = '';
-            } elseif ($value->sale_status == 'Sent') {
-            $nextStatusColor = '';
-            } elseif ($value->sale_status == 'Partlal') {
-            $nextStatusColor = 'overdue_status';
-            } elseif ($value->sale_status == 'Paid') {
-            $nextStatusColor = 'Paid_status';
+            } else {
+            $dueMessage = abs($daysDifference) . ' Days ago'; // Overdue message
+            $dueMessageColor = 'red'; // Overdue color
             }
-            @endphp
-                      <span class="status_btn {{ $nextStatusColor }}">{{ $value->sale_status }}</span>
+          @endphp
+                      <span style="color: {{ $dueMessageColor }};">
+                      {{ $dueMessage }}
+                      </span>
+                      </td>
+                      <td>
+                      @php
+            // Fetch the current due amount and original amount for this specific record
+            $remainingDueAmount = $value->sale_inv_due_amount; // Current due amount
+            $originalDueAmount = $value->sale_inv_final_amount;  // Total amount before payment
+
+            // Set default status and color
+            $nextStatus = $value->sale_status;
+            $nextStatusColor = '';
+
+            // Check if the due date has passed and the invoice is unpaid
+            if ($daysDifference > 0 && $remainingDueAmount > 0) {
+            // Overdue status
+            $nextStatus = 'Overdue';
+            $nextStatusColor = 'overdue_status'; // Class for overdue status
+            }
+
+            // Check the remaining due amount to determine if fully or partially paid
+            elseif ($remainingDueAmount == 0) {
+            // Fully paid status
+            //$nextStatus = 'Paid';
+            $nextStatusColor = 'Paid_status'; // Set class for paid status
+            } elseif ($remainingDueAmount < $originalDueAmount) {
+            // Partially paid status
+            // $nextStatus = 'Partial';
+            $nextStatusColor = 'partial_status'; // Set class for partially paid
+            } else {
+            // If none of the payment conditions match, fallback to the existing sale status
+            switch ($value->sale_status) {
+            case 'Draft':
+              $nextStatusColor = ''; // Draft status class (if needed)
+              break;
+            case 'Unsent':
+              $nextStatusColor = ''; // Unsent status class (if needed)
+              break;
+            case 'Sent':
+              $nextStatusColor = ''; // Sent status class (if needed)
+              break;
+            case 'Partial':
+              $nextStatusColor = 'partial_status'; // Class for partial payments
+              break;
+            case 'Paid':
+              $nextStatusColor = 'Paid_status'; // Class for fully paidOver Paid
+              break;
+            case 'Over Paid':
+              $nextStatusColor = 'OverPaid_status'; // Class for fully paidOver Paid
+              break;
+            default:
+              $nextStatusColor = ''; // Default to no specific color
+            }
+            }
+          @endphp
+
+                      <!-- Display status with corresponding CSS class -->
+                      <span class="status_btn {{ $nextStatusColor }}">{{ $nextStatus }}</span>
                       </td>
                       <!-- Actions Dropdown -->
                       <td>
@@ -651,127 +742,268 @@
               $nextStatus = 'Send';
               } elseif ($value->sale_status == 'Sent') {
               $nextStatus = 'Record Payment';
-              } elseif ($value->sale_status == 'Partlal') {
+              } elseif ($value->sale_status == 'Partial') {
               $nextStatus = 'Record Payment';
               } elseif ($value->sale_status == 'Paid') {
               $nextStatus = 'View';
               }
+              elseif ($value->sale_status == 'Over Paid') {
+          $nextStatus = 'Manage overpayment';
+          }
               @endphp
 
                         @if($nextStatus == 'Record Payment')
-                        <a href="javascript:void(0);" data-toggle="modal" data-target="#recordpaymentpopup2{{ $value->sale_inv_id }}" >
-                                Record Payment
-                                </a>
-              <div class="modal fade" id="recordpaymentpopup2{{ $value->sale_inv_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                                                  <div class="modal-content">
-                                                    <div class="modal-header">
-                                                      <h5 class="modal-title" id="exampleModalLongTitle">Record A Payment For This Invoice</h5>
-                                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                      </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                    <form method="POST" action="{{ route('business.customerdetails.paymentsstore', $value->sale_inv_id ) }}">
-                                                @csrf
-                                                <input type="hidden" name="invoice_id" value="{{ $value->sale_inv_id }}">
+              <a href="javascript:void(0);" data-toggle="modal"
+              data-target="#recordpaymentpopup2{{ $value->sale_inv_id }}">
+              Record Payment
+              </a>
+              <div class="modal fade" id="recordpaymentpopup2{{ $value->sale_inv_id }}"
+              tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+              aria-hidden="true">
+              <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+              <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Record A Payment For This
+                Invoice</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form method="POST"
+                action="{{ route('business.customerdetails.paymentsstore', $value->sale_inv_id) }}">
+                @csrf
+                <input type="hidden" name="invoice_id" value="{{ $value->sale_inv_id }}">
 
-                                                <div class="row pxy-15 px-10">
-                                                    <div class="col-md-12">
-                                                        <p>Record a Payment you've Already Received, Such As Cash, Check, or Bank Payment.</p>
-                                                    </div>
-                                                    <!-- <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Date</label>
-                                                            <div class="input-group date" id="estimatedate" data-target-input="nearest">
-                                                                <input type="text" name="payment_date" class="form-control datetimepicker-input" placeholder="" data-target="#estimatedate">
-                                                                <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
-                                                                    <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div> -->
-                                                    <div class="col-md-3">
-                                                      <div class="form-group">
-                                                        <label>Date</label>
-                                                        <div class="input-group date" id="estimatedate" data-target-input="nearest">
-                                                        <input type="hidden" id="from-datepickerp-hidden" value="{{ $value->sale_inv_date }}" />
-                                                        <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
-                                                          data-target="#estimatedate" />
-                                                        <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
-                                                          <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                                                        </div> -->
-                                                          <x-flatpickr 
-                                                                id="from-datepickerp" 
-                                                                name="payment_date" 
-                                                                placeholder="Select a date" 
-                                                                value="{{ old('payment_date', $value->sale_inv_date) }}"
-                                                            />
-                                                          <div class="input-group-append">
-                                                            <div class="input-group-text" id="from-calendar-iconp">
-                                                                <i class="fa fa-calendar-alt"></i>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                        <span class="error-message" id="error_payment_date" style="color: red;"></span>
-                                                      </div>
-                                                      </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Amount</label>
-                                                            <div class="d-flex">
-                                                                <select class="form-select amount_currency_input" name="payment_amount" >
-                                                                    <option>$</option>
-                                                                    <option>€</option>
-                                                                    <option>(CFA)</option>
-                                                                    <option>£</option>
-                                                                </select>
-                                                                <input type="text" name="payment_amount" class="form-control amount_input" value="{{ $value->sale_inv_final_amount }}" aria-describedby="inputGroupPrepend">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Method</label>
-                                                            <select class="form-control form-select" name="payment_method">
-                                                                <option>Select a Payment Method...</option>
-                                                                <option value="Bank Payment">Bank Payment</option>
-                                                                <option value="Cash">Cash</option>
-                                                                <option value="Check">Check</option>
-                                                                <option value="Credit Card">Credit Card</option>
-                                                                <option value="PayPal">PayPal</option>
-                                                                <option value="Other Payment Method">Other Payment Method</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label>Account <span class="text-danger">*</span></label>
-                                                        <select class="form-control form-select" name="payment_account" placeholder="Enter your text here">
-                                                            <option>Select a Payment Account...</option>
-                                                            @foreach($accounts as $account)
-                                                                <option>{{ $account->chart_acc_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.</p>
-                                                   </div>
+                <div class="row pxy-15 px-10">
+                <div class="col-md-12">
+                <p>Record a Payment you've Already Received, Such As Cash, Check, or
+                Bank Payment.</p>
+                </div>
+                <!-- <div class="col-md-6">
+                <div class="form-group">
+                  <label>Date</label>
+                  <div class="input-group date" id="estimatedate" data-target-input="nearest">
+                  <input type="text" name="payment_date" class="form-control datetimepicker-input" placeholder="" data-target="#estimatedate">
+                  <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                  </div>
+                  </div>
+                </div>
+                </div> -->
+                <div class="col-md-3">
+                <div class="form-group">
+                <label>Date</label>
+                <div class="input-group date" id="estimatedate"
+                data-target-input="nearest">
+                <input type="hidden" id="from-datepickerp-hidden"
+                value="{{ $value->sale_inv_date }}" />
+                <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+                  data-target="#estimatedate" />
+                <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                </div> -->
+                <x-flatpickr id="from-datepickerp" name="payment_date"
+                placeholder="Select a date"
+                value="{{ old('payment_date', $value->sale_inv_date) }}" />
+                <div class="input-group-append">
+                <div class="input-group-text" id="from-calendar-iconp">
+                <i class="fa fa-calendar-alt"></i>
+                </div>
+                </div>
+                </div>
+                <span class="error-message" id="error_payment_date"
+                style="color: red;"></span>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label>Amount</label>
+                <div class="d-flex">
+                <select class="form-select amount_currency_input"
+                name="payment_amount">
+                <option>$</option>
+                <option>€</option>
+                <option>(CFA)</option>
+                <option>£</option>
+                </select>
+                <input type="text" name="payment_amount"
+                class="form-control amount_input"
+                value="{{ $value->sale_inv_due_amount }}"
+                aria-describedby="inputGroupPrepend">
+                </div>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                <label>Method</label>
+                <select class="form-control form-select" name="payment_method">
+                <option>Select a Payment Account...</option>
+                @foreach($paymethod as $pay)
+          <option value="{{ $pay->m_id }}">{{ $pay->method_name }}</option>
+          <!-- Store ID -->
+        @endforeach
+                </select>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <label>Account <span class="text-danger">*</span></label>
+                <select class="form-control form-select" name="payment_account"
+                placeholder="Enter your text here">
+                <option>Select a Payment Account...</option>
+                @foreach($accounts as $account)
+          <option value="{{ $account->chart_acc_id }}">
+          {{ $account->chart_acc_name }}</option> <!-- Store ID -->
+        @endforeach
+                </select>
+                <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds
+                From.
+                </p>
+                </div>
 
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <label for="recordpaymentmemonotes">Memo / Notes</label>
-                                                            <textarea id="recordpaymentmemonotes" class="form-control" name="notes" rows="3" placeholder="Enter your text here"></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="add_btn">Save</button>
-                                                </div>
-                                            </form>
+                <div class="col-md-12">
+                <div class="form-group">
+                <label for="recordpaymentmemonotes">Memo / Notes</label>
+                <textarea id="recordpaymentmemonotes" class="form-control"
+                name="notes" rows="3" placeholder="Enter your text here"></textarea>
+                </div>
+                </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="add_btn_br"
+                data-dismiss="modal">Cancel</button>
+                <button type="submit" class="add_btn">Save</button>
+                </div>
+                </form>
 
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
+              </div>
+              </div>
+              </div>
+              </div>
+
+
+              @elseif($nextStatus == 'Manage overpayment')
+        <a href="javascript:void(0);" data-toggle="modal"
+        data-target="#overpayment{{ $value->sale_inv_id }}">
+        Manage overpayment
+        </a>
+        <div class="modal fade" id="overpayment{{ $value->sale_inv_id }}" tabindex="-1"
+        role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Manage overpayment For This
+          Invoice</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST"
+          action="{{ route('business.customerdetails.paymentsstore', $value->sale_inv_id) }}">
+          @csrf
+          <input type="hidden" name="invoice_id" value="{{ $value->sale_inv_id }}">
+
+          <div class="row pxy-15 px-10">
+          <div class="col-md-12">
+          <p>Manage overpayment you've Already Received, Such As Cash, Check, or Bank
+          Payment.</p>
+          </div>
+          <!-- <div class="col-md-6">
+          <div class="form-group">
+          <label>Date</label>
+          <div class="input-group date" id="estimatedate" data-target-input="nearest">
+          <input type="text" name="payment_date" class="form-control datetimepicker-input" placeholder="" data-target="#estimatedate">
+          <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+          <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+          </div>
+          </div>
+          </div>
+          </div> -->
+          <div class="col-md-3">
+          <div class="form-group">
+          <label>Date</label>
+          <div class="input-group date" id="estimatedate"
+          data-target-input="nearest">
+          <input type="hidden" id="from-datepickerp-hidden"
+          value="{{ $value->sale_inv_date }}" />
+          <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+          data-target="#estimatedate" />
+          <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+          <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+          </div> -->
+          <x-flatpickr id="from-datepickerp" name="payment_date"
+          placeholder="Select a date"
+          value="{{ old('payment_date', $value->sale_inv_date) }}" />
+          <div class="input-group-append">
+          <div class="input-group-text" id="from-calendar-iconp">
+          <i class="fa fa-calendar-alt"></i>
+          </div>
+          </div>
+          </div>
+          <span class="error-message" id="error_payment_date"
+          style="color: red;"></span>
+          </div>
+          </div>
+          <div class="col-md-6">
+          <div class="form-group">
+          <label>Amount</label>
+          <div class="d-flex">
+          <select class="form-select amount_currency_input" name="payment_amount">
+          <option>$</option>
+          <option>€</option>
+          <option>(CFA)</option>
+          <option>£</option>
+          </select>
+          <input type="text" name="payment_amount"
+          class="form-control amount_input"
+          value="{{ $value->sale_inv_due_amount }}"
+          aria-describedby="inputGroupPrepend">
+          </div>
+          </div>
+          </div>
+          <div class="col-md-6">
+          <div class="form-group">
+          <label>Method</label>
+          <select class="form-control form-select" name="payment_method">
+          <option>Select a Payment Account...</option>
+          @foreach($paymethod as $pay)
+          <option value="{{ $pay->m_id }}">{{ $pay->method_name }}</option> <!-- Store ID -->
+          @endforeach
+          </select>
+          </div>
+          </div>
+          <div class="col-md-6">
+          <label>Account <span class="text-danger">*</span></label>
+          <select class="form-control form-select" name="payment_account"
+          placeholder="Enter your text here">
+          <option>Select a Payment Account...</option>
+          @foreach($accounts as $account)
+          <option value="{{ $account->chart_acc_id }}">{{ $account->chart_acc_name }}</option> <!-- Store ID -->
+          @endforeach
+          </select>
+          <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.
+          </p>
+          </div>
+
+          <div class="col-md-12">
+          <div class="form-group">
+          <label for="recordpaymentmemonotes">Memo / Notes</label>
+          <textarea id="recordpaymentmemonotes" class="form-control" name="notes"
+          rows="3" placeholder="Enter your text here"></textarea>
+          </div>
+          </div>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="add_btn_br" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="add_btn">Save</button>
+          </div>
+          </form>
+
+        </div>
+        </div>
+        </div>
+        </div>
             @else
         <a href="javascript:void(0);"
         onclick="updateStatus({{ $value->sale_inv_id }}, '{{ $nextStatus }}')">
@@ -913,95 +1145,95 @@
                     <div class="row">
                       <div class="col-md-12" id="accordion">
                         <div id="filter_data_activity">
-                        @foreach($sentLogs as $log)
-                          <a class="d-block w-100" data-toggle="collapse" href="#collapseOne-{{ $loop->index }}">
-                            <div class="card-header accordion-button">
-                            <div class="row align-items-center">
-                              <div class="col-auto">
-                              <p class="mb-0">{{ $log->created_at->format('M d') }}</p>
-                              </div>
-                              <div class="col-auto align-items-center d-flex">
-                              <img src="{{url('public/dist/img/send.svg')}}" class="send_icon">
-                              <p class="invoiceid_text mar_15 mb-0">{{ $log->log_msg }}</p>
-                              </div>
-                              <div class="col-auto">
-                              <button class="status_btn mar_15">Sent</button>
-                              </div>
-                            </div>
-                            </div>
-                          </a>
-
-                                    <div id="collapseOne-{{ $loop->index }}" class="collapse" data-parent="#accordion">
-                                      <div class="card-body">
-                                      <div class="row justify-content-between">
-                                        <div class="col-auto">
-                                        <table class="table estimate_detail_table">
-                                          @if($log->log_type == 1 && $log->estimate)
-                                  <tr>
-                                  <td><strong>Date</strong></td>
-                                  <td>{{ $log->estimate->sale_estim_date }}</td>
-                                  </tr>
-                                  <tr>
-                                  <td><strong>Due Date</strong></td>
-                                  <td>{{ $log->estimate->sale_estim_valid_date }}</td>
-                                  </tr>
-                                  <tr>
-                                  <td><strong>P.O/S.O</strong></td>
-                                  <td>{{ $log->estimate->sale_estim_customer_ref }}</td>
-                                  </tr>
-                                  <tr>
-                                  <td><strong>Items</strong></td>
-                                  <td>{{ $log->estimate->sale_estim_date }}</td>
-                                  </tr>
-                                  <tr>
-                                  <td><strong>Total</strong></td>
-                                  <td>{{ $log->estimate->sale_estim_final_amount }}</td>
-                                  </tr>
-                                @elseif($log->log_type == 2 && $log->invoice)
-                            <tr>
-                            <td><strong>Date</strong></td>
-                            <td>{{ $log->invoice->sale_inv_date }}</td>
-                            </tr>
-                            <tr>
-                            <td><strong>Due Date</strong></td>
-                            <td>{{ $log->invoice->sale_inv_valid_date }}</td>
-                            </tr>
-                            <tr>
-                            <td><strong>P.O/S.O</strong></td>
-                            <td>{{ $log->invoice->sale_inv_customer_ref }}</td>
-                            </tr>
-                            <tr>
-                            <td><strong>Items</strong></td>
-                            <td>{{ $log->allInvoices->sale_inv_item_qty ?? 'n/a' }}</td>
-                            </tr>
-                            <tr>
-                            <td><strong>Total</strong></td>
-                            <td>{{ $log->invoice->sale_inv_final_amount ?? 'n/a' }}</td>
-                            </tr>
-                          @else
-                          <tr>
-                          <td colspan="2">No related data found.</td>
-                          </tr>
-                        @endif
-                  </table>
+                          @foreach($sentLogs as $log)
+                <a class="d-block w-100" data-toggle="collapse" href="#collapseOne-{{ $loop->index }}">
+                <div class="card-header accordion-button">
+                  <div class="row align-items-center">
+                  <div class="col-auto">
+                    <p class="mb-0">{{ $log->created_at->format('M d') }}</p>
+                  </div>
+                  <div class="col-auto align-items-center d-flex">
+                    <img src="{{url('public/dist/img/send.svg')}}" class="send_icon">
+                    <p class="invoiceid_text mar_15 mb-0">{{ $log->log_msg }}</p>
                   </div>
                   <div class="col-auto">
-                  <a href="#"><button class="add_btn_br">View related events</button></a>
+                    <button class="status_btn mar_15">Sent</button>
+                  </div>
+                  </div>
+                </div>
+                </a>
 
-                  @if($log->log_type == 1)
-            <a href="{{ route('business.estimates.view', $log->estimate->sale_estim_id) }}"><button
-            class="add_btn">View Estimate</button></a>
+                <div id="collapseOne-{{ $loop->index }}" class="collapse" data-parent="#accordion">
+                <div class="card-body">
+                  <div class="row justify-content-between">
+                  <div class="col-auto">
+                    <table class="table estimate_detail_table">
+                    @if($log->log_type == 1 && $log->estimate)
+            <tr>
+              <td><strong>Date</strong></td>
+              <td>{{ $log->estimate->sale_estim_date }}</td>
+            </tr>
+            <tr>
+              <td><strong>Due Date</strong></td>
+              <td>{{ $log->estimate->sale_estim_valid_date }}</td>
+            </tr>
+            <tr>
+              <td><strong>P.O/S.O</strong></td>
+              <td>{{ $log->estimate->sale_estim_customer_ref }}</td>
+            </tr>
+            <tr>
+              <td><strong>Items</strong></td>
+              <td>{{ $log->estimate->sale_estim_date }}</td>
+            </tr>
+            <tr>
+              <td><strong>Total</strong></td>
+              <td>{{ $log->estimate->sale_estim_final_amount }}</td>
+            </tr>
           @elseif($log->log_type == 2 && $log->invoice)
-        <a href="{{ route('business.invoices.view', $log->invoice->sale_inv_id) }}">
-        <button class="add_btn">View Invoice</button>
-        </a>
-      @endif
+      <tr>
+        <td><strong>Date</strong></td>
+        <td>{{ $log->invoice->sale_inv_date }}</td>
+      </tr>
+      <tr>
+        <td><strong>Due Date</strong></td>
+        <td>{{ $log->invoice->sale_inv_valid_date }}</td>
+      </tr>
+      <tr>
+        <td><strong>P.O/S.O</strong></td>
+        <td>{{ $log->invoice->sale_inv_customer_ref }}</td>
+      </tr>
+      <tr>
+        <td><strong>Items</strong></td>
+        <td>{{ $log->allInvoices->sale_inv_item_qty ?? 'n/a' }}</td>
+      </tr>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td>{{ $log->invoice->sale_inv_final_amount ?? 'n/a' }}</td>
+      </tr>
+    @else
+    <tr>
+      <td colspan="2">No related data found.</td>
+    </tr>
+  @endif
+                    </table>
+                  </div>
+                  <div class="col-auto">
+                    <a href="#"><button class="add_btn_br">View related events</button></a>
+
+                    @if($log->log_type == 1)
+            <a href="{{ route('business.estimates.view', $log->estimate->sale_estim_id) }}"><button
+              class="add_btn">View Estimate</button></a>
+          @elseif($log->log_type == 2 && $log->invoice)
+      <a href="{{ route('business.invoices.view', $log->invoice->sale_inv_id) }}">
+      <button class="add_btn">View Invoice</button>
+      </a>
+    @endif
+                  </div>
                   </div>
                 </div>
                 </div>
-              </div>
-            @endforeach
-            </div>
+              @endforeach
+                        </div>
 
                       </div>
                     </div>
@@ -1707,7 +1939,7 @@
           start_date_active: $('#from-datepicker-active').val(),
           end_date_active: $('#to-datepicker-active').val(),
           log_msg: $('#log_msg').val(),
-         activity_filter: 'activity_filter',
+          activity_filter: 'activity_filter',
           _token: '{{ csrf_token() }}'
         };
 
@@ -1786,6 +2018,31 @@
       }
 
     });
+    var formInput = document.getElementById('from-datepickerp-hidden');
+
+    var fromdatepickerp = flatpickr("#from-datepickerp", {
+
+locale: 'en',
+altInput: true,
+dateFormat: "MM/DD/YYYY",
+altFormat: "MM/DD/YYYY",
+defaultDate: formInput.value || null,
+onChange: function (selectedDates, dateStr, instance) {
+
+// fetchFilteredData();
+//alert('edate');
+},
+parseDate: (datestr, format) => {
+return moment(datestr, format, true).toDate();
+},
+formatDate: (date, format, locale) => {
+return moment(date).format(format);
+}
+});
+document.getElementById('from-calendar-iconp').addEventListener('click', function () {
+fromdatepickerp.open();
+});
+
 
   </script>
   <!-- end -->

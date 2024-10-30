@@ -139,6 +139,7 @@
             </div>
             <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
             <div class="add_customer_list" style="display: none;">
+            <label for="customerSelect">Select Customer</label>
               <select id="customerSelect" name="sale_cus_id" required class="form-control select2"
                       style="width: 100%;">
                       <option>Select Customer</option>
@@ -148,8 +149,6 @@
                   </option>
                 @endforeach
               </select>
-              <div id="customerInfo">
-              </div>
             </div>
           </div>
           <!-- /.col -->
@@ -201,6 +200,9 @@
             </div>
           </div>
           <!-- /.col -->
+          <div class="col-md-12">
+            <div id="customerInfo"></div>
+          </div>
         </div>
       </div>
       <div class="row px-10">
@@ -294,44 +296,41 @@
             </select>
           </div>
         </div>
-      </div>
+        <div class="col-md-4">
+          <div class="table-responsive">
+            <table class="table total_table">
+            <tr>
+              <td style="width:50%">Sub Total :</td>
+              <td id="sub-total">{{ $currency->currency_symbol }}0.00</td>
+            </tr>
+            <tr>
+              <td>Discount :</td>
+              <td id="discount">{{ $currency->currency_symbol }}0.00</td>
+            </tr>
+            <tr>
+              <td>Tax :</td>
+              <td id="tax">{{ $currency->currency_symbol }}0.00</td>
+            </tr>
+            <tr>
+              <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2"
+              required>
+              @foreach($currencys as $curr)
+          <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
+          <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
+            {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
+          </option>
+        @endforeach
+              </select>
 
+              <td><strong>Total:</strong></td>
+              <td id="total"><strong>$0.00</strong></td>
+            </tr>
+            </table>
 
-      <div class="row justify-content-end">
-        <div class="col-md-4 subtotal_box">
-        <div class="table-responsive">
-          <table class="table total_table">
-          <tr>
-            <td style="width:50%">Sub Total :</td>
-            <td id="sub-total">{{ $currency->currency_symbol }}0.00</td>
-          </tr>
-          <tr>
-            <td>Discount :</td>
-            <td id="discount">{{ $currency->currency_symbol }}0.00</td>
-          </tr>
-          <tr>
-            <td>Tax :</td>
-            <td id="tax">{{ $currency->currency_symbol }}0.00</td>
-          </tr>
-          <tr>
-            <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2"
-            required>
-            @foreach($currencys as $curr)
-        <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
-        <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
-          {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
-        </option>
-      @endforeach
-            </select>
-
-            <td>Total:</td>
-            <td id="total">$0.00</td>
-          </tr>
-          </table>
-
-        </div>
+          </div>
         </div>
       </div>
+
       <div class="dropdown-divider"></div>
       <div class="row pad-2">
         <div class="col-md-12">
@@ -345,11 +344,7 @@
       <!-- /.row -->
       </div>
 
-
-    </div>
-    <!-- /.card -->
-
-    <!-- card -->
+      <!-- card -->
     <div class="card card-default">
       <div class="card-header">
       <h3 class="card-title">Footer</h3>
@@ -378,6 +373,10 @@
       <a href="#"><button class="add_btn">Save & Continue</button></a>
       </div>
     </div><!-- /.col -->
+
+
+    </div>
+    <!-- /.card -->
     </form>
     </section>
     <!-- /.content -->
@@ -785,26 +784,32 @@
         if (response.success) {
           var customer = response.data;
           var customerInfoHtml = `
-        <h4>Bill to</h4>
-        <p><strong>${customer.sale_cus_business_name}</strong></p>
-        <p>${customer.sale_cus_first_name}</p>
-        <p>${customer.sale_cus_last_name}</p>
-        <p>${customer.sale_cus_account_number}</p>
-        <p>${customer.sale_cus_website}</p>
-        <p>${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
-        <p>${customer.state.name}</p>
-        <p>${customer.country.name}</p>
-
-        <h4>Ship to</h4>
-        <p>${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
-        <p>${customer.sale_ship_phone}</p>
-
-        <p>${customer.sale_cus_email}</p>
-        <p>${customer.sale_cus_phone}</p>
-        <a href="#" id="chooseDifferentCustomer">Choose a different customer</a>
-        <div class="edit_es_text customer" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
-          <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
-        </div>
+         <div class="row sel-cus-details">
+            <div class="col-lg-4 col-md-4">
+              <h5><strong>Bill to</strong></h5>
+              <p><strong>${customer.sale_cus_business_name}</strong></p>
+              <p>${customer.sale_cus_first_name} ${customer.sale_cus_last_name}</p>
+              <p>${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
+              <p>${customer.state?.name ?? ''}</p>
+              <p>${customer.country.name}</p>
+              <div class="edit_es_text customer" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
+                <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
+              </div>
+              <a href="#" id="chooseDifferentCustomer"><strong>Choose a different customer</strong></a>
+            </div>
+            <div class="col-lg-4 col-md-4">
+              <h5><strong>Ship to</strong></h5>
+              <p>${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
+              <p>${customer.sale_ship_phone}</p>
+              <p>${customer.sale_cus_email}</p>
+              <p>${customer.sale_cus_phone}</p>
+            </div>
+            <div class="col-lg-4 col-md-4">
+              <h5><strong>More</strong></h5>
+              <p>${customer.sale_cus_account_number}</p>
+              <p>${customer.sale_cus_website}</p>
+            </div>
+          </div>
         `;
           $('#customerInfo').html(customerInfoHtml).show();
 

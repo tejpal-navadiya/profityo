@@ -64,7 +64,7 @@
           <div class="business_logo_uplod_box">
             @if($businessDetails && $businessDetails->bus_image)
         <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
-        class="elevation-2" target="_blank">
+        class="elevation-2 img-box" target="_blank">
         <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
         <div class="modal fade" id="removebusinessimage" tabindex="-1" role="dialog"
@@ -138,113 +138,117 @@
       <!-- /.card-header -->
       <div class="card-body2">
         <div class="row justify-content-between pad-3">
-        <div class="col-md-3" id="customerInfo">
-          <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
-          <p class="company_details_text">{{ $estimates->customer->sale_cus_business_name ?? '' }}</p>
-          <p class="company_details_text">{{ $estimates->customer->sale_cus_first_name ?? '' }}
-          {{ $estimates->customer->sale_cus_last_name ?? ''}}</p>
-          <p class="company_details_text">{{ $estimates->customer->sale_cus_email ?? '' }}</p>
-          <p class="company_details_text">{{ $estimates->customer->sale_cus_phone ?? ''}}</p>
-          <div class="edit_es_text" data-toggle="modal"
-          data-target="#editcustor_modal_{{ $estimates->customer->sale_cus_id ?? '' }}"
-          data-id="{{ $estimates->customer->sale_cus_id ?? '' }}">
-          <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit
-          {{ $estimates->customer->sale_cus_first_name ?? ''}} {{ $estimates->customer->sale_cus_last_name ?? ''}}
+        <div class="col-md-3">
+          <div id="customerInfo">
+            <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+            <p class="company_details_text">{{ $estimates->customer->sale_cus_business_name ?? '' }}</p>
+            <p class="company_details_text">{{ $estimates->customer->sale_cus_first_name ?? '' }}
+            {{ $estimates->customer->sale_cus_last_name ?? ''}}</p>
+            <p class="company_details_text">{{ $estimates->customer->sale_cus_email ?? '' }}</p>
+            <p class="company_details_text">{{ $estimates->customer->sale_cus_phone ?? ''}}</p>
+            <div class="edit_es_text" data-toggle="modal"
+            data-target="#editcustor_modal_{{ $estimates->customer->sale_cus_id ?? '' }}"
+            data-id="{{ $estimates->customer->sale_cus_id ?? '' }}">
+            <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit
+            {{ $estimates->customer->sale_cus_first_name ?? ''}} {{ $estimates->customer->sale_cus_last_name ?? ''}}
+            </div>
+          </div>
+          <div class="edit_es_text customer_list list2">
+            <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
+          </div>
+
+          <div class="add_customer_list" style="display: none;">
+            <label for="customerSelect">Select Customer</label>
+            <select id="customerSelect" name="sale_cus_id" class="form-control select2" style="width: 100%;">
+            <!-- <option>Select Items</option> -->
+                  @foreach($salecustomer as $customer)
+                <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
+                {{ $customer->sale_cus_business_name }}
+                </option>
+              @endforeach
+            </select>
+            <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
           </div>
         </div>
-        <div class="edit_es_text customer_list list2">
-          <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
-        </div>
-
-        <div class="add_customer_list" style="display: none;">
-          <select id="customerSelect" name="sale_cus_id" class="form-control select2" style="width: 100%;">
-          <!-- <option>Select Items</option> -->
-          @foreach($salecustomer as $customer)
-        <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
-        {{ $customer->sale_cus_business_name }}
-        </option>
-      @endforeach
-          </select>
-          <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
-        </div>
+        
 
 
         <!-- /.col -->
         <div class="col-md-9">
           <div class="row">
-          <div class="col-md-3">
-            <div class="form-group">
-            <label for="estimatenumber">Estimate Number</label>
-            <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder=""
-              value="{{ $estimates->sale_estim_number }}">
-            <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-            <label for="estimatecustomerref">Customer Ref</label>
-            <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"
-              placeholder="" value="{{ $estimates->sale_estim_customer_ref }}">
-            <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-            <label>Date</label>
-            <div class="input-group date" id="estimatedate" data-target-input="nearest">
-              <!-- <input type="hidden" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
-              data-target="#estimatedate" value="{{ $estimates->sale_estim_date }}"/>
-              <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
-                <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-              </div> -->
-              <input type="hidden" id="from-datepicker-hidden" value="{{ $estimates->sale_estim_date }}" />
-
-              @php
-        $saleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_date)->format('m/d/Y');
-        @endphp
-
-              <x-flatpickr id="from-datepicker" name="sale_estim_date" placeholder="Select a date"
-              :value="$saleEstimDate" />
-              <div class="input-group-append">
-              <div class="input-group-text" id="from-calendar-icon">
-                <i class="fa fa-calendar-alt"></i>
+            <div class="col-md-3">
+              <div class="form-group">
+              <label for="estimatenumber">Estimate Number</label>
+              <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder=""
+                value="{{ $estimates->sale_estim_number }}">
+              <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
               </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+              <label for="estimatecustomerref">Customer Ref</label>
+              <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"
+                placeholder="" value="{{ $estimates->sale_estim_customer_ref }}">
+              <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
               </div>
-              <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
             </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group">
-            <label>Valid Until</label>
-            <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-              <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
-              data-target="#estimatevaliddate" name="sale_estim_valid_date" value="{{ $estimates->sale_estim_valid_date }}"/>
-              <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
-                <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-              </div> -->
-              <input type="hidden" id="to-datepicker-hidden" value="{{ $estimates->sale_estim_valid_date }}" />
+            <div class="col-md-3">
+              <div class="form-group">
+              <label>Date</label>
+              <div class="input-group date" id="estimatedate" data-target-input="nearest">
+                <!-- <input type="hidden" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+                data-target="#estimatedate" value="{{ $estimates->sale_estim_date }}"/>
+                <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                </div> -->
+                <input type="hidden" id="from-datepicker-hidden" value="{{ $estimates->sale_estim_date }}" />
 
-              @php
-        $formattedSaleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('m/d/Y');
-        @endphp
+                @php
+          $saleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_date)->format('m/d/Y');
+          @endphp
 
-              <x-flatpickr id="to-datepicker" name="sale_estim_valid_date" placeholder="Select a date"
-              :value="$formattedSaleEstimDate" />
-              <div class="input-group-append">
-              <div class="input-group-text" id="to-calendar-icon">
-                <i class="fa fa-calendar-alt"></i>
+                <x-flatpickr id="from-datepicker" name="sale_estim_date" placeholder="Select a date"
+                :value="$saleEstimDate" />
+                <div class="input-group-append">
+                <div class="input-group-text" id="from-calendar-icon">
+                  <i class="fa fa-calendar-alt"></i>
+                </div>
+                </div>
+                <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
               </div>
               </div>
             </div>
-            <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
-            <!-- <p class="within_day">Within 7 days</p> -->
-            <p class="within_day">Within <span id="total-days">{{ $estimates->sale_total_days ?? '0' }}</span>
-              days</p>
-            <input type="hidden" id="hidden-total-days" name="sale_total_days" value="{{ $estimates->sale_total_days ?? '0' }}">
-            <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
+            <div class="col-md-3">
+              <div class="form-group">
+              <label>Valid Until</label>
+              <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+                <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
+                data-target="#estimatevaliddate" name="sale_estim_valid_date" value="{{ $estimates->sale_estim_valid_date }}"/>
+                <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
+                  <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                </div> -->
+                <input type="hidden" id="to-datepicker-hidden" value="{{ $estimates->sale_estim_valid_date }}" />
+
+                @php
+          $formattedSaleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('m/d/Y');
+          @endphp
+
+                <x-flatpickr id="to-datepicker" name="sale_estim_valid_date" placeholder="Select a date"
+                :value="$formattedSaleEstimDate" />
+                <div class="input-group-append">
+                <div class="input-group-text" id="to-calendar-icon">
+                  <i class="fa fa-calendar-alt"></i>
+                </div>
+                </div>
+              </div>
+              <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
+              <!-- <p class="within_day">Within 7 days</p> -->
+              <p class="within_day">Within <span id="total-days">{{ $estimates->sale_total_days ?? '0' }}</span>
+                days</p>
+              <input type="hidden" id="hidden-total-days" name="sale_total_days" value="{{ $estimates->sale_total_days ?? '0' }}">
+              <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
+              </div>
             </div>
-          </div>
           </div>
         </div>
         <!-- /.col -->
@@ -415,68 +419,65 @@
         <input type="hidden" name="sale_estim_discount_total" value="{{ $estimates->sale_estim_discount_total }}">
         <input type="hidden" name="sale_estim_tax_amount" value="{{ $estimates->sale_estim_tax_amount }}">
         <input type="hidden" name="sale_estim_final_amount" value="{{ $estimates->sale_estim_final_amount }}">
-        <div class="row">
-        <div class="col-md-4">
-          <div class="d-flex">
-          <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"
-            aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_discount_desc }}"
-            placeholder="Description (optional)">
+        <div class="row pad-2">
+          <div class="col-md-4">
+            <div class="d-flex">
+            <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"
+              aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_discount_desc }}"
+              placeholder="Description (optional)">
+            </div>
           </div>
-        </div>
-        <div class="col-md-4">
-          <div class="d-flex">
-          <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
-            aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_item_discount }}"
-            placeholder="Enter a discount value" min="1">
-          <select class="form-select form-selectcurrency" id="sale_estim_discount_type"
-            name="sale_estim_discount_type">
-            <option value="1" {{ $estimates->sale_estim_discount_type == 1 ? 'selected' : '' }}>
-            {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}</option>
-            <option value="2" {{ $estimates->sale_estim_discount_type == 2 ? 'selected' : '' }}>%</option>
-          </select>
-          </div>
-        </div>
-        </div>
-        <div class="row justify-content-end">
-        <div class="col-md-4 subtotal_box">
-          <div class="table-responsive">
-          <table class="table total_table">
-            <tr>
-            <select name="sale_currency_id" id="sale_currency_id"
-              class="form-select form-selectcurrency select2" required>
-              @foreach($currencys as $curr)
-          <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
-          <option value="{{ $curr->id }}" {{ $curr->id == $estimates->sale_currency_id ? 'selected' : '' }}
-          data-symbol="{{ $curr->currency_symbol }}">
-          {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
-          </option>
-        @endforeach
+          <div class="col-md-4">
+            <div class="d-flex">
+            <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
+              aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_item_discount }}"
+              placeholder="Enter a discount value" min="1">
+            <select class="form-select form-selectcurrency" id="sale_estim_discount_type"
+              name="sale_estim_discount_type">
+              <option value="1" {{ $estimates->sale_estim_discount_type == 1 ? 'selected' : '' }}>
+              {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}</option>
+              <option value="2" {{ $estimates->sale_estim_discount_type == 2 ? 'selected' : '' }}>%</option>
             </select>
-            <td style="width:50%">Sub Total :</td>
-            <td id="sub-total">
-              {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_sub_total }}
-            </td>
-            </tr>
-            <tr>
-            <td>Discount :</td>
-            <td id="discount">
-              {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_discount_total }}
-            </td>
-            </tr>
-            <tr>
-            <td>Tax :</td>
-            <td id="tax">
-              {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_tax_amount }}
-            </td>
-            </tr>
-            <tr>
-            <td>Total:</td>
-            <td id="total">
-              {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_final_amount }}
-            </td>
-            </tr>
-          </table>
-
+            </div>
+          </div>
+          <div class="col-md-4">
+          <div class="table-responsive">
+            <table class="table total_table">
+              <tr>
+              <select name="sale_currency_id" id="sale_currency_id"
+                class="form-select form-selectcurrency select2" required>
+                @foreach($currencys as $curr)
+            <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
+            <option value="{{ $curr->id }}" {{ $curr->id == $estimates->sale_currency_id ? 'selected' : '' }}
+            data-symbol="{{ $curr->currency_symbol }}">
+            {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
+            </option>
+          @endforeach
+              </select>
+              <td style="width:50%">Sub Total :</td>
+              <td id="sub-total">
+                {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_sub_total }}
+              </td>
+              </tr>
+              <tr>
+              <td>Discount :</td>
+              <td id="discount">
+                {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_discount_total }}
+              </td>
+              </tr>
+              <tr>
+              <td>Tax :</td>
+              <td id="tax">
+                {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_tax_amount }}
+              </td>
+              </tr>
+              <tr>
+              <td>Total:</td>
+              <td id="total">
+                {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_final_amount }}
+              </td>
+              </tr>
+            </table>
           </div>
         </div>
         </div>
@@ -494,10 +495,8 @@
       </div>
       </div>
       <!-- /.card -->
-    </div>
-    <!-- /.card -->
 
-    <!-- card -->
+      <!-- card -->
     <div class="card card-default">
       <div class="card-header">
       <h3 class="card-title">Footer</h3>
@@ -526,6 +525,9 @@
       <button class="add_btn">Save & Continue</button>
       </div>
     </div><!-- /.col -->
+
+    </div>
+    <!-- /.card -->
     </form>
     </section>
     <!-- /.content -->
@@ -1286,18 +1288,11 @@
               <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
               <p class="company_details_text"><strong>${customer.sale_cus_business_name}</strong></p>
               <p class="company_details_text">${customer.sale_cus_first_name} ${customer.sale_cus_last_name}</p>
-              <p class="company_details_text">${customer.sale_cus_account_number}</p>
-              <p class="company_details_text">${customer.sale_cus_website}</p>
               <p class="company_details_text">${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
               <p class="company_details_text">${customer.state.name}</p>
               <p class="company_details_text">${customer.country.name}</p>
 
-              <p class="company_business_name" style="text-decoration: underline;">Ship To</p>
-              <p class="company_details_text">${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
-              <p class="company_details_text">${customer.sale_ship_phone}</p>
 
-              <p class="company_details_text">${customer.sale_cus_email}</p>
-              <p class="company_details_text">${customer.sale_cus_phone}</p>
               <div class="edit_es_text customer" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
             <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
               </div>

@@ -406,7 +406,7 @@
 
                             <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
 
-                            class="elevation-2" target="_blank">
+                            class="elevation-2 img-box" target="_blank">
 
                             @endif
 
@@ -675,6 +675,8 @@
                 @endif
 
                 <div class="col-md-12">
+
+                    <p class="estimate_view_title ">Footer</p>
 
                     <p>{{ $estimates->sale_estim_footer_note ?? '' }}</p>
 

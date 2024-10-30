@@ -195,7 +195,7 @@
             <ul class="nav nav-treeview">
               @if(isset($access['transections']) && $access['transections'])
               <li class="nav-item">
-                <a href="transactions-list.html" class="nav-link">
+                <a href="{{ route('business.transection.index') }}" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Transactions</p>
                 </a>

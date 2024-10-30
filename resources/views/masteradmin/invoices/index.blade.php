@@ -47,7 +47,7 @@
               class="invoice_report_icon icon_cr1"></div>
             <div class="mar_15">
             <p class="in_contact_title">Overdue</p>
-            <p class="in_contact_total text_color1">$125.50</p>
+            <p class="in_contact_total text_color1">${{ number_format($overdueTotal, 2) }} </p>
             </div>
           </div>
           </div>
@@ -61,7 +61,7 @@
               class="invoice_report_icon icon_cr2"></div>
             <div class="mar_15">
             <p class="in_contact_title">Due Within Next 30 Days</p>
-            <p class="in_contact_total text_color2">$65.25</p>
+            <p class="in_contact_total text_color2">${{ number_format($totalDueNext30Days, 2) }}</p>
             </div>
           </div>
           </div>
@@ -242,7 +242,7 @@
                             // Check if the due date has passed and the invoice is unpaid
                             if ($daysDifference > 0 && $remainingDueAmount > 0) {
                                 // Overdue status
-                              //  $nextStatus = 'Overdue';
+                                $nextStatus = 'Overdue';
                                 $nextStatusColor = 'overdue_status'; // Class for overdue status
                             }
                             
@@ -399,7 +399,7 @@
           </select>
           <input type="text" name="payment_amount"
           class="form-control amount_input"
-          value="{{ $value->sale_inv_final_amount }}"
+          value="{{ $value->sale_inv_due_amount }}"
           aria-describedby="inputGroupPrepend">
           </div>
           </div>
@@ -408,13 +408,10 @@
           <div class="form-group">
           <label>Method</label>
           <select class="form-control form-select" name="payment_method">
-          <option>Select a Payment Method...</option>
-          <option value="Bank Payment">Bank Payment</option>
-          <option value="Cash">Cash</option>
-          <option value="Check">Check</option>
-          <option value="Credit Card">Credit Card</option>
-          <option value="PayPal">PayPal</option>
-          <option value="Other Payment Method">Other Payment Method</option>
+          <option>Select a Payment Account...</option>
+          @foreach($paymethod as $pay)
+          <option value="{{ $pay->m_id }}">{{ $pay->method_name }}</option> <!-- Store ID -->
+          @endforeach
           </select>
           </div>
           </div>
@@ -424,8 +421,8 @@
           placeholder="Enter your text here">
           <option>Select a Payment Account...</option>
           @foreach($accounts as $account)
-        <option>{{ $account->chart_acc_name }}</option>
-      @endforeach
+          <option value="{{ $account->chart_acc_id }}">{{ $account->chart_acc_name }}</option> <!-- Store ID -->
+          @endforeach
           </select>
           <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.
           </p>
@@ -774,7 +771,7 @@
                             // Check if the due date has passed and the invoice is unpaid
                             if ($daysDifference > 0 && $remainingDueAmount > 0) {
                                 // Overdue status
-                              //  $nextStatus = 'Overdue';
+                              $nextStatus = 'Overdue';
                                 $nextStatusColor = 'overdue_status'; // Class for overdue status
                             }
                             
@@ -799,7 +796,7 @@
                                     case 'Sent':
                                         $nextStatusColor = ''; // Sent status class (if needed)
                                         break;
-                                    case 'Partlal':
+                                    case 'Partial':
                                         $nextStatusColor = 'partial_status'; // Class for partial payments
                                         break;
                                     case 'Paid':
@@ -967,7 +964,7 @@
           </select>
           <input type="text" name="payment_amount"
           class="form-control amount_input"
-          value="{{ $value->sale_inv_final_amount }}"
+          value="{{ $value->sale_inv_due_amount }}"
           aria-describedby="inputGroupPrepend">
           </div>
           </div>
@@ -976,13 +973,10 @@
           <div class="form-group">
           <label>Method</label>
           <select class="form-control form-select" name="payment_method">
-          <option>Select a Payment Method...</option>
-          <option value="Bank Payment">Bank Payment</option>
-          <option value="Cash">Cash</option>
-          <option value="Check">Check</option>
-          <option value="Credit Card">Credit Card</option>
-          <option value="PayPal">PayPal</option>
-          <option value="Other Payment Method">Other Payment Method</option>
+          <option>Select a Payment Account...</option>
+          @foreach($paymethod as $pay)
+          <option value="{{ $pay->m_id }}">{{ $pay->method_name }}</option> <!-- Store ID -->
+          @endforeach
           </select>
           </div>
           </div>
@@ -992,8 +986,8 @@
           placeholder="Enter your text here">
           <option>Select a Payment Account...</option>
           @foreach($accounts as $account)
-        <option>{{ $account->chart_acc_name }}</option>
-      @endforeach
+          <option value="{{ $account->chart_acc_id }}">{{ $account->chart_acc_name }}</option> <!-- Store ID -->
+          @endforeach
           </select>
           <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.
           </p>
@@ -1017,21 +1011,13 @@
         </div>
         </div>
         </div>
-      @else
-    <a href="javascript:void(0);"
-    onclick="updateStatus({{ $value->sale_inv_id }}, '{{ $nextStatus }}')">
-    {{ $nextStatus }}
-    </a>
-  @endif
-
-
-  <!--  -->
-  @if($nextStatus == 'Manage overpayment')
+          <!--  -->
+  @elseif($nextStatus == 'Manage overpayment')
         <a href="javascript:void(0);" data-toggle="modal"
-        data-target="#recordpaymentpopup3{{ $value->sale_inv_id }}">
+        data-target="#overpayment{{ $value->sale_inv_id }}">
         Manage overpayment
         </a>
-        <div class="modal fade" id="recordpaymentpopup3{{ $value->sale_inv_id }}" tabindex="-1"
+        <div class="modal fade" id="overpayment{{ $value->sale_inv_id }}" tabindex="-1"
         role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -1110,13 +1096,10 @@
           <div class="form-group">
           <label>Method</label>
           <select class="form-control form-select" name="payment_method">
-          <option>Select a Payment Method...</option>
-          <option value="Bank Payment">Bank Payment</option>
-          <option value="Cash">Cash</option>
-          <option value="Check">Check</option>
-          <option value="Credit Card">Credit Card</option>
-          <option value="PayPal">PayPal</option>
-          <option value="Other Payment Method">Other Payment Method</option>
+          <option>Select a Payment Account...</option>
+          @foreach($paymethod as $pay)
+          <option value="{{ $pay->m_id }}">{{ $pay->method_name }}</option> <!-- Store ID -->
+          @endforeach
           </select>
           </div>
           </div>
@@ -1126,8 +1109,8 @@
           placeholder="Enter your text here">
           <option>Select a Payment Account...</option>
           @foreach($accounts as $account)
-        <option>{{ $account->chart_acc_name }}</option>
-      @endforeach
+          <option value="{{ $account->chart_acc_id }}">{{ $account->chart_acc_name }}</option> <!-- Store ID -->
+          @endforeach
           </select>
           <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.
           </p>
@@ -1151,12 +1134,17 @@
         </div>
         </div>
         </div>
+
       @else
     <a href="javascript:void(0);"
     onclick="updateStatus({{ $value->sale_inv_id }}, '{{ $nextStatus }}')">
     {{ $nextStatus }}
     </a>
+
+
   @endif
+
+
 
 
 

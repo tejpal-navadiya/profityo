@@ -129,269 +129,266 @@
 
       <!-- card -->
       <div class="card card-default">
-      <!-- /.card-header -->
-      <div class="card-body2">
-        <div class="row justify-content-between pad-3">
-          <div class="col-lg-3 col-md-12">
-            <div class="add_customer_box">
-              <img src="{{url('public/dist/img/customer1.png')}}" class="upload_icon_img">
-              <span class="add_customer_text">Add Customer</span>
-            </div>
-            <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
-            <div class="add_customer_list" style="display: none;">
-              <select id="customerSelect" name="sale_cus_id" required class="form-control select2"
-                      style="width: 100%;">
-                      <option>Select Customer</option>
-                      @foreach($salecustomer as $customer)
-                  <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
-                  {{ $customer->sale_cus_business_name }}
-                  </option>
-                @endforeach
-              </select>
-              <div id="customerInfo">
+        <!-- /.card-header -->
+        <div class="card-body2">
+          <div class="row justify-content-between pad-3">
+            <div class="col-lg-3 col-md-12">
+              <div class="add_customer_box">
+                <img src="{{url('public/dist/img/customer1.png')}}" class="upload_icon_img">
+                <span class="add_customer_text">Add Customer</span>
+              </div>
+              <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
+              <div class="add_customer_list" style="display: none;">
+                <label for="customerSelect">Select Customer</label>
+                <select id="customerSelect" name="sale_cus_id" required class="form-control select2"
+                        style="width: 100%;">
+                        <option>Select Customer</option>
+                        @foreach($salecustomer as $customer)
+                    <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
+                    {{ $customer->sale_cus_business_name }}
+                    </option>
+                  @endforeach
+                </select>
               </div>
             </div>
-          </div>
-          <!-- /.col -->
-          <div class="col-lg-9 col-md-12">
-            <div class="row">
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="estimatenumber">Estimate Number</label>
-                  <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $newId }}">
-                  <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="estimatecustomerref">Customer Ref</label>
-                  <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"
-                  placeholder="">
-                  <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label>Date</label>
-                  <div class="input-group date" id="estimatedate" data-target-input="nearest">
-                        <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
-                      data-target="#estimatedate" />
-                    <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
-                      <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                    </div> -->
-                    <x-flatpickr id="from-datepicker" name="sale_estim_date" placeholder="Select a date" />
-                    <div class="input-group-append">
-                      <div class="input-group-text" id="from-calendar-icon">
-                      <i class="fa fa-calendar-alt"></i>
-                      </div>
-                    </div>
+            <!-- /.col -->
+            <div class="col-lg-9 col-md-12">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="estimatenumber">Estimate Number</label>
+                    <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $newId }}">
+                    <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
                   </div>
-                  <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
                 </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label>Valid Until</label>
-                  <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-                        <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
-                      data-target="#estimatevaliddate" name="sale_estim_valid_date" />
-                    <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
-                      <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                    </div> -->
-                      <x-flatpickr id="to-datepicker" name="sale_estim_valid_date" placeholder="Select a date" />
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label for="estimatecustomerref">Customer Ref</label>
+                    <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"
+                    placeholder="">
+                    <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Date</label>
+                    <div class="input-group date" id="estimatedate" data-target-input="nearest">
+                          <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+                        data-target="#estimatedate" />
+                      <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                      </div> -->
+                      <x-flatpickr id="from-datepicker" name="sale_estim_date" placeholder="Select a date" />
                       <div class="input-group-append">
-                        <div class="input-group-text" id="to-calendar-icon">
+                        <div class="input-group-text" id="from-calendar-icon">
                         <i class="fa fa-calendar-alt"></i>
                         </div>
                       </div>
+                    </div>
+                    <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
                   </div>
-                  <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
-                  <!-- <p class="within_day">Within 7 days</p> -->
-                  <p class="within_day">Within <span id="total-days">0</span> days</p>
-                  <input type="hidden" id="hidden-total-days" name="sale_total_days" value="0">
-                  <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Valid Until</label>
+                    <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+                          <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
+                        data-target="#estimatevaliddate" name="sale_estim_valid_date" />
+                      <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                      </div> -->
+                        <x-flatpickr id="to-datepicker" name="sale_estim_valid_date" placeholder="Select a date" />
+                        <div class="input-group-append">
+                          <div class="input-group-text" id="to-calendar-icon">
+                          <i class="fa fa-calendar-alt"></i>
+                          </div>
+                        </div>
+                    </div>
+                    <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
+                    <!-- <p class="within_day">Within 7 days</p> -->
+                    <p class="within_day">Within <span id="total-days">0</span> days</p>
+                    <input type="hidden" id="hidden-total-days" name="sale_total_days" value="0">
+                    <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- /.col -->
-        </div>
-      </div>
-      <div class="row px-10">
-        <div class="col-md-12 text-right">
-        <a class="editcolum_btn" data-toggle="modal" data-target="#editcolum"><i
-          class="fas fa-solid fa-pen-to-square mr-2"></i>Edit Columns</a>
-        <a id="add" class="additem_btn"><i class="fas fa-plus add_plus_icon"></i>Add Item</a>
-        </div>
-        <div class="col-md-12 table-responsive">
-        <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
-          <thead>
-          <tr>
-            <th style="width: 30%;" id="itemsHeader">Items</th>
-            <th id="unitsHeader">Units</th>
-            <th id="priceHeader">Price</th>
-            <th>Tax</th>
-            <th id="amountHeader">Amount</th>
-            <th>Actions</th> <!-- New column for actions -->
-          </tr>
-          </thead>
-          <tbody>
-          <tr class="item-row" id="item-row-template">
-            <td>
-            <div>
-              <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
-              <option>Select Items</option>
-              @foreach($products as $product)
-          <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == old('sale_product_id') ? 'selected' : '' }}>
-          {{ $product->sale_product_name }}
-          </option>
-        @endforeach
-              </select>
-              <span class="error-message" id="error_items_0_sale_product_id" style="color: red;"></span>
-
-              <input type="text" class="form-control px-10" name="items[][sale_estim_item_desc]"
-              placeholder="Enter item description">
-              <span class="error-message" id="error_items_0_sale_estim_item_desc" style="color: red;"></span>
+            <div class="col-md-12">
+              <div id="customerInfo"></div>
             </div>
-            </td>
-            <td><input type="number" class="form-control" min="1" name="items[][sale_estim_item_qty]"
-              placeholder="Enter item Quantity">
-            <span class="error-message" id="error_items_0_sale_estim_item_qty" style="color: red;"></span>
-            </td>
-            <td>
-            <div class="d-flex">
-              <input type="text" name="items[][sale_estim_item_price]" class="form-control"
-              aria-describedby="inputGroupPrepend" placeholder="Enter item Price">
-
-            </div>
-            <span class="error-message" id="error_items_0_sale_estim_item_price" style="color: red;"></span>
-            </td>
-
-            <td>
-            <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
-              @foreach($salestax as $salesTax)
-                <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-                </option>
-              @endforeach
-            </select>
-            </td>
-            <td class="text-right item-price">0.00</td>
-            <td><i class="fa fa-trash delete-item"></i></td>
-          </tr>
-
-          </tbody>
-        </table>
-        </div>
-        <!-- /.col -->
-      </div>
-      <hr />
-      <input type="hidden" name="sale_estim_sub_total" value="0">
-      <input type="hidden" name="sale_estim_discount_total" value="0">
-      <input type="hidden" name="sale_estim_tax_amount" value="0">
-      <input type="hidden" name="sale_estim_final_amount" value="0">
-      <div class="row pad-2">
-        <div class="col-md-4">
-          <div class="d-flex">
-            <input type="text" class="form-control" name="sale_estim_discount_desc"
-            aria-describedby="inputGroupPrepend" placeholder="Description (optional)">
+            <!-- /.col -->
           </div>
         </div>
-        <div class="col-md-4">
-          <div class="d-flex">
-            <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
-            placeholder="Enter a discount value" min="1" aria-describedby="inputGroupPrepend">
-            <select class="form-select form-selectcurrency" id="sale_estim_discount_type"
-            name="sale_estim_discount_type">
-            <option value="1">{{ $currency->currency_symbol }}</option>
-            <option value="2">%</option>
-            </select>
+        <div class="row px-10">
+          <div class="col-md-12 text-right">
+          <a class="editcolum_btn" data-toggle="modal" data-target="#editcolum"><i
+            class="fas fa-solid fa-pen-to-square mr-2"></i>Edit Columns</a>
+          <a id="add" class="additem_btn"><i class="fas fa-plus add_plus_icon"></i>Add Item</a>
           </div>
-        </div>
-      </div>
+          <div class="col-md-12 table-responsive">
+          <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
+            <thead>
+            <tr>
+              <th style="width: 30%;" id="itemsHeader">Items</th>
+              <th id="unitsHeader">Units</th>
+              <th id="priceHeader">Price</th>
+              <th>Tax</th>
+              <th id="amountHeader">Amount</th>
+              <th>Actions</th> <!-- New column for actions -->
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="item-row" id="item-row-template">
+              <td>
+              <div>
+                <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
+                <option>Select Items</option>
+                @foreach($products as $product)
+            <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == old('sale_product_id') ? 'selected' : '' }}>
+            {{ $product->sale_product_name }}
+            </option>
+          @endforeach
+                </select>
+                <span class="error-message" id="error_items_0_sale_product_id" style="color: red;"></span>
 
+                <input type="text" class="form-control px-10" name="items[][sale_estim_item_desc]"
+                placeholder="Enter item description">
+                <span class="error-message" id="error_items_0_sale_estim_item_desc" style="color: red;"></span>
+              </div>
+              </td>
+              <td><input type="number" class="form-control" min="1" name="items[][sale_estim_item_qty]"
+                placeholder="Enter item Quantity">
+              <span class="error-message" id="error_items_0_sale_estim_item_qty" style="color: red;"></span>
+              </td>
+              <td>
+              <div class="d-flex">
+                <input type="text" name="items[][sale_estim_item_price]" class="form-control"
+                aria-describedby="inputGroupPrepend" placeholder="Enter item Price">
 
-      <div class="row justify-content-end">
-        <div class="col-md-4 subtotal_box">
-          <div class="table-responsive">
-            <table class="table total_table">
-            <tr>
-              <td style="width:50%">Sub Total :</td>
-              <td id="sub-total">{{ $currency->currency_symbol }}0.00</td>
-            </tr>
-            <tr>
-              <td>Discount :</td>
-              <td id="discount">{{ $currency->currency_symbol }}0.00</td>
-            </tr>
-            <tr>
-              <td>Tax :</td>
-              <td id="tax">{{ $currency->currency_symbol }}0.00</td>
-            </tr>
-            <tr>
-              <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2 mb-2"
-                      required>
-                      @foreach($currencys as $curr)
-                  <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
-                  <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
-                    {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
+              </div>
+              <span class="error-message" id="error_items_0_sale_estim_item_price" style="color: red;"></span>
+              </td>
+
+              <td>
+              <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                @foreach($salestax as $salesTax)
+                  <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
+                  {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
                   </option>
                 @endforeach
               </select>
-
-              <td>Total:</td>
-              <td id="total">$0.00</td>
+              </td>
+              <td class="text-right item-price">0.00</td>
+              <td><i class="fa fa-trash delete-item"></i></td>
             </tr>
-            </table>
 
+            </tbody>
+          </table>
+          </div>
+          <!-- /.col -->
+        </div>
+        <hr />
+        <input type="hidden" name="sale_estim_sub_total" value="0">
+        <input type="hidden" name="sale_estim_discount_total" value="0">
+        <input type="hidden" name="sale_estim_tax_amount" value="0">
+        <input type="hidden" name="sale_estim_final_amount" value="0">
+        <div class="row pad-2">
+          <div class="col-md-4">
+            <div class="d-flex">
+              <input type="text" class="form-control" name="sale_estim_discount_desc"
+              aria-describedby="inputGroupPrepend" placeholder="Description (optional)">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex">
+              <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
+              placeholder="Enter a discount value" min="1" aria-describedby="inputGroupPrepend">
+              <select class="form-select form-selectcurrency" id="sale_estim_discount_type"
+              name="sale_estim_discount_type">
+              <option value="1">{{ $currency->currency_symbol }}</option>
+              <option value="2">%</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="table-responsive">
+              <table class="table total_table">
+              <tr>
+                <td style="width:50%">Sub Total :</td>
+                <td id="sub-total">{{ $currency->currency_symbol }}0.00</td>
+              </tr>
+              <tr>
+                <td>Discount :</td>
+                <td id="discount">{{ $currency->currency_symbol }}0.00</td>
+              </tr>
+              <tr>
+                <td>Tax :</td>
+                <td id="tax">{{ $currency->currency_symbol }}0.00</td>
+              </tr>
+              <tr>
+                <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2 mb-2"
+                        required>
+                        @foreach($currencys as $curr)
+                    <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
+                    <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
+                      {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
+                    </option>
+                  @endforeach
+                </select>
+
+                <td><strong>Total:</strong></td>
+                <td id="total"><strong>$0.00</strong></td>
+              </tr>
+              </table>
+
+            </div>
           </div>
         </div>
-      </div>
-      <div class="dropdown-divider"></div>
-      <div class="row pad-2">
-        <div class="col-md-12">
-        <div class="form-group">
-          <label for="inputDescription">Notes / Terms</label>
-          <textarea id="inputDescription" name="sale_estim_notes" class="form-control" rows="3"
-          placeholder="Enter notes or terms of service that are visible to your customer"></textarea>
+        <div class="dropdown-divider"></div>
+        <div class="row pad-2">
+          <div class="col-md-12">
+          <div class="form-group">
+            <label for="inputDescription">Notes / Terms</label>
+            <textarea id="inputDescription" name="sale_estim_notes" class="form-control" rows="3"
+            placeholder="Enter notes or terms of service that are visible to your customer"></textarea>
+          </div>
+          </div>
         </div>
-        </div>
-      </div>
-      <!-- /.row -->
+        <!-- /.row -->
       </div>
 
+      <!-- card -->
+      <div class="card card-default">
+        <div class="card-header">
+        <h3 class="card-title">Footer</h3>
+        <div class="card-tools">
+          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+          <i class="fas fa-minus"></i>
+          </button>
+        </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+        <div class="row justify-content-between">
+          <div class="col-md-12">
+          <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
+            placeholder="Enter a footer for this estimate (e.g. tax information, thank you note)"></textarea>
+          </div>
+        </div>
+        <!-- /.row -->
+        </div>
+      </div>
+      <!-- /.card -->
+
+      <div class="row py-20">
+        <div class="col-md-12 text-center">
+          <a href="{{ route('business.estimates.preview') }}" class="add_btn_br">Preview</a>
+          <a href="#"><button class="add_btn">Save & Continue</button></a>
+        </div>
+      </div><!-- /.col -->
 
     </div>
     <!-- /.card -->
-
-    <!-- card -->
-    <div class="card card-default">
-      <div class="card-header">
-      <h3 class="card-title">Footer</h3>
-      <div class="card-tools">
-        <button type="button" class="btn btn-tool" data-card-widget="collapse">
-        <i class="fas fa-minus"></i>
-        </button>
-      </div>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body">
-      <div class="row justify-content-between">
-        <div class="col-md-12">
-        <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
-          placeholder="Enter a footer for this estimate (e.g. tax information, thank you note)"></textarea>
-        </div>
-      </div>
-      <!-- /.row -->
-      </div>
-    </div>
-    <!-- /.card -->
-
-    <div class="row py-20">
-      <div class="col-md-12 text-center">
-      <a href="{{ route('business.estimates.preview') }}" class="add_btn_br">Preview</a>
-      <a href="#"><button class="add_btn">Save & Continue</button></a>
-      </div>
-    </div><!-- /.col -->
     </form>
     </section>
     <!-- /.content -->
@@ -520,13 +517,13 @@
         <div class="col-md-6">
           <div class="form-group">
           <label for="currency">Business Currency </label>
-          <h4 for="currency">
+          <h5 for="currency">
             @if ($currency)
-        <h4 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h4>
+        <h5 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h5>
       @else
-    <h4 for="currency">No currency information available</h4>
+    <h5 for="currency">No currency information available</h5>
   @endif
-          </h4>
+          </h5>
           </div>
         </div>
         </div>
@@ -800,26 +797,32 @@
         if (response.success) {
           var customer = response.data;
           var customerInfoHtml = `
-      <h4>Bill to</h4>
-      <p><strong>${customer.sale_cus_business_name}</strong></p>
-      <p>${customer.sale_cus_first_name}</p>
-      <p>${customer.sale_cus_last_name}</p>
-      <p>${customer.sale_cus_account_number}</p>
-      <p>${customer.sale_cus_website}</p>
-      <p>${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
-      <p>${customer.state?.name ?? ''}</p>
-      <p>${customer.country.name}</p>
-
-      <h4>Ship to</h4>
-      <p>${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
-      <p>${customer.sale_ship_phone}</p>
-
-      <p>${customer.sale_cus_email}</p>
-      <p>${customer.sale_cus_phone}</p>
-      <a href="#" id="chooseDifferentCustomer">Choose a different customer</a>
-      <div class="edit_es_text customer" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
-        <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
-      </div>
+          <div class="row sel-cus-details">
+            <div class="col-lg-4 col-md-4">
+              <h5><strong>Bill to</strong></h5>
+              <p><strong>${customer.sale_cus_business_name}</strong></p>
+              <p>${customer.sale_cus_first_name} ${customer.sale_cus_last_name}</p>
+              <p>${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
+              <p>${customer.state?.name ?? ''}</p>
+              <p>${customer.country.name}</p>
+              <div class="edit_es_text customer" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
+                <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
+              </div>
+              <a href="#" id="chooseDifferentCustomer"><strong>Choose a different customer</strong></a>
+            </div>
+            <div class="col-lg-4 col-md-4">
+              <h5><strong>Ship to</strong></h5>
+              <p>${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
+              <p>${customer.sale_ship_phone}</p>
+              <p>${customer.sale_cus_email}</p>
+              <p>${customer.sale_cus_phone}</p>
+            </div>
+            <div class="col-lg-4 col-md-4">
+              <h5><strong>More</strong></h5>
+              <p>${customer.sale_cus_account_number}</p>
+              <p>${customer.sale_cus_website}</p>
+            </div>
+          </div>
 
       `;
           $('#customerInfo').html(customerInfoHtml).show();
@@ -1276,28 +1279,34 @@
                 var customer = response.customer;
 
                 var customerInfoHtml = `
-                    <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
-                    <p class="company_details_text"><strong>${customer.sale_cus_business_name}</strong></p>
-                    <p class="company_details_text">${customer.sale_cus_first_name} ${customer.sale_cus_last_name}</p>
-                    <p class="company_details_text">${customer.sale_cus_account_number}</p>
-                    <p class="company_details_text">${customer.sale_cus_website}</p>
-                    <p class="company_details_text">${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
-                    <p class="company_details_text">${customer.state.name}</p>
-                    <p class="company_details_text">${customer.country.name}</p>
+             
 
-                    <p class="company_business_name" style="text-decoration: underline;">Ship To</p>
-                    <p class="company_details_text">${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
-                    <p class="company_details_text">${customer.sale_ship_phone}</p>
-
-                    <p class="company_details_text">${customer.sale_cus_email}</p>
-                    <p class="company_details_text">${customer.sale_cus_phone}</p>
-
-                    <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
-                        <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
+                <div class="row sel-cus-details">
+                  <div class="col-lg-4 col-md-4">
+                    <h5><strong>Bill to</strong></h5>
+                    <p><strong>${customer.sale_cus_business_name}</strong></p>
+                    <p>${customer.sale_cus_first_name} ${customer.sale_cus_last_name}</p>
+                    <p>${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
+                    <p>${customer.state?.name ?? ''}</p>
+                    <p>${customer.country.name}</p>
+                    <div class="edit_es_text customer" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
+                      <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
                     </div>
-                    <div class="edit_es_text customer_list">
-                        <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
-                    </div>
+                    <a href="#" id="chooseDifferentCustomer"><strong>Choose a different customer</strong></a>
+                  </div>
+                  <div class="col-lg-4 col-md-4">
+                    <h5><strong>Ship to</strong></h5>
+                    <p>${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
+                    <p>${customer.sale_ship_phone}</p>
+                    <p>${customer.sale_cus_email}</p>
+                    <p>${customer.sale_cus_phone}</p>
+                  </div>
+                  <div class="col-lg-4 col-md-4">
+                    <h5><strong>More</strong></h5>
+                    <p>${customer.sale_cus_account_number}</p>
+                    <p>${customer.sale_cus_website}</p>
+                  </div>
+                </div>
                 `;
 
                 $('#customerInfo').html(customerInfoHtml).show();

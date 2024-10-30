@@ -418,6 +418,7 @@ class Controller extends BaseController
                     $table->string('sale_inv_discount_total')->nullable()->default(0);
                     $table->string('sale_inv_tax_amount')->nullable()->default(0);
                     $table->string('sale_inv_final_amount')->nullable()->default(0);
+                    $table->string('sale_inv_due_amount')->nullable()->default(0);
                     $table->string('sale_inv_notes')->nullable();
                     $table->string('sale_inv_footer_note')->nullable();
                     $table->string('sale_inv_image')->nullable();
@@ -429,6 +430,12 @@ class Controller extends BaseController
                 Schema::table($storeId.'_py_invoices_details', function (Blueprint $table) use ($storeId) {
                     if (!Schema::hasColumn($storeId.'_py_invoices_details', 'sale_total_days')) {
                         $table->integer('sale_total_days')->nullable()->default(0);
+                    }
+                });
+
+                Schema::table($storeId.'_py_invoices_details', function (Blueprint $table) use ($storeId) {
+                    if (!Schema::hasColumn($storeId.'_py_invoices_details', 'sale_inv_due_amount')) {
+                        $table->integer('sale_inv_due_amount')->nullable()->default(0);
                     }
                 });
             }
@@ -742,6 +749,7 @@ if (!Schema::hasTable($storeId . '_py_record_a_payment')) {
         $table->string('payment_date')->nullable();
         $table->string('payment_amount')->nullable();
         $table->string('notes')->nullable();
+        $table->string('description')->nullable();
         $table->tinyInteger('status')->default(0)->nullable();
         $table->timestamps();
     });

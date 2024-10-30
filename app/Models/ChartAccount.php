@@ -32,4 +32,9 @@ class ChartAccount extends Model
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_chart_account');
     }
+    public function recordPayments()
+{
+    return $this->hasMany(RecordPayment::class, 'chart_account_id');
+}
+
 }

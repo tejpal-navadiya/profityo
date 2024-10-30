@@ -49,7 +49,6 @@
                 </div>
               </div>
               <div class="col-md-8">
-          
                 <div class="form-group">
                     <label for="vendorname">Type</label>
                     <div class="row">
@@ -73,12 +72,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
+              </div>
+            <div>
             <div id="vendorregular">
               <div class="modal_sub_title">Primary Contact</div>
               <div class="row pad-5">
-
               <div class="col-md-6" id="contractorFields" style="display: none;">
                 <div class="form-group">
                     <label for="vendorfirstname">Contractor Type</label>
@@ -228,12 +226,12 @@
               </div>
             </div>
          
-          <div class="row py-20 px-10">
-            <div class="col-md-12 text-center">
-            <a href="{{route('business.purchasvendor.index')}}" class="add_btn_br">Cancel</a>
-              <a href="#"><button class="add_btn">Save</button></a>
-            </div>
-          </div><!-- /.col -->
+            <div class="row py-20 px-10">
+              <div class="col-md-12 text-center">
+                <a href="{{route('business.purchasvendor.index')}}" class="add_btn_br">Cancel</a>
+                <a href="#"><button class="add_btn">Save</button></a>
+              </div>
+            </div><!-- /.col -->
         </div>
         </form>
         <!-- /.card -->

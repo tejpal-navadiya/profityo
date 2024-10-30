@@ -504,7 +504,7 @@ label:not(.form-check-label):not(.custom-file-label){
   border-bottom: 0;
   font-weight: 600;
   color: #053A51;
-  font-size: 18px;
+  font-size: 16px;
   background: #EDF1F3;
 }
 .dataTables_wrapper .table td{
@@ -621,6 +621,7 @@ table.dataTable {
   padding: 20px;
   text-align: center;
   width: 100%;
+  height: max-content;
 }
 .upload_icon_img{
   position: relative;
@@ -633,6 +634,7 @@ table.dataTable {
 }
 .modal-body{
   padding: 0;
+  white-space: normal;
 }
 
 .modal_sub_title{
@@ -760,12 +762,15 @@ label {
   position: relative;
   padding: 20px 20px 0;
 }
+.total_table tr{
+  border-top: 1px solid #535353;
+}
 .total_table td{
   padding: .60rem .75rem;
   color: #535353;
   font-size: 16px;
   vertical-align: top;
-  border-top: 1px solid #535353;
+  border-top: 0;
 }
 .dropdown-divider{
   border-top: 1px solid #535353;
@@ -1672,7 +1677,7 @@ form {
   padding: 10px 0px;
 }
 span.flatpickr-weekday{
-  color: #fff;
+  color: #fff !important;
 }
 .form-control:disabled, .form-control[readonly]{
   background-color: transparent;
@@ -1682,10 +1687,21 @@ span.flatpickr-weekday{
 }
 .img-box{
   position: relative;
-  max-width: 200px;
+  max-width: 150px;
   width: 100%;
 }
-
+.sel-cus-details p{
+  margin-bottom: 0rem;
+}
+table.table.total_table {
+  margin-top: 10px;
+}
+.total_table tr:first-child{
+  border-top: 0;
+}
+.flatpickr-container{
+  width: 100%;
+}
 
 /*--------------------------------------------------------------
 # Responsive Css

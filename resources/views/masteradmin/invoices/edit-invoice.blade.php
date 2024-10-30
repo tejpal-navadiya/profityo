@@ -131,36 +131,41 @@
       </div>
       <!-- /.card -->
 
-      <!-- card -->
-      <div class="card card-default">
+        <!-- card -->
+        <div class="card card-default">
           <!-- /.card-header -->
           <div class="card-body2">
             <div class="row justify-content-between pad-3">
-              <div class="col-md-3" id="customerInfo">
-                <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
-                <p class="company_details_text">{{ $estimates->customer->sale_cus_business_name }}</p>
-                <p class="company_details_text">{{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}</p>
-                <p class="company_details_text">{{ $estimates->customer->sale_cus_email }}</p>
-                <p class="company_details_text">{{ $estimates->customer->sale_cus_phone }}</p>
-                <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_{{ $estimates->customer->sale_cus_id }}" data-id="{{ $estimates->customer->sale_cus_id }}">
-                    <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit {{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}
+              <div class="col-md-3">
+                <div id="customerInfo">
+                  <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+                  <p class="company_details_text">{{ $estimates->customer->sale_cus_business_name }}</p>
+                  <p class="company_details_text">{{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}</p>
+                  <p class="company_details_text">{{ $estimates->customer->sale_cus_email }}</p>
+                  <p class="company_details_text">{{ $estimates->customer->sale_cus_phone }}</p>
+                  <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_{{ $estimates->customer->sale_cus_id }}" data-id="{{ $estimates->customer->sale_cus_id }}">
+                      <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit {{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}
+                  </div>
                 </div>
-              </div>
-              <div class="edit_es_text customer_list list2">
-                  <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
-              </div>
 
-              <div class="add_customer_list" style="display: none;">
-                <select id="customerSelect" name="sale_cus_id" class="form-control select2" style="width: 100%;">
-                    <!-- <option>Select Items</option> -->
-                    @foreach($salecustomer as $customer)
-                    <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
-                        {{ $customer->sale_cus_business_name }}
-                    </option>
-                    @endforeach
-                </select>
-                <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
+                <div class="edit_es_text customer_list list2">
+                  <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
+                </div>
+
+                <div class="add_customer_list" style="display: none;">
+                  <select id="customerSelect" name="sale_cus_id" class="form-control select2" style="width: 100%;">
+                      <!-- <option>Select Items</option> -->
+                      @foreach($salecustomer as $customer)
+                      <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
+                          {{ $customer->sale_cus_business_name }}
+                      </option>
+                      @endforeach
+                  </select>
+                  <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
+                </div>
+                
               </div>
+              
 
               
               <!-- /.col -->
@@ -397,7 +402,7 @@
             <input type="hidden" name="sale_estim_discount_total" value="{{ $estimates->sale_estim_discount_total }}">
             <input type="hidden" name="sale_estim_tax_amount" value="{{ $estimates->sale_estim_tax_amount }}">
             <input type="hidden" name="sale_estim_final_amount" value="{{ $estimates->sale_estim_final_amount }}">
-            <div class="row">
+            <div class="row pad-2">
                 <div class="col-md-4">
                     <div class="d-flex">
                     <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_discount_desc }}" placeholder="Description (optional)">
@@ -413,9 +418,7 @@
                     </select>
                     </div>
                 </div>
-            </div>
-            <div class="row justify-content-end">
-                <div class="col-md-4 subtotal_box">
+                <div class="col-md-4">
                     <div class="table-responsive">
                     <table class="table total_table">
                         <tr>
@@ -460,38 +463,39 @@
           </div>
         </div>
         <!-- /.card -->
-    </div>
-    <!-- /.card -->
-
-    <!-- card -->
-    <div class="card card-default">
-      <div class="card-header">
-        <h3 class="card-title">Footer</h3>
-        <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse">
-            <i class="fas fa-minus"></i>
-          </button>
-        </div>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body">
-        <div class="row justify-content-between">
-          <div class="col-md-12">
-            <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
-              placeholder="Enter a footer for this invoice (e.g. tax information, thank you note)">{{ $estimates->sale_estim_footer_note }}</textarea>
+        <!-- card -->
+        <div class="card card-default">
+          <div class="card-header">
+            <h3 class="card-title">Footer</h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="row justify-content-between">
+              <div class="col-md-12">
+                <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
+                  placeholder="Enter a footer for this invoice (e.g. tax information, thank you note)">{{ $estimates->sale_estim_footer_note }}</textarea>
+              </div>
+            </div>
+            <!-- /.row -->
           </div>
         </div>
-        <!-- /.row -->
-      </div>
+        <!-- /.card -->
+
+        <div class="row py-20">
+          <div class="col-md-12 text-center">
+            <a class="add_btn_br">Preview</a>
+            <button class="add_btn">Save & Continue</button>
+          </div>
+        </div><!-- /.col -->
     </div>
     <!-- /.card -->
 
-    <div class="row py-20">
-      <div class="col-md-12 text-center">
-        <a class="add_btn_br">Preview</a>
-        <button class="add_btn">Save & Continue</button>
-      </div>
-    </div><!-- /.col -->
+    
     </form>
   </section>
   <!-- /.content -->

@@ -65,12 +65,12 @@
                         </option>
                     @endforeach
                   </select>
-                  <p>{{ $bill->vendor->purchases_vendor_name }}</p>
-                  <p>{{ $bill->vendor->purchases_vendor_address1 }}</p>
-                  <p>{{ $bill->vendor->purchases_vendor_address2 }}</p>
-                  <p>{{ $bill->vendor->purchases_vendor_city_name }}, {{ $bill->vendor->state->name }} {{ $bill->vendor->purchases_vendor_zipcode }}</p>
-                  <p>{{ $bill->vendor->country->name }}</p>
-                  <p>{{ $bill->vendor->purchases_vendor_email }}</p>
+                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_name }}</p>
+                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_address1 }}</p>
+                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_address2 }}</p>
+                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_city_name }}, {{ $bill->vendor->state->name }} {{ $bill->vendor->purchases_vendor_zipcode }}</p>
+                  <p class="mb-0">{{ $bill->vendor->country->name }}</p>
+                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_email }}</p>
                   
                 </div>
 

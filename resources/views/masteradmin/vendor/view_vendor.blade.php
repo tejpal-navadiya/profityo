@@ -166,8 +166,62 @@
             {{ $dueMessage }}
             </span>
             </td>
-                      <td><span class="status_btn Paid_status">{{ $value->sale_status }}</span></td>
-                      <td>
+            <td>
+                        @php
+                            // Fetch the current due amount and original amount for this specific record
+                            $remainingDueAmount = $value->sale_bill_due_amount; // Current due amount
+                            $originalDueAmount = $value->sale_bill_final_amount;  // Total amount before payment
+
+                            // Set default status and color
+                            $nextStatus = $value->sale_status;
+                            $nextStatusColor = '';
+
+                            // Check if the due date has passed and the invoice is unpaid
+                            if ($daysDifference > 0 && $remainingDueAmount > 0) {
+                                // Overdue status
+                              $nextStatus = 'Overdue';
+                                $nextStatusColor = 'overdue_status'; // Class for overdue status
+                            }
+                            
+                            // Check the remaining due amount to determine if fully or partially paid
+                            elseif ($remainingDueAmount == 0) {
+                                // Fully paid status
+                                //$nextStatus = 'Paid';
+                                $nextStatusColor = 'Paid_status'; // Set class for paid status
+                            } elseif ($remainingDueAmount < $originalDueAmount) {
+                                // Partially paid status
+                               // $nextStatus = 'Partial';
+                                $nextStatusColor = 'partial_status'; // Set class for partially paid
+                            } else {
+                                // If none of the payment conditions match, fallback to the existing sale status
+                                switch($value->sale_status) {
+                                    case 'Draft':
+                                        $nextStatusColor = ''; // Draft status class (if needed)
+                                        break;
+                                    case 'Unsent':
+                                        $nextStatusColor = ''; // Unsent status class (if needed)
+                                        break;
+                                    case 'Sent':
+                                        $nextStatusColor = ''; // Sent status class (if needed)
+                                        break;
+                                    case 'Partlal':
+                                        $nextStatusColor = 'partial_status'; // Class for partial payments
+                                        break;
+                                    case 'Paid':
+                                        $nextStatusColor = 'Paid_status'; // Class for fully paidOver Paid
+                                        break;
+                                        case 'Over Paid':
+                                        $nextStatusColor = 'OverPaid_status'; // Class for fully paidOver Paid
+                                        break;
+                                    default:
+                                        $nextStatusColor = ''; // Default to no specific color
+                                }
+                            }
+                        @endphp
+
+                        <!-- Display status with corresponding CSS class -->
+                        <span class="status_btn {{ $nextStatusColor }}">{{ $nextStatus }}</span>
+                    </td>                      <td>
                         <ul class="navbar-nav ml-auto float-right">
                           <li class="nav-item dropdown d-flex align-items-center">
                             <!-- <a class="d-block invoice_underline" data-toggle="modal" data-target="#recordpaymentpopup">Record a payment</a> -->
@@ -238,34 +292,33 @@
                                                                     <option>(CFA)</option>
                                                                     <option>£</option>
                                                                 </select>
-                                                                <input type="text" name="payment_amount" class="form-control amount_input" value="{{ $value->sale_bill_final_amount }}" aria-describedby="inputGroupPrepend">
+                                                                <input type="text" name="payment_amount" class="form-control amount_input" value="{{ $value->sale_bill_due_amount }}" aria-describedby="inputGroupPrepend">
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Method</label>
-                                                            <select class="form-control form-select" name="payment_method">
-                                                                <option>Select a Payment Method...</option>
-                                                                <option value="Bank Payment">Bank Payment</option>
-                                                                <option value="Cash">Cash</option>
-                                                                <option value="Check">Check</option>
-                                                                <option value="Credit Card">Credit Card</option>
-                                                                <option value="PayPal">PayPal</option>
-                                                                <option value="Other Payment Method">Other Payment Method</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <label>Account <span class="text-danger">*</span></label>
-                                                        <select class="form-control form-select" name="payment_account" placeholder="Enter your text here">
-                                                            <option>Select a Payment Account...</option>
-                                                            @foreach($accounts as $account)
-                                                                <option>{{ $account->chart_acc_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.</p>
-                                                   </div>
+          <div class="form-group">
+          <label>Method</label>
+          <select class="form-control form-select" name="payment_method">
+          <option>Select a Payment Account...</option>
+          @foreach($paymethod as $pay)
+          <option value="{{ $pay->m_id }}">{{ $pay->method_name }}</option> <!-- Store ID -->
+          @endforeach
+          </select>
+          </div>
+          </div>
+          <div class="col-md-6">
+          <label>Account <span class="text-danger">*</span></label>
+          <select class="form-control form-select" name="payment_account"
+          placeholder="Enter your text here">
+          <option>Select a Payment Account...</option>
+          @foreach($accounts as $account)
+          <option value="{{ $account->chart_acc_id }}">{{ $account->chart_acc_name }}</option> <!-- Store ID -->
+          @endforeach
+          </select>
+          <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.
+          </p>
+          </div>
 
                                                     <div class="col-md-12">
                                                         <div class="form-group">

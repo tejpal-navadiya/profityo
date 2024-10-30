@@ -44,9 +44,6 @@
                 <div class="card" id="card-header">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3">
-                             
-                            </div>
                             <!-- /.col -->
                             <div class="col-md-3">
                                 <div class="form-group dropdown" id="customerInfo">
@@ -169,7 +166,7 @@
                                 <!-- <img src="{{url('public/dist/img/logo.png')}}" alt="Profityo Logo" class="estimate_logo_img"> -->
                                 @if($businessDetails && $businessDetails->bus_image)
                                 <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
-                                class="elevation-2" target="_blank">
+                                class="elevation-2 img-box" target="_blank">
                                 @endif
                             </div>
                             <!-- /.col -->
@@ -296,13 +293,14 @@
                         </div>
                     </div>
                     @if(!empty($reinvoices->sale_re_inv_notes))
-                    <div class="margin-top">
+                    <div class="col-md-12">
                             <p class="estimate_view_title ">Notes / Terms</p>
                             <p>{{ $reinvoices->sale_re_inv_notes ?? '' }}</p>
                     </div>
                     @endif
-                    <div class="margin-top">
-                        <p class="text-center">{{ $reinvoices->sale_re_inv_footer_note ?? '' }}</p>
+                    <div class="col-md-12">
+                    <p class="estimate_view_title ">Footer</p>
+                        <p>{{ $reinvoices->sale_re_inv_footer_note ?? '' }}</p>
                     </div>
                 </div>
                 <!-- /.card -->

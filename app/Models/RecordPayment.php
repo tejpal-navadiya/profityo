@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ChartAccount;
 
 class RecordPayment extends Model
 {
@@ -33,4 +34,9 @@ class RecordPayment extends Model
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_record_a_payment');
     }
+    public function chartOfAccount()
+{
+    return $this->belongsTo(ChartAccount::class, 'payment_account','chart_acc_id');
+}
+
 }

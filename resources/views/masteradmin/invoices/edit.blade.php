@@ -63,7 +63,7 @@
                 <div class="business_logo_uplod_box">
                   @if($businessDetails && $businessDetails->bus_image)
                   <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
-                  class="elevation-2" target="_blank">
+                  class="elevation-2 img-box" target="_blank">
                   <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
                   <div class="modal fade" id="removebusinessimage" tabindex="-1" role="dialog"
@@ -131,38 +131,40 @@
       </div>
       <!-- /.card -->
 
-      <!-- card -->
-      <div class="card card-default">
+        <!-- card -->
+        <div class="card card-default">
           <!-- /.card-header -->
           <div class="card-body2">
             <div class="row justify-content-between pad-3">
-              <div class="col-md-3" id="customerInfo">
-                <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
-                <p class="company_details_text">{{ $invoices->customer->sale_cus_business_name }}</p>
-                <p class="company_details_text">{{ $invoices->customer->sale_cus_first_name }} {{ $invoices->customer->sale_cus_last_name }}</p>
-                <p class="company_details_text">{{ $invoices->customer->sale_cus_email }}</p>
-                <p class="company_details_text">{{ $invoices->customer->sale_cus_phone }}</p>
-                <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_{{ $invoices->customer->sale_cus_id }}" data-id="{{ $invoices->customer->sale_cus_id }}">
-                    <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit {{ $invoices->customer->sale_cus_first_name }} {{ $invoices->customer->sale_cus_last_name }}
+              <div class="col-md-3">
+                <div id="customerInfo">
+                  <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+                  <p class="company_details_text">{{ $invoices->customer->sale_cus_business_name }}</p>
+                  <p class="company_details_text">{{ $invoices->customer->sale_cus_first_name }} {{ $invoices->customer->sale_cus_last_name }}</p>
+                  <p class="company_details_text">{{ $invoices->customer->sale_cus_email }}</p>
+                  <p class="company_details_text">{{ $invoices->customer->sale_cus_phone }}</p>
+                  <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_{{ $invoices->customer->sale_cus_id }}" data-id="{{ $invoices->customer->sale_cus_id }}">
+                      <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit {{ $invoices->customer->sale_cus_first_name }} {{ $invoices->customer->sale_cus_last_name }}
+                  </div>
                 </div>
-              </div>
-              <div class="edit_es_text customer_list list2">
+                <div class="edit_es_text customer_list list2">
                   <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
-              </div>
+                </div>
 
-              <div class="add_customer_list" style="display: none;">
-                <select id="customerSelect" name="sale_cus_id" class="form-control select2" style="width: 100%;">
-                    <!-- <option>Select Items</option> -->
-                    @foreach($salecustomer as $customer)
-                    <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
-                        {{ $customer->sale_cus_business_name }}
-                    </option>
-                    @endforeach
-                </select>
-                <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
+                <div class="add_customer_list" style="display: none;">
+                  <label for="customerSelect">Select Customer</label>
+                  <select id="customerSelect" name="sale_cus_id" class="form-control select2" style="width: 100%;">
+                      <!-- <option>Select Items</option> -->
+                      @foreach($salecustomer as $customer)
+                      <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
+                          {{ $customer->sale_cus_business_name }}
+                      </option>
+                      @endforeach
+                  </select>
+                  <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
+                </div>
+               
               </div>
-
-              
               <!-- /.col -->
               <div class="col-md-9">
                 <div class="row">
@@ -399,55 +401,53 @@
             <input type="hidden" name="sale_estim_discount_total" value="{{ $invoices->sale_inv_discount_total }}">
             <input type="hidden" name="sale_estim_tax_amount" value="{{ $invoices->sale_inv_tax_amount }}">
             <input type="hidden" name="sale_estim_final_amount" value="{{ $invoices->sale_inv_final_amount }}">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="d-flex">
-                    <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $invoices->sale_inv_discount_desc }}" placeholder="Description (optional)">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="d-flex">
-                    <input type="number" min="1" class="form-control form-controltext" name="sale_estim_item_discount"
-                        aria-describedby="inputGroupPrepend" value="{{ $invoices->sale_inv_item_discount }}" placeholder="Enter a discount value">
-                    <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type" >
-                        <option value="1" {{ $invoices->sale_inv_discount_type == 1 ? 'selected' : '' }} >{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}</option>
-                        <option value="2" {{ $invoices->sale_inv_discount_type == 2 ? 'selected' : '' }}>%</option>
-                    </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row justify-content-end">
-                <div class="col-md-4 subtotal_box">
-                    <div class="table-responsive">
-                    <table class="table total_table">
-                        <tr>
-                        <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" required>
-                          @foreach($currencys as $curr)
-                            <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
-                            <option value="{{ $curr->id }}" {{ $curr->id == $invoices->sale_currency_id ? 'selected' : '' }} data-symbol="{{ $curr->currency_symbol }}">
-                            {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
-                          </option>
-                          @endforeach
-                        </select>
-                        <td style="width:50%">Sub Total :</td>
-                        <td id="sub-total">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_sub_total }}</td>
-                        </tr>
-                        <tr>
-                        <td>Discount :</td>
-                        <td id="discount">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_discount_total }}</td>
-                        </tr>
-                        <tr>
-                        <td>Tax :</td>
-                        <td id="tax">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_tax_amount }}</td>
-                        </tr>
-                        <tr>
-                        <td>Total:</td>
-                        <td id="total">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_final_amount }}</td>
-                        </tr>
-                    </table>
+            <div class="row pad-2" >
+              <div class="col-md-4">
+                  <div class="d-flex">
+                  <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $invoices->sale_inv_discount_desc }}" placeholder="Description (optional)">
+                  </div>
+              </div>
+              <div class="col-md-4">
+                  <div class="d-flex">
+                  <input type="number" min="1" class="form-control form-controltext" name="sale_estim_item_discount"
+                      aria-describedby="inputGroupPrepend" value="{{ $invoices->sale_inv_item_discount }}" placeholder="Enter a discount value">
+                  <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type" >
+                      <option value="1" {{ $invoices->sale_inv_discount_type == 1 ? 'selected' : '' }} >{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}</option>
+                      <option value="2" {{ $invoices->sale_inv_discount_type == 2 ? 'selected' : '' }}>%</option>
+                  </select>
+                  </div>
+              </div>
+              <div class="col-md-4">
+                  <div class="table-responsive">
+                  <table class="table total_table">
+                      <tr>
+                      <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" required>
+                        @foreach($currencys as $curr)
+                          <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
+                          <option value="{{ $curr->id }}" {{ $curr->id == $invoices->sale_currency_id ? 'selected' : '' }} data-symbol="{{ $curr->currency_symbol }}">
+                          {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
+                        </option>
+                        @endforeach
+                      </select>
+                      <td style="width:50%">Sub Total :</td>
+                      <td id="sub-total">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_sub_total }}</td>
+                      </tr>
+                      <tr>
+                      <td>Discount :</td>
+                      <td id="discount">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_discount_total }}</td>
+                      </tr>
+                      <tr>
+                      <td>Tax :</td>
+                      <td id="tax">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_tax_amount }}</td>
+                      </tr>
+                      <tr>
+                      <td>Total:</td>
+                      <td id="total">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_final_amount }}</td>
+                      </tr>
+                  </table>
 
-                    </div>
-                </div>
+                  </div>
+              </div>
             </div>
             <div class="dropdown-divider"></div>
             <div class="row pad-2">
@@ -462,38 +462,37 @@
           </div>
         </div>
         <!-- /.card -->
-    </div>
-    <!-- /.card -->
-
-    <!-- card -->
-    <div class="card card-default">
-      <div class="card-header">
-        <h3 class="card-title">Footer</h3>
-        <div class="card-tools">
-          <button type="button" class="btn btn-tool" data-card-widget="collapse">
-            <i class="fas fa-minus"></i>
-          </button>
-        </div>
-      </div>
-      <!-- /.card-header -->
-      <div class="card-body">
-        <div class="row justify-content-between">
-          <div class="col-md-12">
-            <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
-              placeholder="Enter a footer for this invoice (e.g. tax information, thank you note)">{{ $invoices->sale_inv_footer_note }}</textarea>
+        <!-- card -->
+        <div class="card card-default">
+          <div class="card-header">
+            <h3 class="card-title">Footer</h3>
+            <div class="card-tools">
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+              </button>
+            </div>
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body">
+            <div class="row justify-content-between">
+              <div class="col-md-12">
+                <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
+                  placeholder="Enter a footer for this invoice (e.g. tax information, thank you note)">{{ $invoices->sale_inv_footer_note }}</textarea>
+              </div>
+            </div>
+            <!-- /.row -->
           </div>
         </div>
-        <!-- /.row -->
-      </div>
+        <!-- /.card -->
+
+        <div class="row py-20">
+          <div class="col-md-12 text-center">
+            <a class="add_btn_br">Preview</a>
+            <button class="add_btn">Save & Continue</button>
+          </div>
+        </div><!-- /.col -->
     </div>
     <!-- /.card -->
-
-    <div class="row py-20">
-      <div class="col-md-12 text-center">
-        <a class="add_btn_br">Preview</a>
-        <button class="add_btn">Save & Continue</button>
-      </div>
-    </div><!-- /.col -->
     </form>
   </section>
   <!-- /.content -->
@@ -1228,18 +1227,10 @@
                       <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
                       <p class="company_details_text"><strong>${customer.sale_cus_business_name}</strong></p>
                       <p class="company_details_text">${customer.sale_cus_first_name} ${customer.sale_cus_last_name}</p>
-                      <p class="company_details_text">${customer.sale_cus_account_number}</p>
-                      <p class="company_details_text">${customer.sale_cus_website}</p>
                       <p class="company_details_text">${customer.sale_bill_address1}, ${customer.sale_bill_address2}, ${customer.sale_bill_city_name}, ${customer.sale_bill_zipcode}</p>
                       <p class="company_details_text">${customer.state.name}</p>
                       <p class="company_details_text">${customer.country.name}</p>
 
-                      <p class="company_business_name" style="text-decoration: underline;">Ship To</p>
-                      <p class="company_details_text">${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
-                      <p class="company_details_text">${customer.sale_ship_phone}</p>
-
-                      <p class="company_details_text">${customer.sale_cus_email}</p>
-                      <p class="company_details_text">${customer.sale_cus_phone}</p>
                       <div class="edit_es_text customer" data-toggle="modal" data-target="#editcustor_modal_${customer.sale_cus_id}" data-id="${customer.sale_cus_id}">
                     <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit ${customer.sale_cus_first_name} ${customer.sale_cus_last_name}
                       </div>

@@ -16,6 +16,7 @@ use App\Models\CustomerContact;
 use App\Models\InvoicesItems;
 use App\Models\ChartAccount;
 use App\Models\RecordPayment;
+use App\Models\PaymentMethod;
 
 use Carbon\Carbon;
 
@@ -335,7 +336,7 @@ public function show($sale_cus_id, Request $request): View
     }
 
     $filteredInvoices = $query->get();
-    $allInvoices = $filteredInvoices->where('sale_cus_id', $sale_cus_id)->whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue']);
+    $allInvoices = $filteredInvoices->where('sale_cus_id', $sale_cus_id)->whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue','Paid','Over Paid']);
     $invoicesItems = InvoicesItems::where('sale_inv_id', $sale_cus_id)->with('invoices_product', 'item_tax')->get();
     // Handle AJAX request for activities
     if ($request->ajax()) {
@@ -346,11 +347,36 @@ public function show($sale_cus_id, Request $request): View
             return view('masteradmin.customers.filtered_results', compact('unpaidInvoices', 'allInvoices', 'user_id'));
         }
     }
-    $accounts = ChartAccount::select('chart_acc_name')->get();
+    $accounts = ChartAccount::select('chart_acc_id', 'chart_acc_name')->get();
+    $paymethod = PaymentMethod::select('m_id', 'method_name')->get();    $today = Carbon::now()->format('m/d/Y'); // MM/DD/YYYY format
+    $next30Days = Carbon::now()->addDays(30)->format('m/d/Y'); // MM/DD/YYYY format
+
+// Output the formatted dates
+// dd(['today' => $today, 'next30Days' => $next30Days]);
+
+$invoicesDueNext30Days = InvoicesDetails::whereBetween('sale_inv_valid_date', [$today, $next30Days])->get();
+
+// dd($invoicesDueNext30Days); // Check if records are fetched
+
+$totalDueNext30Days = $invoicesDueNext30Days->sum('sale_inv_due_amount');
+  // Fetch overdue invoices and calculate the sum of overdue amounts
+  $overdueTotal = InvoicesDetails::where('sale_inv_valid_date', '<', $today) // Due date in the past
+  ->where('sale_inv_due_amount', '>', 0)  // Only unpaid invoices
+  ->sum('sale_inv_due_amount'); // Sum the overdue amounts
+
+  $totalUnpaid = InvoicesDetails::where('sale_inv_due_amount', '>', 0)->sum('sale_inv_due_amount');
+
+
+  $last12Months = Carbon::now()->subMonths(12);
+
+// Fetch total paid amount within the last 12 months
+$totalPaidLast12Months = InvoicesDetails::where('sale_inv_due_amount', '=', 0) // Fully paid invoices
+    ->where('sale_inv_valid_date', '>=', $last12Months) // From last 12 months
+    ->sum('sale_inv_final_amount'); // Sum of the final amount
     // Pass the fetched data to the view
     return view('masteradmin.customers.view_customer', compact(
         'SalesCustomers', 'Country', 'States', 'unpaidInvoices', 'allInvoices', 'user_id', 'sentLogs', 'sentLogs', 'activityStatus'
-    ,'accounts'));
+    ,'accounts','totalDueNext30Days','paymethod','overdueTotal','totalUnpaid','totalPaidLast12Months'));
 }
 
 
@@ -431,7 +457,66 @@ private function getActivityLogs($user_id, $sale_cus_id, Request $request)
     }
 
 
-    public function paymentstore(Request $request, $id)
+//     public function paymentstore(Request $request, $id)
+// {
+//     // Validate the form data
+//     $user = Auth::guard('masteradmins')->user();
+    
+//     $validatedData = $request->validate([
+//         'payment_date' => 'required|date',
+//         'payment_amount' => 'required|numeric',
+//         'payment_method' => 'required|string',
+//         'payment_account' => 'required|string',
+//         'notes' => 'required|string',
+//     ]);
+
+//     // Create a new payment record
+//     RecordPayment::create([
+//         'id' => $user->id,
+//         'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
+//         'payment_date' => $validatedData['payment_date'],
+//         'payment_amount' => $validatedData['payment_amount'],
+//         'payment_method' => $validatedData['payment_method'],
+//         'payment_account' => $validatedData['payment_account'],
+//         'notes' => $validatedData['notes'],
+//     ]);
+
+//     // Fetch the relevant invoice by ID and update the sale_inv_due_amount
+//     $invoice = InvoicesDetails::where('sale_inv_id',$id)->first();
+//     $invammount=0;
+//     if ($invoice) {
+//         // Deduct the payment amount from the sale_inv_due_amount
+//        $invammount = $invoice->sale_inv_due_amount -= $validatedData['payment_amount'];
+
+//         // Ensure sale_inv_due_amount doesn't go below 0
+//         if ($invoice->sale_inv_due_amount < 0) {
+           
+//             $invammount= $invoice->sale_inv_due_amount = 0;
+//         }
+
+//         // Save the updated invoice
+//         $invoice->where('sale_inv_id', $id)->update(['sale_inv_due_amount' => $invammount]);
+//     }
+
+//     // Fetch the relevant Chart of Account record by the payment account
+//     $chartOfAccount = ChartAccount::where('chart_acc_name', $validatedData['payment_account'])->first();
+//     $chart_amount = 0;
+//     if ($chartOfAccount) {
+//         // Check if the amount is null or has a value, then update accordingly
+//         if (is_null($chartOfAccount->amount)) {
+//             $chart_amount = $chartOfAccount->amount = $validatedData['payment_amount'];
+//         } else {
+//           $chart_amount =  $chartOfAccount->amount += $validatedData['payment_amount'];
+//      }
+
+//         // Save the updated amount to the chart of account record
+//         $chartOfAccount->where('chart_acc_name', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
+//     }
+
+//     // Redirect or return a response
+//     return redirect()->route('business.salescustomers.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
+// }
+public function paymentstore(Request $request, $id)
 {
     // Validate the form data
     $user = Auth::guard('masteradmins')->user();
@@ -455,40 +540,48 @@ private function getActivityLogs($user_id, $sale_cus_id, Request $request)
         'notes' => $validatedData['notes'],
     ]);
 
-    // Fetch the relevant invoice by ID and update the sale_inv_due_amount
-    $invoice = InvoicesDetails::where('sale_inv_id',$id)->first();
-    $invammount=0;
+    // Fetch the relevant invoice by ID
+    $invoice = InvoicesDetails::where('sale_inv_id', $id)->first();
     if ($invoice) {
         // Deduct the payment amount from the sale_inv_due_amount
-       $invammount = $invoice->sale_inv_due_amount -= $validatedData['payment_amount'];
+        $invammount = $invoice->sale_inv_due_amount - $validatedData['payment_amount'];
 
-        // Ensure sale_inv_due_amount doesn't go below 0
-        if ($invoice->sale_inv_due_amount < 0) {
-           
-            $invammount= $invoice->sale_inv_due_amount = 0;
+        // Determine the status and the excess amount if the payment is more than the due amount
+        if ($invammount < 0) {
+            // If the payment exceeds the due amount
+            $excessAmount = abs($invammount); // Calculate the excess amount
+            $status =   $invoice->sale_status = 'Over Paid'; // Mark as overpaid
+            $invoice->sale_inv_due_amount = 0; // Set due amount to zero
+        } elseif ($invammount == 0) {
+            // Fully paid
+            $excessAmount = 0; // No excess amount
+            $status =  $invoice->sale_status = 'Paid';
+            $invoice->sale_inv_due_amount = 0; // Set due amount to zero
+        } else {
+            // Partially paid
+            $excessAmount = 0; // No excess amount
+            $status = $invoice->sale_status = 'Partial';
+            $invoice->sale_inv_due_amount = $invammount; // Update due amount
         }
+        //  elseif ($invoice->sale_inv_due_amount >  $validatedData['payment_amount']) { // Assuming original_due_amount is the total amount before payment
+        //     $status =  $invoice->sale_status = 'Over Paid';
+        // }
 
         // Save the updated invoice
-        $invoice->where('sale_inv_id', $id)->update(['sale_inv_due_amount' => $invammount]);
+        $invoice->where('sale_inv_id', $id)->update( ['sale_inv_due_amount' => $invammount ,'sale_status'=>$status]);
     }
 
+
+// Calculate the new due amount after the payment
     // Fetch the relevant Chart of Account record by the payment account
     $chartOfAccount = ChartAccount::where('chart_acc_name', $validatedData['payment_account'])->first();
-    $chart_amount = 0;
     if ($chartOfAccount) {
-        // Check if the amount is null or has a value, then update accordingly
-        if (is_null($chartOfAccount->amount)) {
-            $chart_amount = $chartOfAccount->amount = $validatedData['payment_amount'];
-        } else {
-          $chart_amount =  $chartOfAccount->amount += $validatedData['payment_amount'];
-     }
-
-        // Save the updated amount to the chart of account record
+        // Update the chart account amount
+        $chart_amount =   $chartOfAccount->amount = ($chartOfAccount->amount ?? 0) + $validatedData['payment_amount'];
         $chartOfAccount->where('chart_acc_name', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
     }
 
     // Redirect or return a response
     return redirect()->route('business.salescustomers.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
 }
-
 }

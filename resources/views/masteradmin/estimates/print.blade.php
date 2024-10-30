@@ -143,24 +143,24 @@
                             <!-- /.col -->
                         </div>
                         <div class="row justify-content-end">
-                            <div class="col-auto subtotal_box">
+                            <div class="col-md-4 subtotal_box">
                                 <div class="table-responsive">
                                     <table class="table total_table">
                                         <tr>
-                                            <td style="width:70%">Sub Total :</td>
-                                            <td>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $estimates->sale_estim_sub_total }}</td>
+                                            <td><strong>Sub Total :</strong></td>
+                                            <td><strong>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $estimates->sale_estim_sub_total }}</strong></td>
                                         </tr>
                                         <tr>
-                                            <td>Discount:</td>
-                                            <td>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $estimates->sale_estim_discount_total }}</td>
+                                            <td><strong>Discount:</strong></td>
+                                            <td><strong>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $estimates->sale_estim_discount_total }}</strong></td>
                                         </tr>
                                         <tr>
-                                            <td>Tax :</td>
-                                            <td>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $estimates->sale_estim_tax_amount }}</td>
+                                            <td><strong>Tax :</strong></td>
+                                            <td><strong>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $estimates->sale_estim_tax_amount }}</strong></td>
                                         </tr>
                                         <tr>
-                                            <td>Total:</td>
-                                            <td>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $estimates->sale_estim_final_amount }}</td>
+                                            <td><strong>Total:</strong></td>
+                                            <td><strong>{{ $currency ? $currency->currency_symbol : 'N/A' }}{{ $estimates->sale_estim_final_amount }}</strong></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -174,7 +174,8 @@
                     </div>
                     @endif
                     <div class="col-md-12">
-                        <p class="text-center">{{ $estimates->sale_estim_footer_note ?? '' }}</p>
+                    <p class="estimate_view_title ">Footer</p>
+                        <p>{{ $estimates->sale_estim_footer_note ?? '' }}</p>
                     </div>
                 </div>
                 <!-- /.card -->

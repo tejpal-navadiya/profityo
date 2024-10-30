@@ -27,12 +27,16 @@
         <a class="nav-link user_nav" data-toggle="dropdown" href="#">
           <!-- <img src="{{url('public/dist/img/user2-160x160.jpg')}}" class="elevation-2 user_img" alt="User Image"> -->
            <?php //dd(Auth::guard('masteradmins')->user()); ?>
-          @if(Auth::guard('masteradmins')->user()->users_image)
-            <img src="{{ url(env('IMAGE_URL').'masteradmin/profile_image/' . Auth::guard('masteradmins')->user()->users_image) }} " class="elevation-2 user_img" target="_blank">
-          @else
-            <img src="{{url('public/dist/img/user2-160x160.jpg')}}" class="elevation-2 user_img" alt="User Image">
-          @endif
-          <span class="d-block dropdown-toggle" >{{ Auth::guard('masteradmins')->user()->users_name}} </span>
+           @if(Auth::guard('masteradmins')->check() && Auth::guard('masteradmins')->user()->users_image)
+    <img src="{{ url(env('IMAGE_URL').'masteradmin/profile_image/' . Auth::guard('masteradmins')->user()->users_image) }}" class="elevation-2 user_img" target="_blank" alt="Profile Image">
+@else
+    <img src="{{url('public/dist/img/user2-160x160.jpg')}}" class="elevation-2 user_img" alt="User Image">
+@endif
+
+@if(Auth::guard('masteradmins')->check() && Auth::guard('masteradmins')->user()->users_name)
+    <span class="d-block dropdown-toggle">{{ Auth::guard('masteradmins')->user()->users_name }}</span>
+@endif
+          <!-- <span class="d-block dropdown-toggle" >{{ Auth::guard('masteradmins')->user()->users_name}} </span> -->
         </a>
         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
             <x-dropdown-link :href="route('business.profile.edit')">

@@ -28,6 +28,7 @@ use App\Http\Controllers\Masteradmin\EmployeesController;
 use App\Http\Controllers\Masteradmin\ChartOfAccountController;
 use App\Http\Controllers\Masteradmin\RecurringInvoicesController;
 use App\Http\Controllers\Masteradmin\BillsController;
+use App\Http\Controllers\Masteradmin\TransectionController;
 
 
 /*
@@ -312,7 +313,10 @@ Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 
         Route::get('/add-bill/{id}', [BillsController::class, 'create'])->name('business.bill.add');
         Route::post('/paybill/store/{id}', [BillsController::class, 'paymentstore'])->name('business.bill.paymentsbillstore');
 
-
+//transection...
+Route::get('/transection-list', [TransectionController::class, 'index'])->name('business.transection.index');
+Route::get('/transactions/filter', [TransectionController::class, 'filterTransactions'])->name('transactions.filter');
+Route::get('/edit-transactions', [TransectionController::class, 'edit'])->name('business.transactions.edit');
 
 
 });
