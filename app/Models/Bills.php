@@ -30,5 +30,8 @@ class Bills extends Model
     {
         return $this->belongsTo(PurchasVendor::class, 'sale_vendor_id','purchases_vendor_id');
     }
-
+    public function currency()
+    {
+        return $this->belongsTo(Countries::class, 'sale_currency_id', 'id');
+    }
 }

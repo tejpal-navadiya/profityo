@@ -17,7 +17,7 @@
                 <div class="col-auto">
                     <ol class="breadcrumb float-sm-right">
                         <a href="{{route('business.salescustomers.index')}}"><button class="add_btn_br">Cancel</button></a>
-                        <a href="#"><button class="add_btn">Save</button></a>
+                        <button type="submit" form="cust-Form" class="add_btn">Save</button>
                     </ol>
                 </div>
             </div>
@@ -42,7 +42,7 @@
             <h3 class="card-title">Basic Information</h3>
           </div>
           <!-- /.card-header -->
-          <form method="POST" action="{{ route('business.salescustomers.update', ['SalesCustomers' => $SalesCustomerse->sale_cus_id]) }}">
+          <form id="cust-Form" method="POST" action="{{ route('business.salescustomers.update', ['SalesCustomers' => $SalesCustomerse->sale_cus_id]) }}">
           @csrf
           @method('Patch')
           <div class="card-body2">
@@ -177,13 +177,13 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="bill_address1">Address Line 1</label>
-                  <input type="text" class="form-control" name="sale_bill_address1" id="bill_address1" placeholder="Enter a Location" value="{{ $SalesCustomerse->sale_bill_address1 }}">
+                  <input type="text" class="form-control" name="sale_bill_address1" id="bill_address1" placeholder="Enter a Address" value="{{ $SalesCustomerse->sale_bill_address1 }}">
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="bill_address2">Address Line 2</label>
-                  <input type="text" class="form-control" name="sale_bill_address2" id="bill_address2" placeholder="Enter a Location" value="{{ $SalesCustomerse->sale_bill_address2 }}">
+                  <input type="text" class="form-control" name="sale_bill_address2" id="bill_address2" placeholder="Enter a Address" value="{{ $SalesCustomerse->sale_bill_address2 }}">
                 </div>
               </div>
               <div class="col-md-4">
@@ -246,13 +246,13 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="ship_address1">Address Line 1</label>
-                  <input type="text" class="form-control" name="sale_ship_address1" id="ship_address1" placeholder="Enter a Location" value="{{ $SalesCustomerse->sale_ship_address1 }}">
+                  <input type="text" class="form-control" name="sale_ship_address1" id="ship_address1" placeholder="Enter a Address" value="{{ $SalesCustomerse->sale_ship_address1 }}">
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="ship_address2">Address Line 2</label>
-                  <input type="text" class="form-control" name="sale_ship_address2" id="ship_address2" placeholder="Enter a Location" value="{{ $SalesCustomerse->sale_ship_address2 }}">
+                  <input type="text" class="form-control" name="sale_ship_address2" id="ship_address2" placeholder="Enter a Address" value="{{ $SalesCustomerse->sale_ship_address2 }}">
                 </div>
               </div>
               <div class="col-md-4">
@@ -395,6 +395,27 @@
         }
     });
 
+    $('#ship_country').change(function() {
+        var country_id = $(this).val();
+        if (country_id) {
+            $.ajax({
+                url: '{{ url('business/productgetstates') }}/' + country_id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    $('#ship_state').empty();
+                    $('#ship_state').append('<option value="">Select State</option>');
+                    $.each(data, function(key, value) {
+                        $('#ship_state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
+                    });
+                }
+            });
+        } else {
+            $('#ship_state').empty();
+            $('#ship_state').append('<option value="">Select State</option>');
+        }
+    });
+
     // Handle "Same as Billing Address" functionality
     $('#same_address_checkbox').change(function() {
         if ($(this).is(':checked')) {
@@ -427,7 +448,7 @@
       // alert('add');
       rowCount++;
       $('#dynamic_field').append(`
-       <div class="item-row row" id="row${rowCount}">
+       <div class="item-row row align-items-end" id="row${rowCount}">
         <div class="col-md-3">
           <div class="form-group">
             <label for="contactname">Name</label>
@@ -455,7 +476,9 @@
           </div>
         </div>
         <div class="col-md-3">
-          <i class="fa fa-trash delete-item" id="${rowCount}"> Remove Contact </i>
+          <div class="form-group">
+            <button type="button" id="${rowCount}" class="remove_contact_btn delete-item"><i class="fa fa-trash add_plus_icon"></i>Remove Contact</button>
+          </div>
         </div>
       
       </div>

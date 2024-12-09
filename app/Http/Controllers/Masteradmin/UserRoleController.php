@@ -32,7 +32,7 @@ class UserRoleController extends Controller
         $validatedData = $request->validate([
             'role_name' => 'required|string|max:255',
         ], [
-            'role_name.required' => 'The role name field is required.',
+            'role_name.required' => 'Please enter role name.',
         ]);
 
         $validatedData['id'] = $user->id;
@@ -61,7 +61,7 @@ class UserRoleController extends Controller
         $validatedData = $request->validate([
             'role_name' => 'required|string|max:255',
         ], [
-            'role_name.required' => 'The role name field is required.',
+            'role_name.required' => 'Please enter role name.',
         ]);
 
         // Update the plan attributes based on validated data
@@ -99,14 +99,18 @@ class UserRoleController extends Controller
         $user = Auth::guard('masteradmins')->user();
         
         $userrole = UserRole::where(['role_id' => $role_id, 'id' => $user->id])->firstOrFail();
+        // $permissions = AdminMenu::where('pmenu', 0)
+        //     ->where('is_deleted', 0)
+        //     ->whereIn('mid', array_merge(range(1, 20), [114]))
+        //     ->get();
         $permissions = AdminMenu::where('pmenu', 0)
-            ->where('is_deleted', 0)
-            ->whereIn('mid', range(1, 20))
-            ->get();
+        ->where('is_deleted', 0)
+        ->where('mid', '!=', 21) // Exclude parent ID 21
+        ->get();
         $reports = AdminMenu::where('pmenu', 21)
             ->where('is_deleted', 0)
             ->get();
-
+// dd($permissions);
         foreach ($permissions as $permission) {
             $this->setPermissionAccess($permission, $role_id);
         }

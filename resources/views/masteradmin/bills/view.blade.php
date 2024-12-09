@@ -114,8 +114,8 @@
                  @foreach($billsItems as $item)
                   <tr>
                     <td>{{ $item->bill_product->purchases_product_name ?? 'No Name' }}</td>
-                    <td >{{ $item->expense_category->chart_acc_name ?? 'No Name' }}</td>
-                    <td class="text-center">{{ $item->sale_bill_item_desc }}</td>
+                    <td>{{ $item->expense_category->chart_acc_name ?? 'No Name' }}</td>
+                    <td>{{ $item->sale_bill_item_desc }}</td>
                     <td class="text-center">{{ $item->sale_bill_item_qty }}</td>
                     <td class="text-center">{{ $item->sale_bill_item_price }}</td>
                     <td class="text-center">{{ $item->item_tax->tax_name ?? 'No Tax Name' }} {{ $item->item_tax->tax_rate ?? 'No Tax Name' }}%</td>

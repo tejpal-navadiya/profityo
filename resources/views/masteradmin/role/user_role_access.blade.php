@@ -1,5 +1,5 @@
 
-    <div class="wrapper">
+<div class="wrapper">
     @extends('masteradmin.layouts.app')
 <title>New User Role | Profityo</title>
 @section('content')
@@ -100,15 +100,15 @@
                                 </div>
                             </div><!-- /.card-body -->
                             <div class="col-md-12">
-                                <div class="row user_acc_report_lable">
+                                <div class="row user_acc_report_lable plan_acc_report_lable">
                                     <div class="form-check">
                                         <input class="form-check-input parent-checkbox" type="checkbox" id="chk_reports" name="reports_parent" {{ $reports_parent_checked ? 'checked' : '' }}>
                                         <label class="form-check-label" for="chk_reports">Reports</label>
                                     </div>
                                 </div>
-                                <div class="row report_row justify-content-between">
+                                <div class="row report_row">
                                     @foreach ($reports as $report)
-                                        <div class="col-auto">
+                                        <div class="col-md-3">
                                             <div class="form-check">
                                                 <label class="form-check-label" for="chk_{{ $report->mname }}">{{ $report->mtitle }}</label>
                                                 <input class="form-check-input child-checkbox report-child-checkbox" type="checkbox" {{ $report->is_access ? 'checked' : '' }} name="{{ $report->mname }}" id="chk_{{ $report->mname }}" value="1">

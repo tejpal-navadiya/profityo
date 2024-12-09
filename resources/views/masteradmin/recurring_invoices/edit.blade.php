@@ -62,7 +62,7 @@
               <div class="col-md-3 px-10">
                 <div class="business_logo_uplod_box">
                   @if($businessDetails && $businessDetails->bus_image)
-                  <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                  <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                   class="elevation-2 img-box" target="_blank">
                   <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
@@ -168,11 +168,11 @@
               
               <!-- /.col -->
               <div class="col-md-9">
-                <div class="row">
+                <div class="row in-number-row">
                   <div class="col-md-3">
                     <div class="form-group">
                       <label for="estimatenumber">Invoice number</label>
-                      <label for="estimatenumber">Auto-generated</label>
+                      <label for="estimatenumber">Auto-generated<span class="text-danger">*</span></label>
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -184,15 +184,16 @@
                   </div>
                   <div class="col-md-3">
                     <div class="form-group">
-                      <label>Invoice Date</label>
-                      <label>Auto-generated</label>
+                      <label>
+                         Date</label>
+                      <label>Auto-generated<span class="text-danger">*</span></label>
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group">
-                      <label>Payment Due</label>
+                      <label>Payment Due<span class="text-danger">*</span></label>
                       <select name="sale_re_inv_payment_due_id" id="sale_re_inv_payment_due_id" class="form-control select2" style="width: 100%;">
-                        <option value="" {{ $reinvoices->sale_re_inv_payment_due_id == null ? 'selected' : '' }}>On Receipt</option>
+                        <option value=""  {{ $reinvoices->sale_re_inv_payment_due_id == null ? 'selected' : '' }}>On Receipt</option>
                         <option value="7" {{ $reinvoices->sale_re_inv_payment_due_id == 7 ? 'selected' : '' }}>Within 7 Days</option>
                         <option value="14" {{ $reinvoices->sale_re_inv_payment_due_id == 14 ? 'selected' : '' }}>Within 14 Days</option>
                         <option value="30" {{ $reinvoices->sale_re_inv_payment_due_id == 30 ? 'selected' : '' }}>Within 30 Days</option>
@@ -265,14 +266,14 @@
                                     @endif
                                 </th>
                               @elseif(strpos($mname, 'units') !== false)
-                                <th id="unitsHeader">
+                                <th style="width: 15%;" id="unitsHeader">
                                     {!! $headerText !!} 
                                     @if($currentChecked)
                                       {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
                                   @endif
                                 </th>
                             @elseif(strpos($mname, 'price') !== false)
-                                <th id="priceHeader">
+                                <th style="width: 15%;" id="priceHeader">
                                     {!! $headerText !!} 
                                     @if($currentChecked)
                                         {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
@@ -280,13 +281,13 @@
                                 </th>
                                 <th>Tax</th> <!-- Always include Tax when price is available -->
                             @elseif(strpos($mname, 'amount') !== false)
-                                <th id="amountHeader">
+                                <th class="text-right" id="amountHeader">
                                     {!! $headerText !!} 
                                     @if($currentChecked)
                                       {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
                                   @endif
                                 </th>
-                                <th>Actions</th>
+                                <th class="text-right">Actions</th>
                             @endif
                         @endif
                       @endforeach
@@ -295,12 +296,12 @@
 
                       @if(!$hasData)
                   <!-- Default Headers -->
-                      <th style="width: 30%;" id="itemsHeader">Items</th>
-                      <th id="unitsHeader">Units</th>
-                      <th id="priceHeader">Price</th>
+                      <th style="width: 30%;" id="itemsHeader">Items<span class="text-danger">*</span></th>
+                      <th style="width: 15%;" id="unitsHeader">Units<span class="text-danger">*</span></th>
+                      <th style="width: 15%;" id="priceHeader">Price<span class="text-danger">*</span></th>
                       <th>Tax</th>
-                      <th id="amountHeader">Amount</th>
-                      <th>Actions</th> <!-- New column for actions -->
+                      <th class="text-right"id="amountHeader">Amount</th>
+                      <th class="text-right">Actions</th> <!-- New column for actions -->
                       @endif
                     </tr>
                   </thead>
@@ -342,9 +343,18 @@
                                     </option>
                                 @endforeach
                             </select>
+                            <div class="px-10"></div>
+                            <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                                @foreach($salestax as $salesTax)
+                                    <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
+                                        {{ $salesTax->tax_id == $item->sale_re_inv_item_tax ? 'selected' : '' }}>
+                                        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                                    </option>
+                                @endforeach
+                            </select>
                         </td>
                         <td class="text-right item-price">{{ number_format($item->sale_re_inv_item_price * $item->sale_re_inv_item_qty, 2) }}</td>
-                        <td><i class="fa fa-trash delete-item"></i></td>
+                        <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item"></i></td>
                     </tr>
                   @endforeach
 
@@ -353,15 +363,16 @@
               </div>
               <!-- /.col -->
             </div>
-            <hr />
+            <br />
             <input type="hidden" name="sale_estim_sub_total" value="{{ $reinvoices->sale_re_inv_sub_total }}">
             <input type="hidden" name="sale_estim_discount_total" value="{{ $reinvoices->sale_re_inv_discount_total }}">
             <input type="hidden" name="sale_estim_tax_amount" value="{{ $reinvoices->sale_re_inv_tax_amount }}">
             <input type="hidden" name="sale_estim_final_amount" value="{{ $reinvoices->sale_re_inv_final_amount }}">
             <div class="row pad-2">
               <div class="col-md-4">
-                  <div class="d-flex">
-                  <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $reinvoices->sale_re_inv_discount_desc }}" placeholder="Description (optional)">
+                  <div class="d-flex align-items-center">
+                    <label style="margin-right: 10px;">Discount</label>
+                    <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $reinvoices->sale_re_inv_discount_desc }}" placeholder="Discount Description">
                   </div>
               </div>
               <div class="col-md-4">
@@ -378,7 +389,7 @@
                   <div class="table-responsive">
                   <table class="table total_table">
                       <tr>
-                      <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" required>
+                      <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" style="width: 100%;" required>
                         @foreach($currencys as $curr)
                           <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
                           <option value="{{ $curr->id }}" {{ $curr->id == $reinvoices->sale_currency_id ? 'selected' : '' }} data-symbol="{{ $curr->currency_symbol }}">
@@ -480,12 +491,14 @@
           <div class="row pxy-15 px-10">
             <div class="col-md-12">
               <div class="form-group">
-                <x-input-label for="company-business" :value="__('Company/Business')"> <span
-                    class="text-danger">*</span></x-input-label>
-                <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"
-                  name="bus_company_name" required autofocus autocomplete="bus_company_name"
-                  :value="old('bus_company_name', $businessDetails->bus_company_name)" />
-                <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
+              <x-input-label for="company-business" :value="__('Company/Business')" />
+              <span class="text-danger">*</span>
+              <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"
+                            name="bus_company_name"  autofocus autocomplete="bus_company_name"
+                            :value="old('bus_company_name', $businessDetails->bus_company_name)" />
+              <!-- Error message span -->
+              <span id="companyNameError" class="text-danger mt-2" style="display:none;">Please enter company name.</span>
+              <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
               </div>
             </div>
           </div>
@@ -580,13 +593,13 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label for="currency">Business Currency </label>
-                <h4 for="currency">
+                <h6 for="currency">
                   @if ($currency)
-            <h4 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h4>
+            <h6 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h6>
           @else
-        <h4 for="currency">No currency information available</h4>
+        <h6 for="currency">No currency information available</h6>
       @endif
-                </h4>
+                </h6>
               </div>
             </div>
           </div>
@@ -1682,7 +1695,7 @@
 
       if (selectedProductId) {
         $.ajax({
-          url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/get-product-details/' + selectedProductId,
+          url: '{{ route('business.estimates.getProductDetails', '') }}/' + selectedProductId,
           method: 'GET',
           success: function (response) {
             $row.find('input[name="items[][sale_estim_item_price]"]').val(response.sale_product_price);
@@ -1752,14 +1765,20 @@
                     </div>
                 </td>
                 <td>
-                    <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
-                        @foreach($salestax as $salesTax)
-              <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
-            @endforeach
-                    </select>
+                  <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                      @foreach($salestax as $salesTax)
+                      <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
+                    @endforeach
+                  </select>
+                  <div class="px-10"></div>
+                  <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                      @foreach($salestax as $salesTax)
+                      <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
+                    @endforeach
+                  </select>
                 </td>
                 <td class="text-right item-price">0.00</td>
-                <td><i class="fa fa-trash delete-item" id="${rowCount}"></i></td>
+                <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item" id="${rowCount}"></i></td>
             </tr>
         `);
 
@@ -2209,6 +2228,34 @@ $(document).ready(function() {
     }
     });
   </script>
+  <script>
+$(document).ready(function() {
+    // Form submit event
+    $('#editBusinessForm').on('submit', function(e) {
+        var companyField = $('#bus_company_name');
+        var errorField = $('#companyNameError');
+
+        // Check if the company name field is empty
+        if (companyField.val().trim() === "") {
+            errorField.show(); // Show the error message
+            companyField.addClass("is-invalid"); // Add invalid class to highlight the field
+            e.preventDefault(); // Prevent form submission
+        } else {
+            errorField.hide(); // Hide the error message if input is valid
+            companyField.removeClass("is-invalid"); // Remove invalid class if input is valid
+        }
+    });
+
+    // Hide error message when the user starts typing
+    $('#bus_company_name').on('input', function() {
+        var errorField = $('#companyNameError');
+        if ($(this).val().trim() !== "") {
+            errorField.hide(); // Hide the error message if the field is no longer empty
+            $(this).removeClass("is-invalid"); // Remove the invalid class
+        }
+    });
+});
+</script>
 
 
 @endsection

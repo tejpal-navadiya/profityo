@@ -1,5 +1,8 @@
 body{
-  color: #242424;
+  color: #000;
+}
+.wrapper, body, html {
+  min-height: auto;
 }
 .sidebar{
   padding: 0;
@@ -337,11 +340,11 @@ body{
   color: #242424;
   padding: .60rem .75rem;
   vertical-align: middle;
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid #cfcfcf;
 }
 .item_table td{
   border-top: 0;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #888;
   vertical-align: top;
 }
 .content-header {
@@ -760,14 +763,14 @@ label {
 }
 .subtotal_box{
   position: relative;
-  padding: 20px 20px 0;
+  padding: 0px 20px;
 }
 .total_table tr{
   border-top: 1px solid #535353;
 }
 .total_table td{
   padding: .60rem .75rem;
-  color: #535353;
+  color: #000;
   font-size: 16px;
   vertical-align: top;
   border-top: 0;
@@ -810,7 +813,7 @@ label {
 }
 .estimate_view_title{
   position: relative;
-  font-size: 22px;
+  font-size: 19px;
   color: #053A51;
   font-weight: 600;
   margin-bottom: 0;
@@ -1207,7 +1210,7 @@ label {
   color: #535353;
 }
 .add_new_account_text{
-  font-size: 18px;
+  font-size: 16px;
   color: #255DED;
   font-weight: 600;
   cursor: pointer;
@@ -1598,9 +1601,6 @@ display:none;
   vertical-align: -webkit-baseline-middle;
 }
 
-.item_table tr:last-child td{
-  border-bottom: 0;
-}
 
 .report_total_amount_text{
   color: #37B663 !important;
@@ -1682,8 +1682,6 @@ span.flatpickr-weekday{
 .form-control:disabled, .form-control[readonly]{
   background-color: transparent;
   opacity: 1;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
 }
 .img-box{
   position: relative;
@@ -1701,6 +1699,85 @@ table.table.total_table {
 }
 .flatpickr-container{
   width: 100%;
+}
+.flatpickr-day.selected{
+  background: #37B663 !important;
+  border-color: #37B663 !important;
+}
+.remove_contact_btn {
+  position: relative;
+  background: #FF313A;
+  padding: 8px 20px;
+  color: #fff;
+  font-size: 16px;
+  line-height: normal;
+  font-weight: 500;
+  border-radius: 5px;
+  border: 1px solid #FF313A;
+}
+.text-sm {
+  font-size: 16px !important;
+}
+.form-check{
+  padding-left: 0;
+}
+.form-check-input {
+  position: relative;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 5px;
+}
+.report_row .form-check{
+  padding-bottom: 15px;
+}
+.item-price {
+  font-size: 18px;
+  font-weight: 600;
+}
+hr {
+  border-top: 1px solid rgba(0, 0, 0, .5);
+}
+.in-bi-tab {
+  border: 1px solid #cfcfcf;
+  border-radius: 50px;
+  padding: 6px;
+}
+.in-bi-tab .nav-link.active, .in-bi-tab .show>.nav-link{
+  background: #39D254;
+  color: #fff;
+  border-radius: 50px;
+  padding: 6px 10px;
+}
+.in-bi-tab .nav-link{
+  color: #242424;
+  border-radius: 50px;
+  padding: 6px 10px;
+}
+.in-total-box{
+  position: relative;
+  background: #fff;
+  box-shadow: 0px 0px 4px 2px rgba(55, 182, 99, 0.25);
+  border-radius: 5px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+.in-box-icon{
+  position: relative;
+  max-width: 34px;
+  margin-right: 15px;
+}
+.in-box-title{
+  font-size: 16px;
+  margin-bottom: 0;
+}
+.in-box-total{
+  font-size: 18px;
+  margin-bottom: 0;
+  color: #39D254;
+  font-weight: 600;
 }
 
 /*--------------------------------------------------------------
@@ -1854,6 +1931,19 @@ table.table.total_table {
   /* .input-group{
     width: 150px;
   } */
+  .in-number-row .col-md-3{
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  .in-bi-tab .nav-link{
+    padding: 6px;
+    font-size: 10px;
+  }
+  .in-bi-tab .nav-link.active, .in-bi-tab .show>.nav-link{
+    padding: 6px;
+    font-size: 10px;
+  }
+
 }
 @media only screen and (min-width: 992px) and (max-width: 1199px){
   .main-sidebar, .main-sidebar::before{
@@ -2034,6 +2124,24 @@ table.table.total_table {
   .update_report_btn{
     padding: 8px;
   }
+  .in-number-row .col-md-3{
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  .in-bi-tab {
+    border: 1px solid #cfcfcf;
+    border-radius: 8px;
+    padding: 8px;
+    justify-content: center;
+  }
+  .in-bi-tab .nav-link{
+    padding: 6px;
+    font-size: 12px;
+  }
+  .in-bi-tab .nav-link.active, .in-bi-tab .show>.nav-link{
+    padding: 6px;
+    font-size: 12px;
+  }
 }
 @media only screen and (min-width: 768px) and (max-width: 991px){
   .welcome_text{
@@ -2181,6 +2289,13 @@ table.table.total_table {
   .compare_date{
     font-size: 16px;
   }
+  .add_customer_box{
+    margin-bottom: 10px;
+  }
+  .in-number-row .col-md-3{
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
 }
 @media only screen and (max-width: 767px){
   .welcome_img{
@@ -2326,6 +2441,9 @@ table.table.total_table {
   }
   .dash_board_icon{
     margin: auto;
+  }
+  .add_customer_box{
+    margin-bottom: 10px;
   }
 }
 @media screen and (max-width: 577px){

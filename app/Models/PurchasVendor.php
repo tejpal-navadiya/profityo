@@ -64,5 +64,8 @@ class PurchasVendor extends Model
     {
         return $this->hasOne(PurchasVendorBankDetail::class, 'purchases_vendor_id', 'purchases_vendor_id');
     }
-
+    public function currency()
+    {
+        return $this->belongsTo(Countries::class, 'sale_currency_id', 'id');
+    }
 }

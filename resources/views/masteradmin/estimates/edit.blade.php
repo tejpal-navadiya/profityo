@@ -21,7 +21,7 @@
       <div class="col-auto">
         <ol class="breadcrumb float-sm-right">
         <a class="add_btn_br">Preview</a>
-        <a href="#"><button class="add_btn">Save & Continue</button></a>
+        <button type="submit" form="items-form" class="add_btn">Save & Continue</button>
         </ol>
       </div><!-- /.col -->
       </div><!-- /.row -->
@@ -178,7 +178,7 @@
           <div class="row">
             <div class="col-md-3">
               <div class="form-group">
-              <label for="estimatenumber">Estimate Number</label>
+              <label for="estimatenumber">Estimate Number<span class="text-danger">*</span></label>
               <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder=""
                 value="{{ $estimates->sale_estim_number }}">
               <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
@@ -194,7 +194,7 @@
             </div>
             <div class="col-md-3">
               <div class="form-group">
-              <label>Date</label>
+              <label>Dateeeee<span class="text-danger">*</span></label>
               <div class="input-group date" id="estimatedate" data-target-input="nearest">
                 <!-- <input type="hidden" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
                 data-target="#estimatedate" value="{{ $estimates->sale_estim_date }}"/>
@@ -214,13 +214,14 @@
                   <i class="fa fa-calendar-alt"></i>
                 </div>
                 </div>
-                <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
+              
               </div>
+              <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group">
-              <label>Valid Until</label>
+              <label>Valid Until<span class="text-danger">*</span></label>
               <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
                 <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
                 data-target="#estimatevaliddate" name="sale_estim_valid_date" value="{{ $estimates->sale_estim_valid_date }}"/>
@@ -324,14 +325,14 @@
                           @endif
                       </th>
                     @elseif(strpos($mname, 'units') !== false)
-                      <th id="unitsHeader">
+                      <th id="unitsHeader" style="width: 15%;">
                           {!! $headerText !!} 
                           @if($currentChecked)
                             {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
                          @endif
                       </th>
                   @elseif(strpos($mname, 'price') !== false)
-                      <th id="priceHeader">
+                      <th id="priceHeader" style="width: 15%;">
                           {!! $headerText !!} 
                           @if($currentChecked)
                               {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
@@ -339,13 +340,13 @@
                       </th>
                       <th>Tax</th> <!-- Always include Tax when price is available -->
                   @elseif(strpos($mname, 'amount') !== false)
-                      <th id="amountHeader">
+                      <th id="amountHeader" class="text-right">
                           {!! $headerText !!} 
                           @if($currentChecked)
                             {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
                          @endif
                       </th>
-                      <th>Actions</th>
+                      <th class="text-right">Actions</th>
                   @endif
               @endif
             @endforeach
@@ -354,12 +355,12 @@
 
             @if(!$hasData)
         <!-- Default Headers -->
-            <th style="width: 30%;" id="itemsHeader">Items</th>
-            <th id="unitsHeader">Units</th>
-            <th id="priceHeader">Price</th>
+            <th style="width: 30%;" id="itemsHeader">Items<span class="text-danger">*</span></th>
+            <th style="width: 15%;" id="unitsHeader">Units<span class="text-danger">*</span></th>
+            <th style="width: 15%;" id="priceHeader">Price<span class="text-danger">*</span></th>
             <th>Tax</th>
-            <th id="amountHeader">Amount</th>
-            <th>Actions</th> <!-- New column for actions -->
+            <th id="amountHeader" class="text-right">Amount</th>
+            <th class="text-right">Actions</th> <!-- New column for actions -->
             @endif
             </tr>
           </thead>
@@ -397,15 +398,23 @@
         <td>
           <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
           @foreach($salestax as $salesTax)
-        <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}" {{ $salesTax->tax_id == $item->sale_estim_item_tax ? 'selected' : '' }}>
-        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-        </option>
-      @endforeach
+          <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}" {{ $salesTax->tax_id == $item->sale_estim_item_tax ? 'selected' : '' }}>
+          {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+          </option>
+          @endforeach
+          </select>
+          <div class="px-10"></div>
+          <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+          @foreach($salestax as $salesTax)
+          <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}" {{ $salesTax->tax_id == $item->sale_estim_item_tax ? 'selected' : '' }}>
+          {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+          </option>
+          @endforeach
           </select>
         </td>
         <td class="text-right item-price">
           {{ number_format($item->sale_estim_item_price * $item->sale_estim_item_qty, 2) }}</td>
-        <td><i class="fa fa-trash delete-item"></i></td>
+        <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item"></i></td>
         </tr>
       @endforeach
 
@@ -414,14 +423,15 @@
         </div>
         <!-- /.col -->
         </div>
-        <hr />
+        <br />
         <input type="hidden" name="sale_estim_sub_total" value="{{ $estimates->sale_estim_sub_total }}">
         <input type="hidden" name="sale_estim_discount_total" value="{{ $estimates->sale_estim_discount_total }}">
         <input type="hidden" name="sale_estim_tax_amount" value="{{ $estimates->sale_estim_tax_amount }}">
         <input type="hidden" name="sale_estim_final_amount" value="{{ $estimates->sale_estim_final_amount }}">
         <div class="row pad-2">
           <div class="col-md-4">
-            <div class="d-flex">
+            <div class="d-flex align-items-center">
+            <label style="margin-right: 10px;">Discount</label>
             <input type="text" class="form-control form-controltext" name="sale_estim_discount_desc"
               aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_discount_desc }}"
               placeholder="Description (optional)">
@@ -445,7 +455,7 @@
             <table class="table total_table">
               <tr>
               <select name="sale_currency_id" id="sale_currency_id"
-                class="form-select form-selectcurrency select2" required>
+                class="form-select form-selectcurrency select2" style="width: 100%;" required>
                 @foreach($currencys as $curr)
             <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
             <option value="{{ $curr->id }}" {{ $curr->id == $estimates->sale_currency_id ? 'selected' : '' }}
@@ -472,9 +482,9 @@
               </td>
               </tr>
               <tr>
-              <td>Total:</td>
+              <td><strong>Total:</strong></td>
               <td id="total">
-                {{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_final_amount }}
+              <strong>{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_final_amount }}</strong>
               </td>
               </tr>
             </table>
@@ -556,12 +566,20 @@
         <div class="row pxy-15 px-10">
         <div class="col-md-12">
           <div class="form-group">
-          <x-input-label for="company-business" :value="__('Company/Business')"> <span
+          <!-- <x-input-label for="company-business" :value="__('Company/Business')"> <span
             class="text-danger">*</span></x-input-label>
           <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"
             name="bus_company_name" required autofocus autocomplete="bus_company_name"
             :value="old('bus_company_name', $businessDetails->bus_company_name)" />
-          <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
+          <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" /> --> 
+          <x-input-label for="company-business" :value="__('Company/Business')" />
+              <span class="text-danger">*</span>
+              <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"
+                            name="bus_company_name"  autofocus autocomplete="bus_company_name"
+                            :value="old('bus_company_name', $businessDetails->bus_company_name)" />
+              <!-- Error message span -->
+              <span id="companyNameError" class="text-danger mt-2" style="display:none;">Please enter company name.</span>
+              <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
           </div>
         </div>
         </div>
@@ -656,13 +674,13 @@
         <div class="col-md-6">
           <div class="form-group">
           <label for="currency">Business Currency </label>
-          <h4 for="currency">
+          <h5 for="currency">
             @if ($currency)
-        <h4 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h4>
+        <h5 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h5>
       @else
-    <h4 for="currency">No currency information available</h4>
+    <h5 for="currency">No currency information available</h5>
   @endif
-          </h4>
+          </h5>
           </div>
         </div>
         </div>
@@ -1859,12 +1877,18 @@
           <td>
             <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
               @foreach($salestax as $salesTax)
-          <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
-      @endforeach
+              <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
+              @endforeach
+            </select>
+            <div class="px-10"></div>
+            <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+              @foreach($salestax as $salesTax)
+              <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
+              @endforeach
             </select>
           </td>
           <td class="text-right item-price">0.00</td>
-          <td><i class="fa fa-trash delete-item" id="${rowCount}"></i></td>
+          <td class="text-right"><i class="fa fa-trash delete-item delete_icon_grid" id="${rowCount}"></i></td>
         </tr>
       `);
 
@@ -2387,5 +2411,33 @@
     }
     });
   </script>
+   <script>
+$(document).ready(function() {
+    // Form submit event
+    $('#editBusinessForm').on('submit', function(e) {
+        var companyField = $('#bus_company_name');
+        var errorField = $('#companyNameError');
+
+        // Check if the company name field is empty
+        if (companyField.val().trim() === "") {
+            errorField.show(); // Show the error message
+            companyField.addClass("is-invalid"); // Add invalid class to highlight the field
+            e.preventDefault(); // Prevent form submission
+        } else {
+            errorField.hide(); // Hide the error message if input is valid
+            companyField.removeClass("is-invalid"); // Remove invalid class if input is valid
+        }
+    });
+
+    // Hide error message when the user starts typing
+    $('#bus_company_name').on('input', function() {
+        var errorField = $('#companyNameError');
+        if ($(this).val().trim() !== "") {
+            errorField.hide(); // Hide the error message if the field is no longer empty
+            $(this).removeClass("is-invalid"); // Remove the invalid class
+        }
+    });
+});
+</script>
   @endsection
 @endif

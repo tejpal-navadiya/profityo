@@ -21,7 +21,7 @@
             <div class="form-group">
                 <x-input-label for="users_name" :value="__('Name')" /><span class="text-danger">*</span>
                 <x-text-input id="users_name" name="users_name" type="text" class="mt-1 block w-full" :value="old('user_first_name', $user->users_name)"
-                    required autofocus autocomplete="users_name" placeholder="Enter Name" />
+                     autofocus autocomplete="users_name" placeholder="Enter Name" />
                 <x-input-error class="mt-2" :messages="$errors->get('users_name')" />
             </div>
         </div>
@@ -29,7 +29,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <x-input-label for="country" :value="__('Country')" /><span class="text-danger">*</span>
-                <select class="form-control select2" style="width: 100%;" id="country" name="country_id" required>
+                <select class="form-control select2" style="width: 100%;" id="country" name="country_id" >
                     <option >Select a Country...</option>
                     @foreach($countries as $country)
                         <option value="{{ $country->id }}" {{ old('country_id', $user->country_id) == $country->id ? 'selected' : '' }}>{{ $country->name }} ({{ $country->iso2 }})</option>
@@ -42,7 +42,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <x-input-label for="state" :value="__('Province/State')" /><span class="text-danger">*</span>
-                <select class="form-control select2" style="width: 100%;" id="state" name="state_id" required>
+                <select class="form-control select2" style="width: 100%;" id="state" name="state_id" >
                     <option >Select a State...</option>
                     @foreach($states as $state)
                         <option value="{{ $state->id }}" {{ $state->id == old('state_id', $selectedStateId) ? 'selected' : '' }}>

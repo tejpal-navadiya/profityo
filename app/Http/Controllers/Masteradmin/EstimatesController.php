@@ -25,6 +25,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Notifications\EstimateViewMail;
+use App\Models\ChartAccount;
+
 // use Dompdf\Dompdf;
 // use Dompdf\Options;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -37,68 +39,131 @@ use Illuminate\Validation\Rule;
 class EstimatesController extends Controller
 {
     //
-    public function index(Request $request)
-    {
-        // dd($request->sale_status);
+    // public function index(Request $request)
+    // {
 
-        $user = Auth::guard('masteradmins')->user();
-        $user_id = $user->user_id;
+
+    //     $user = Auth::guard('masteradmins')->user();
+    //     $user_id = $user->users_id;
+    //     $currencys = Countries::get();
+    //     $startDate = $request->input('start_date'); 
+    //     $endDate = $request->input('end_date');   
+    //     //\DB::enableQueryLog();
        
-        $startDate = $request->input('start_date'); 
-        $endDate = $request->input('end_date');   
-        //\DB::enableQueryLog();
-
-        $query = Estimates::with('customer')->orderBy('created_at', 'desc');
-
-        // if ($request->has('start_date') && $request->start_date) {
-        //     $query->whereDate('sale_estim_date', '>=', $request->start_date);
-        // }
-
-        // if ($request->has('end_date') && $request->end_date) {
-        //     $query->whereDate('sale_estim_date', '<=', $request->end_date);
-        // }
-
-        // Check for start date and end date
-        if ($startDate && !$endDate) {
-            $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
-        } elseif ($startDate && $endDate) {
-            $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate])
-                ->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
-        }
-
-        if ($request->has('sale_estim_number') && $request->sale_estim_number) {
-            $query->where('sale_estim_number', 'like', '%' . $request->sale_estim_number . '%');
-        }
-
-        if ($request->has('sale_cus_id') && $request->sale_cus_id) {
-            $query->where('sale_cus_id', $request->sale_cus_id);
-        }
-
-        if ($request->has('sale_status') && $request->sale_status) {
-            $query->where('sale_status', $request->sale_status);
-        }
-
-        $filteredEstimates = $query->get();
-
-        $activeEstimates = $filteredEstimates->whereIn('sale_status', ['Saved', 'Sent']);
-        $draftEstimates = $filteredEstimates->where('sale_status', 'Draft');
-        $allEstimates = $filteredEstimates;
-        $salecustomer = SalesCustomers::get();
+    //     // $query = Estimates::with(['customer', 'currency'])->orderBy('created_at', 'desc');
+    //     $query = Estimates::with(['customer', 'currency'])
+    //     ->where('id', $user_id) // Filter by user ID
+    //     ->orderBy('created_at', 'desc');
     
-        if ($request->ajax()) {
-           // dd(\DB::getQueryLog()); 
-            // dd($allEstimates);
-            return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
-        }
+    //     // if ($request->has('start_date') && $request->start_date) {
+    //     //     $query->whereDate('sale_estim_date', '>=', $request->start_date);
+    //     // }
 
-        return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'));
+    //     // if ($request->has('end_date') && $request->end_date) {
+    //     //     $query->whereDate('sale_estim_date', '<=', $request->end_date);
+    //     // }
+
+    //     // Check for start date and end date
+    //     if ($startDate && !$endDate) {
+    //         $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+    //     } elseif ($startDate && $endDate) {
+    //         $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate])
+    //             ->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
+    //     }
+
+    //     if ($request->has('sale_estim_number') && $request->sale_estim_number) {
+    //         $query->where('sale_estim_number', 'like', '%' . $request->sale_estim_number . '%');
+    //     }
+
+    //     if ($request->has('sale_cus_id') && $request->sale_cus_id) {
+    //         $query->where('sale_cus_id', $request->sale_cus_id);
+    //     }
+      
+    //     if ($request->has('sale_status') && $request->sale_status) {
+    //         $query->where('sale_status', $request->sale_status);
+    //     }
+
+    //     $filteredEstimates = $query->get();
+
+    //     $activeEstimates = $filteredEstimates->whereIn('sale_status', ['Saved', 'Sent']);
+    //     $draftEstimates = $filteredEstimates->where('sale_status', 'Draft');
+    //     $allEstimates = $filteredEstimates;
+    //     $salecustomer = SalesCustomers::get();
+    //     $currencys = Countries::get();
+    //     if ($request->ajax()) {
+          
+    //         return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
+    //     }
+
+    //     return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer','currencys'));
+    // }
+
+    public function index(Request $request)
+{
+    $user = Auth::guard('masteradmins')->user();
+    $user_id = $user->users_id;
+    $role_id = $user->role_id;
+
+    $currencys = Countries::get();
+    $startDate = $request->input('start_date');
+    $endDate = $request->input('end_date');
+
+    // Initialize query based on role
+    if ($role_id == 0) { // Admin Role
+        $query = Estimates::with(['customer', 'currency'])
+            ->orderBy('created_at', 'desc');
+    } else { // Non-admin Role
+        $query = Estimates::with(['customer', 'currency'])
+            ->where(function ($query) use ($user_id) {
+                $query->where('id', $user_id); // Example for additional condition
+            })
+            ->orderBy('created_at', 'desc');
     }
+
+    // Apply date filters
+    if ($startDate && !$endDate) {
+        $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') = STR_TO_DATE(?, '%m/%d/%Y')", [$startDate]);
+    } elseif ($startDate && $endDate) {
+        $query->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') >= STR_TO_DATE(?, '%m/%d/%Y')", [$startDate])
+            ->whereRaw("STR_TO_DATE(sale_estim_date, '%m/%d/%Y') <= STR_TO_DATE(?, '%m/%d/%Y')", [$endDate]);
+    }
+
+    // Additional filters
+    if ($request->has('sale_estim_number') && $request->sale_estim_number) {
+        $query->where('sale_estim_number', 'like', '%' . $request->sale_estim_number . '%');
+    }
+
+    if ($request->has('sale_cus_id') && $request->sale_cus_id) {
+        $query->where('sale_cus_id', $request->sale_cus_id);
+    }
+
+    if ($request->has('sale_status') && $request->sale_status) {
+        $query->where('sale_status', $request->sale_status);
+    }
+
+    // Fetch filtered data
+    $filteredEstimates = $query->get();
+
+    // Categorize estimates
+    $activeEstimates = $filteredEstimates->whereIn('sale_status', ['Saved', 'Sent']);
+    $draftEstimates = $filteredEstimates->where('sale_status', 'Draft');
+    $allEstimates = $filteredEstimates;
+
+    $salecustomer = SalesCustomers::get();
+
+    if ($request->ajax()) {
+        return view('masteradmin.estimates.filtered_results', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer'))->render();
+    }
+
+    return view('masteradmin.estimates.index', compact('activeEstimates', 'draftEstimates', 'allEstimates', 'user_id', 'salecustomer', 'currencys'));
+}
+
 
     public function create(): View
     {
         
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
+     
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -116,7 +181,7 @@ class EstimatesController extends Controller
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
-        // dd($currencys);
+      
         
         $salestax = SalesTax::all();
 
@@ -153,14 +218,21 @@ class EstimatesController extends Controller
 
         $newId = $lastEstimate ? $lastEstimate->sale_estim_id + 1 : 1;
 
-        // dd($businessDetails);
-        return view('masteradmin.estimates.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId'));
+        $salecustomer = SalesCustomers::get();
+        $currencys = Countries::get();
+        $Country = Countries::all(); // Fetch all countries
+        $SalesTax = SalesTax::all();
+
+        // Fetch ChartAccount records based on type_id
+        $IncomeAccounts = ChartAccount::where('type_id', 3)->get();
+        $ExpenseAccounts = ChartAccount::where('type_id', 4)->get(); 
+        return view('masteradmin.estimates.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId','Country', 'SalesTax', 'IncomeAccounts', 'ExpenseAccounts'));
     }
 
     public function getProductDetails($id)
     {
         $product = SalesProduct::where('sale_product_id', $id)->firstOrFail();
-        // dd($product);
+       
         if ($product) {
             return response()->json($product);
         } else {
@@ -170,9 +242,9 @@ class EstimatesController extends Controller
 
     public function store(Request $request)
     {
-        // $sessionData = session('form_data');
-        // dd($request);
-        // dd($request->sale_currency_id);
+       
+        // dd($request->input('items'));
+        // dd($request->all());
         $user = Auth::guard('masteradmins')->user();
        
         $dynamicId = $user->user_id; // This should be set dynamically based on your application logic
@@ -205,7 +277,7 @@ class EstimatesController extends Controller
             'items.*.sale_estim_item_desc' => 'required|string',
             'items.*.sale_estim_item_qty' => 'required|integer|min:1',
             'items.*.sale_estim_item_price' => 'required|numeric|min:0',
-            'items.*.sale_estim_item_tax' => 'required|integer',
+            // 'items.*.sale_estim_item_tax' => 'required|string',
         ], [
             'sale_estim_title.max' => 'The title may not exceed 255 characters.',
             'sale_cus_id.required' => 'Please select a customer.',
@@ -224,7 +296,7 @@ class EstimatesController extends Controller
             'sale_status.required' => 'Please set the status of the estimate.',
             'sale_estim_status.required' => 'Please set the estimate status.',
             'sale_total_days.required' => 'Please set valid date range.',
-            'items.*.sale_product_id.integer' => 'Each item must have a product selected.',
+            'items.*.sale_product_id.integer' => 'Please select item.',
             'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
             'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
             'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
@@ -247,26 +319,54 @@ class EstimatesController extends Controller
         $estimate->sale_total_days = $request->sale_total_days;
         $estimate->id = $user->id;
         $estimate->sale_status = 'Draft';
-        // dd($estimate);
+
         $estimate->save();
         
-
+      
+        
         foreach ($request->input('items') as $item) {
             $estimateItem = new EstimatesItems();
+            $taxValues = [];
+          
+            if (!empty($item['sale_estim_item_tax'])) {
+                $taxValues[] = $item['sale_estim_item_tax'];
+            }
+            if (!empty($item['sale_estim_item_tax2'])) {
+                $taxValues[] = $item['sale_estim_item_tax2'];
+            }
+          
+            if (!empty($item['sale_estim_item_tax_new']) && is_array($item['sale_estim_item_tax_new'])) {
+                foreach ($item['sale_estim_item_tax_new'] as $additionalTax) {
+                    if (!empty($additionalTax)) {
+                        $taxValues[] = $additionalTax;
+                    }
+                }
+            }
+        
+        
+        //   dd($taxValues);
+            $estimateItem->sale_estim_item_tax = implode(',', $taxValues);
+        
             
+            unset($item['sale_estim_item_tax'], $item['sale_estim_item_tax2'], $item['sale_estim_item_tax_new']);
+        
+          
             $estimateItem->fill($item);
-
+        
+           
             $estimateItem->id = $user->id;
-            $estimateItem->sale_estim_id = $estimate->id; 
+            $estimateItem->sale_estim_id = $estimate->id;
             $estimateItem->sale_estim_item_status = 1;
+        
 
             $estimateItem->save();
         }
-
-        // Retrieve session data
+        
+        
+       
         $sessionData = session('form_data') ?? [];
 
-        // Iterate through each item in session data
+      
         foreach ($sessionData as $key => $value) {
             // Ignore _token and _method
             if (in_array($key, ['_token', '_method'])) {
@@ -279,11 +379,10 @@ class EstimatesController extends Controller
                 $menu = CustomizeMenu::where('mname', $mname)->first();
 
                 if ($menu) {
-                    // Check if the _other counterpart exists in the session
                     $otherKey = $key . '_other';
                     $otherValue = $sessionData[$otherKey] ?? null;
 
-                    // Determine the mtitle value
+                
                     if ($otherValue) {
                         // If there's an _other value, concatenate it with the main key value
                         $mtitle = $value;
@@ -329,10 +428,10 @@ class EstimatesController extends Controller
     // Method to show the preview page
     public function preview(Request $request)
     {
-    //    dd($request);
+   
         // Collect the request data
         $previewData = $request->all();
-        // dd($previewData);
+        
         // Pass the collected data to the preview view
         return view('masteradmin.estimates.preview', compact('previewData'));
     }
@@ -341,7 +440,7 @@ class EstimatesController extends Controller
     public function edit($id, Request $request): View
     {
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
+     
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -359,14 +458,14 @@ class EstimatesController extends Controller
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
         $customers = SalesCustomers::where('id', $user->id)->first();
-        // dd($salecustomer['sale_cus_id']);
+       
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
-        // dd($currencys);
+      
         
         $salestax = SalesTax::all();
-        // dd($businessDetails);
+       
 
         $estimates = Estimates::where('sale_estim_id', $id)->with('customer')->firstOrFail();
 
@@ -387,7 +486,7 @@ class EstimatesController extends Controller
         ->where('esti_cust_menu_title', 'on')
         ->get(); // Convert collection to array
 
-        // dd($estimatesCustomizeMenuIcon);
+       
 
         $specificMenus = CustomizeMenu::with('children')
         ->whereIn('cust_menu_id', [1, 2, 3, 4])
@@ -406,18 +505,14 @@ class EstimatesController extends Controller
         ->get();
 
         $estimateCustomizeMenu = EstimateCustomizeMenu::where('sale_estim_id', $id)->get();
-        // dd($estimateCustomizeMenu);
-        // $states = States::get();
-
-        // dd($estimates);
+   
         return view('masteradmin.estimates.edit', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','estimatesCustomizeMenu','specificMenus','HideMenus', 'HideSettings', 'HideDescription','estimateCustomizeMenu','estimatesCustomizeMenuIcon'));
 
     }
 
     public function update(Request $request, $estimates_id)
     {
-        // dd($request);
-        // \DB::enableQueryLog();
+   
 
         $user = Auth::guard('masteradmins')->user();
 
@@ -455,10 +550,37 @@ class EstimatesController extends Controller
             'sale_estim_image' => 'nullable|image',
             'sale_estim_item_discount' => 'nullable|integer',
             'sale_total_days' => 'required|integer',
+            'items.*.sale_product_id' => 'required|integer',
+            'items.*.sale_estim_item_desc' => 'required|string',
+            'items.*.sale_estim_item_qty' => 'required|integer|min:1',
+            'items.*.sale_estim_item_price' => 'required|numeric|min:0',
+            'items.*.sale_estim_item_tax' => 'required|integer',
         
         ],[
+            'sale_estim_title.max' => 'The title may not exceed 255 characters.',
+            'sale_cus_id.required' => 'Please select a customer.',
+            'sale_cus_id.integer' => 'Please select a customer.',
             'sale_estim_number.required' => 'The estimate number is required.',
             'sale_estim_number.unique' => 'An estimate with this number already exists. Estimate numbers must be unique.',
+            'sale_estim_date.required' => 'Please select the estimate date.',
+            'sale_estim_valid_date.required' => 'Please select the valid until date.',
+            'sale_estim_discount_type.required' => 'Please select a discount type.',
+            'sale_estim_discount_type.in' => 'The discount type must be either Dollar ($) or Percentage (%).',
+            'sale_estim_sub_total.required' => 'Please enter the sub-total amount.',
+            'sale_estim_discount_total.required' => 'Please enter the total discount amount.',
+            'sale_estim_tax_amount.required' => 'Please enter the tax amount.',
+            'sale_estim_final_amount.required' => 'Please enter the final amount.',
+            'sale_estim_image.image' => 'The file uploaded must be a valid image.',
+            'sale_status.required' => 'Please set the status of the estimate.',
+            'sale_estim_status.required' => 'Please set the estimate status.',
+            'sale_total_days.required' => 'Please set valid date range.',
+            'items.*.sale_product_id.integer' => 'Please select item.',
+            'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
+            'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
+            'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
+            'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
+            'items.*.sale_estim_item_price.min' => 'The price for each item must be at least 0.',
+            'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
         ]);
 
         // if()
@@ -468,8 +590,6 @@ class EstimatesController extends Controller
         $estimate->sale_total_days = $validatedData['sale_total_days'];
         $estimate->where('sale_estim_id', $estimates_id)->update($validatedData);
 
-        // dd(\DB::getQueryLog()); 
-        // dd($estimate);
         
         EstimatesItems::where('sale_estim_id', $estimates_id)->delete();
 
@@ -547,13 +667,13 @@ class EstimatesController extends Controller
 
     public function updateCustomer(Request $request, $sale_cus_id)
     {
-        // dd($request);
+      
         // Find the SalesCustomers by sale_cus_id
         $SalesCustomersu = SalesCustomers::where(['sale_cus_id' => $sale_cus_id])->firstOrFail();
 
         // Validate incoming request data
         $rules = [
-            'sale_cus_business_name' => 'required|string|max:255',
+            // 'sale_cus_business_name' => 'required|string|max:255',
             'sale_cus_first_name' => 'nullable|string|max:255',
             'sale_cus_last_name' => 'nullable|string|max:255',
             'sale_cus_email' => 'nullable|email|max:255',
@@ -581,7 +701,7 @@ class EstimatesController extends Controller
         ];
 
         $messages = [
-           'sale_cus_business_name.required' => 'The business name is required.',
+        //    'sale_cus_business_name.required' => 'The business name is required.',
         'sale_cus_business_name.string' => 'The business name must be a valid string.',
         'sale_cus_first_name.string' => 'The first name must be a valid string.',
         'sale_cus_last_name.string' => 'The last name must be a valid string.',
@@ -624,7 +744,7 @@ class EstimatesController extends Controller
         $SalesCustomersu->load('state', 'country');
 
         // Redirect with a success message
-        // dd($SalesCustomersu);
+      
         if ($SalesCustomersu) {
             return response()->json(['customer' => $SalesCustomersu]);
         } else {
@@ -636,7 +756,7 @@ class EstimatesController extends Controller
     {
         $customers = SalesCustomers::get(['sale_cus_id', 'sale_cus_business_name']);
         
-        // dd($customers);
+       
         return response()->json($customers);
     }
 
@@ -655,7 +775,7 @@ class EstimatesController extends Controller
 
         EstimateCustomizeMenu::where('sale_estim_id', $id)->delete();
 
-        \MasterLogActivity::addToLog('Estimates details Deleted.');
+        \MasterLogActivity::addToLog('Estimates details Deleted.'); 
 
        
         return response()->json(['success' => true, 'message' => 'Estimate deleted successfully.']);
@@ -667,7 +787,7 @@ class EstimatesController extends Controller
 
     public function menuUpdate(Request $request) 
     {   
-        // dd($request->all());
+       
         Session::put('form_data', $request->all());
 
         return response()->json([
@@ -680,16 +800,16 @@ class EstimatesController extends Controller
     public function getMenuSessionData()
     {
         $sessionData = Session::get('form_data', []);
-        //dd($sessionData);
+       
         return response()->json($sessionData);
     }
 
     public function view($id, Request $request): View
     {
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
+       
         $user_id = $user->user_id;
-        // dd($user_id);
+       
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -707,19 +827,19 @@ class EstimatesController extends Controller
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
         $customers = SalesCustomers::where('id', $user->id)->first();
-        // dd($salecustomer['sale_cus_id']);
+       
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
-        // dd($currencys);
+      
         
         $salestax = SalesTax::all();
-        // dd($businessDetails);
+      
 
         $estimates = Estimates::where('sale_estim_id', $id)->with('customer')->firstOrFail();
 
         $estimatesItems = EstimatesItems::where('sale_estim_id', $id)->with('estimate_product', 'item_tax')->get();
-        // dd($estimatesItems);
+        
         $customer_states = collect();
         if ($customers && $customers->sale_bill_country_id) {
             $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
@@ -732,7 +852,7 @@ class EstimatesController extends Controller
 
         // $states = States::get();
 
-        // dd($estimates);
+     
         return view('masteradmin.estimates.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','user_id'));
 
     }
@@ -740,7 +860,7 @@ class EstimatesController extends Controller
     public function duplicate($id, Request $request): View
     {
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
+      
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -758,21 +878,20 @@ class EstimatesController extends Controller
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
         $customers = SalesCustomers::where('id', $user->id)->first();
-        // dd($salecustomer['sale_cus_id']);
+       
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
-        // dd($currencys);
-        
+      
         $salestax = SalesTax::all();
-        // dd($businessDetails);
+      
 
         $estimates = Estimates::where('sale_estim_id', $id)->with('customer')->firstOrFail();
 
         $lastEstimate = Estimates::orderBy('sale_estim_id', 'desc')->first();
 
         $newId = $lastEstimate ? $lastEstimate->sale_estim_id + 1 : 1;
-        // dd($newId);
+      
 
         $estimatesItems = EstimatesItems::where('sale_estim_id', $id)->get();
 
@@ -808,13 +927,13 @@ class EstimatesController extends Controller
         $estimatesCustomizeMenu = EstimateCustomizeMenu::where('sale_estim_id', $id)->get();
       
 
-        // dd($estimates);
+      
         return view('masteradmin.estimates.duplicate', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','newId','HideMenus','estimateCustomizeMenu','estimatesCustomizeMenu','specificMenus','HideSettings','HideDescription'));
     }
 
     public function duplicateStore(Request $request)
     {
-        // dd($request->sale_currency_id);
+       
 
         $user = Auth::guard('masteradmins')->user();
 
@@ -865,7 +984,7 @@ class EstimatesController extends Controller
         $estimate->sale_status = 'Draft';
         $estimate->sale_estim_status = 1;
         
-        // dd($estimate);
+       
         $estimate->save();
 
         foreach ($request->input('items') as $item) {
@@ -1009,7 +1128,7 @@ class EstimatesController extends Controller
 
     $nextStatus = $statusMap[$currentStatus] ?? null;
 
-    // dd($nextStatus); // 
+  
 
         if ($nextStatus) {
 
@@ -1073,7 +1192,7 @@ class EstimatesController extends Controller
         $estimateViewUrl = route('business.estimate.sendview', [$shortEncodedEstimateId, $shortEncodedUserID]);
 
 
-        // dd($estimateViewUrl);
+       
 
         $customer = SalesCustomers::where('sale_cus_id', $estimate->sale_cus_id)->first();
         if (!$customer || empty($customer->sale_cus_email)) {
@@ -1089,7 +1208,7 @@ class EstimatesController extends Controller
         $currencySymbol = $currency ? $currency->currency_symbol : '';
         
         $logMsg = "Estimate #{$estimate->sale_estim_number} for {$currencySymbol}{$estimate->sale_estim_final_amount}";
-        // \DB::enableQueryLog();
+     
 
         SentLog::create([
             'log_type' => '1',
@@ -1101,7 +1220,7 @@ class EstimatesController extends Controller
             'log_status' => '1', 
         ]);
 
-        // dd(\DB::gestQueryLog()); 
+      
 
 
         return redirect()->back()->with('success', 'Estimate link sent to the customer successfully.');
@@ -1120,7 +1239,7 @@ class EstimatesController extends Controller
     
             $decryptedEstimateId = Crypt::decryptString($base64EstimateId);
             $decryptedUserID = Crypt::decryptString($base64UserID);
-            // dd($decryptedUserID);
+          
             
             $tableName = $decryptedUserID . '_py_business_details';
             
@@ -1204,7 +1323,7 @@ class EstimatesController extends Controller
     public function authsendView(Request $request, $id, $slug)
     {
         try {
-            // dd('hiii');
+           
             $id1= $id;
             $slug1 = $slug;
     
@@ -1212,7 +1331,7 @@ class EstimatesController extends Controller
     
             $decryptedEstimateId = $id;
             $decryptedUserID = $slug;
-            // dd($decryptedUserID);
+          
 
             
             $tableName = $decryptedUserID . '_py_business_details';
@@ -1330,7 +1449,7 @@ class EstimatesController extends Controller
     {
 
         $user = Auth::guard('masteradmins')->user();
-        // dd($user);
+      
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -1348,14 +1467,13 @@ class EstimatesController extends Controller
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
         $customers = SalesCustomers::where('id', $user->id)->first();
-        // dd($salecustomer['sale_cus_id']);
+     
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
-        // dd($currencys);
+      
         
         $salestax = SalesTax::all();
-        // dd($businessDetails);
 
         $estimates = Estimates::where('sale_estim_id', $id)->with('customer')->firstOrFail();
 
@@ -1371,8 +1489,7 @@ class EstimatesController extends Controller
         $lastInvoice = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
 
         $newId = $lastInvoice ? $lastInvoice->sale_inv_id + 1 : 1;
-        // dd($newId);
-
+      
         $estimatesItems = EstimatesItems::where('sale_estim_id', $id)->get();
 
         $customer_states = collect();
@@ -1409,10 +1526,26 @@ class EstimatesController extends Controller
 
         // $states = States::get();
 
-        // dd($estimates);
+        
         return view('masteradmin.invoices.edit-invoice', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','estimates','estimatesItems','customer_states','ship_state','newId','specificMenus','HideMenus','HideSettings','HideDescription','estimateCustomizeMenu','estimatesCustomizeMenu'));
 
     }
 
-    
+    public function getTaxNames(Request $request)
+{
+    $request->validate([
+        'tax_id' => 'required|integer|exists:taxes,id',  // Assuming you have a 'taxes' table
+    ]);
+
+    $taxId = $request->input('tax_id');
+    $tax = SalesTax::find($taxId); // Assuming you have a Tax model
+
+    // Prepare the response with tax names (you can modify this logic to get more data)
+    $taxNames = $tax ? $tax->name : ''; // Assuming 'name' is the tax name column
+
+    // Return the response as JSON
+    return response()->json([
+        'tax_names' => $taxNames
+    ]);
+}
 }

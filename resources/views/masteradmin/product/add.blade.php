@@ -19,8 +19,8 @@
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
             <a href="{{route('business.salesproduct.index')}}" class="add_btn_br">Cancel</a>
-            <a href="#"><button class="add_btn">Save</button></a>
-          </ol>
+            <button type="submit" form="pro-Form" class="add_btn">Save</button>
+            </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -35,7 +35,7 @@
           <h3 class="card-title">Create New Product Or Service</h3>
         </div>
         <!-- /.card-header -->
-        <form method="POST" action="{{ route('business.salesproduct.store') }}">
+        <form id="pro-Form" method="POST" action="{{ route('business.salesproduct.store') }}">
           @csrf
           <div class="card-body">
             <p>Products and services that you buy from vendors are used as items on Bills to record those purchases, and
@@ -57,10 +57,10 @@
                   <label>Price</label>
                   <div class="d-flex">
                     <input type="number" class="form-control form-controltext" name="sale_product_price"
-                      aria-describedby="inputGroupPrepend" placeholder="0.00" value="{{ old('sale_product_price') }}">
+                      aria-describedby="inputGroupPrepend" min="0" placeholder="0.00" value="{{ old('sale_product_price') }}">
                     <select class="form-select form-selectcurrency" name="sale_product_currency_id"
                       id="sale_product_currency_id">
-                      <!-- <option value="">Select</option> -->
+                      <!-- <option value="">Select</option> --> 
                       @foreach($Country as $curr)
               <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option>
             @endforeach
@@ -74,8 +74,8 @@
                   <label>Tax</label>
                   <select class="form-control select2" name="sale_product_tax" id="sale_product_tax">
                     <option value="">Select Tax</option>
-                    @foreach($SalesTax as $salesTax)
-            <option value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }}</option>
+                     @foreach($SalesTax as $salesTax)
+                   <option value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }}</option>
           @endforeach
                   </select>
                 </div>

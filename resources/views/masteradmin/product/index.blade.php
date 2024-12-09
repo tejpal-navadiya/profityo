@@ -72,8 +72,8 @@
               <tr>
               <td>{{ $value->sale_product_name }}</td>
               <td>{{ $value->sale_product_desc }}</td>
-              <td>{{ $value->sale_product_price }}</td>
-              <td><strong>{{ $value->tax->tax_abbreviation }} ({{ $value->tax->tax_rate }}%)</strong> - {{ $value->tax->tax_name }}</td>
+              <td>{{ $currencys->firstWhere('id', $value->sale_product_currency_id)->currency_symbol ?? '' }}{{ $value->sale_product_price }}</td>
+              <td><strong>{{ $value->tax->tax_abbreviation ?? '' }} ({{ $value->tax->tax_rate ?? ''}}%)</strong> - {{ $value->tax->tax_name ?? ''}}</td>
               <!-- <td><span class="overdue_text">$75.00 Overdue</span></td> -->
               <td class="text-right">
               <!-- <a href=""><i class="fas ffa-solid fa-key view_icon_grid"></i></a> -->

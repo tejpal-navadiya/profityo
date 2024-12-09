@@ -87,14 +87,14 @@ class UserController extends Controller
         'users_password' => 'nullable|string|min:8',
         'role_id' => 'required|integer',
     ], [
-        'users_name.required' => 'The name field is required.',
-        'users_email.required' => 'The email field is required.',
+        'users_name.required' => '  Please enter name.',
+        'users_email.required' => 'Please enter email.',
         'users_email.email' => 'The email must be a valid email address.',
         'users_email.unique' => 'The email has already been taken.',
-        'users_phone.required' => 'The phone field is required.',
+        'users_phone.required' => 'Please enter phone number.',
         'users_phone.digits_between' => 'The phone number must be between 10 and 15 digits.',
-        'role_id.required' => 'The role field is required.',
-        'role_id.integer' => 'The role field is required.',
+        'role_id.integer' => 'Please enter role.',
+        // 'role_id.integer' => 'Please enter role.',
     ]);
 
         
@@ -171,14 +171,14 @@ class UserController extends Controller
             'users_password' => 'nullable|string|min:8',
             'role_id' => 'required|integer',
         ], [
-            'users_name.required' => 'The name field is required.',
-            'users_email.required' => 'The email field is required.',
-            'users_email.email' => 'The email must be a valid email address.',
-            'users_email.unique' => 'The email has already been taken.', // Custom message for unique constraint
-            'users_phone.required' => 'The phone field is required.',
-            'users_phone.digits_between' => 'The phone number must be between 10 and 15 digits.',
-            'role_id.required' => 'The role field is required.',
-            'role_id.integer' => 'The role must be an integer.',
+            'users_name.required' => '  Please enter name.',
+        'users_email.required' => 'Please enter email.',
+        'users_email.email' => 'The email must be a valid email address.',
+        'users_email.unique' => 'The email has already been taken.',
+        'users_phone.required' => 'Please enter phone number.',
+        'users_phone.digits_between' => 'The phone number must be between 10 and 15 digits.',
+        'role_id.integer' => 'Please enter role.',
+        // 'role_id.integer' => 'Please enter role.',
         ]);
         
 

@@ -75,7 +75,7 @@
         <div class="row">
           <div class="col-lg-3 col-1024 col-md-6 px-10">
             <select id="sale_cus_id" class="form-control select2" style="width: 100%;" name="sale_cus_id">
-              <option value="" default>All customers</option>
+              <option value="" default>All Customers</option>
               @foreach($salecustomer as $value)
                 <option value="{{ $value->sale_cus_id }}">{{ $value->sale_cus_business_name }} </option>
               @endforeach
@@ -83,7 +83,7 @@
           </div>
           <div class="col-lg-2 col-1024 col-md-6 px-10">
             <select class="form-control form-select" style="width: 100%;" name="sale_status" id="sale_status">
-              <option value="">All statuses</option>
+              <option value="">All Statuses</option>
               <option value="Draft">Draft</option>
               <option value="Saved">Saved</option>
               <option value="Sent">Sent</option>
@@ -111,7 +111,7 @@
           </div>
           <div class="col-lg-3 col-1024 col-md-6 px-10">
             <div class="input-group">
-              <input type="search" class="form-control" name="sale_estim_number"  placeholder="Enter estimate #" id="sale_estim_number">
+              <input type="search" class="form-control" name="sale_estim_number"  placeholder="Enter Estimate #" id="sale_estim_number">
               <div class="input-group-append" id="sale_estim_number_submit">
                 <button type="submit" class="btn btn-default" >
                   <i class="fa fa-search"></i>
@@ -137,7 +137,7 @@
         <div class="card-body1">
           <div class="tab-content">
             <div class="tab-pane active" id="activeestimate">
-              <div class="col-md-12 table-responsive pad_table">
+              <div class="col-md-12 pad_table">
                 <table id="example1" class="table table-hover text-nowrap">
                   <thead>
                     <tr>
@@ -156,7 +156,7 @@
                           <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
-                          <td>{{ $value->sale_estim_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <!-- Actions Dropdown -->
                           <td>
@@ -253,7 +253,7 @@
             </div>
 
             <div class="tab-pane" id="draftestimate">
-              <div class="col-md-12 table-responsive pad_table">
+              <div class="col-md-12 pad_table">
                 <table id="example5" class="table table-hover text-nowrap">
                   <thead>
                     <tr>
@@ -272,7 +272,7 @@
                           <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
-                          <td>{{ $value->sale_estim_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <!-- Actions Dropdown -->
                           <td>
@@ -370,7 +370,7 @@
             </div>
 
             <div class="tab-pane" id="allestimate">
-              <div class="col-md-12 table-responsive pad_table">
+              <div class="col-md-12 pad_table">
                 <table id="example4" class="table table-hover text-nowrap">
                   <thead>
                     <tr>
@@ -389,7 +389,7 @@
                           <td>{{ $value->customer->sale_cus_first_name ?? '' }} {{ $value->customer->sale_cus_last_name ?? '' }}</td>
                           <td>{{ $value->sale_estim_number }}</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_estim_date)->format('M d, Y') }}</td>
-                          <td>{{ $value->sale_estim_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_estim_final_amount }}</td>
                           <td><span class="status_btn">{{ $value->sale_status }}</span></td>
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">

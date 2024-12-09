@@ -12,13 +12,27 @@ use App\Models\SalesTax;
 class SalesTaxController extends Controller
 {
     //
-    public function index(): View
+    public function index(Request $request)
     {
-        //
-        // dd('hii');
-        $SalesTax = SalesTax::all();
+        // Get authenticated user and their role
+        $user = Auth::guard('masteradmins')->user();
+        $user_id = $user->users_id; // Fetch the role ID of the logged-in user
+        $role_id = $user->role_id;
+
+        // Fetch sales taxes
+        if ($role_id == 0) { // Admin Role: Fetch all records
+            $SalesTax = SalesTax::all();
+        } else { // Non-Admin Role: Fetch limited data based on role
+            $SalesTax = SalesTax::where('id', $user_id)->get(); 
+          
+        }
+    
+        // Pass the filtered data to the view
         return view('masteradmin.salestax.index')->with('SalesTax', $SalesTax);
     }
+
+    
+
     public function create(): View
     {
         return view('masteradmin.salestax.add');
@@ -45,7 +59,7 @@ class SalesTaxController extends Controller
         $validatedData['tax_recoverable'] = $request->has('tax_recoverable') ? 'on' : 'off';
         $validatedData['tax_compound'] = $request->has('tax_compound') ? 'on' : 'off';
 
-        $validatedData['id'] = $user->id;
+        $validatedData['id'] = $user->users_id;
         $validatedData['tax_status'] = 1;
 
         SalesTax::create($validatedData);

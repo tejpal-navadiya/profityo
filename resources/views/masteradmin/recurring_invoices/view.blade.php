@@ -284,8 +284,8 @@
                                             <td>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_tax_amount }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Total:</td>
-                                            <td>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_final_amount }}</td>
+                                            <td><strong>Total:</strong></td>
+                                            <td><strong>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_final_amount }}</strong></td>
                                         </tr>
                                     </table>
                                 </div>
@@ -690,8 +690,8 @@
         @csrf
         @method('PATCH')
         <div class="modal-body">
-            <div class="row pxy-15 px-10">
-              <div class="col-md-3">
+            <div class="row pxy-15">
+              <div class="col-md-4">
                 <div class="form-group">
                   <label>Repeat this Invoice</label>
                   <select id="repeat-invoice-select" name="repeat_inv_type" class="form-control form-select">
@@ -703,7 +703,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-md-3" id="day-selection-row" style="display:none;">
+              <div class="col-md-4" id="day-selection-row" style="display:none;">
                 <div class="form-group">
                 <label>every</label>
                 <select class="form-control form-select" name="repeat_inv_day" id="day-select">
@@ -717,7 +717,7 @@
                 </select>
                 </div>
               </div>
-              <div class="col-md-3" id="month-selection-row" style="display:none;">
+              <div class="col-md-4" id="month-selection-row" style="display:none;">
                 <div class="form-group">
                     <label>every</label>
                     <select class="form-control form-select" name="repeat_inv_month" id="month-select">
@@ -736,7 +736,7 @@
                     </select>
                 </div>
               </div>
-              <div class="col-md-3" id="date-selection-row" style="display:none;">
+              <div class="col-md-4" id="date-selection-row" style="display:none;">
                 <div class="form-group">
                 <label>on the</label>
                 <select class="form-control form-select" name="repeat_inv_date" id="date-select">
@@ -779,7 +779,7 @@
               
             </div>
            
-            <div class="row pxy-15 px-10">
+            <div class="row pxy-15">
               <div class="col-md-3">
                 <div class="form-group">
                   <label>Create first invoice on</label>
@@ -807,13 +807,14 @@
 
             <div class="col-md-2" id="after-input" style="display: none;">
                 <div class="form-group">
-                    <input type="number" class="form-control" name="create_inv_number" id="invoice_number" value="1" value="{{ $reinvoicesschedule->create_inv_number ?? '' }}">
                     <label>invoices</label>
+                    <input type="number" class="form-control" name="create_inv_number" id="invoice_number" value="1" value="{{ $reinvoicesschedule->create_inv_number ?? '' }}">
                 </div>
             </div>
 
             <div class="col-md-3" id="on-datepicker" style="display: none;">
                 <div class="form-group">
+                    <label>&nbsp;</label>
                     <div class="input-group date" id="invoicedate" data-target-input="nearest">
                         <x-flatpickr id="invoicedate-datepicker" name="create_inv_date" placeholder="Select a date" />
                         <div class="input-group-append">

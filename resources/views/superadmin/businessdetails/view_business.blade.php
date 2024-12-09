@@ -144,7 +144,7 @@
                         <td>{{ $detail->role_name}}</td>
                         <td>{{ $detail->updated_at }}</td>
                         <td>
-                        @if ($detail->users_status == 0)
+                        @if ($detail->users_status == 1)
                             <span class="status_btn converted_status"> Active </span>
                           @else
                           <span class="status_btn overdue_status">Inactive</span>

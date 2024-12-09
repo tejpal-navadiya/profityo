@@ -8,7 +8,7 @@ use App\Models\States;
 use App\Models\Employees;
 use App\Models\EmployeeTaxDetails;
 use Carbon\Carbon;
-
+use App\Models\VacationPolicy;
 use App\Models\EmployeeComperisation;
 use App\Models\EmployeeStartOffboarding;
 use App\Models\EmployeePlaceLeave;
@@ -29,12 +29,99 @@ class EmployeesController extends Controller
     {
         $Country = Countries::all(); // Fetch all countries
         $State = States::all(); // Fetch all states
-        return view('masteradmin.payroll_employee.add', compact('Country', 'State'));
+        $vacation = VacationPolicy::all();
+        return view('masteradmin.payroll_employee.add', compact('Country', 'State','vacation'));
     }
 
+    
+    
+    // public function store(Request $request)
+    // {
+        
+    //     $user = Auth::guard('masteradmins')->user();
+    
+    //     // Validate request data
+    //     $request->validate([
+    //         'emp_first_name' => 'required|string|max:255',
+    //         'emp_last_name' => 'nullable|string|max:255',
+    //         'emp_social_security_number' => 'required|string|max:255',
+    //         'emp_hopy_address' => 'nullable|string|max:255',
+    //         'city_name' => 'nullable|string|max:255',
+    //         'state_id' => 'nullable|numeric',
+    //         'zipcode' => 'nullable|string|max:255',
+    //         'emp_dob' => [
+    //             'required',
+    //             'date',
+    //             function ($attribute, $value, $fail) {
+    //                 $dob = Carbon::parse($value);
+    //                 $age = $dob->diffInYears(Carbon::now());
+    //                 if ($age < 10) {
+    //                     $fail('The employee must be at least 10 years old.');
+    //                 }
+    //             },
+    //         ],
+    //         'emp_email' => 'nullable|email|max:255',
+    //         'emp_doh' => 'required|string|max:255',
+    //         'emp_work_location' => 'required|string|max:255',
+    //         'emp_wage_type' => 'required|string|max:255',
+    //         'emp_wage_amount' => 'required|string|max:255',
+    //         'emp_work_hours' => 'nullable|string|max:255',
+    //         'emp_status' => 'nullable|string|max:255',
+    //         'emp_direct_deposit' => 'required|in:1,0', // Update validation rule        //    'emp_vacation_policy' => 'required|exists:py_vacation_policy,v_id', // New validation rule
+    //         'emp_vacation_accural_rate' => 'nullable|numeric', // New validation rule for the accrual rate
+
+    //     ], [
+    //         'emp_first_name.required' => 'Please enter first name.',
+    //         'emp_last_name.required' => 'Please enter last name.',
+    //         'emp_social_security_number.required' => 'Please enter social security number.',
+    //         'emp_wage_amount.required' => 'Please enter wage amount.',
+    //         'emp_dob.required' => 'Please enter date of birth.',
+    //         'emp_doh.required' => 'Please enter doh.',
+    //         'emp_work_location.required' => 'Please enter work location.',
+    //         'emp_wage_type.required' => 'Please enter wage type.',
+    //         'emp_direct_deposit.required' => 'Please select direct deposit option.', // New custom message
+    //         // 'emp_vacation_policy.required' => 'Please select a vacation policy.', // New custom message
+    //     ]);
+    
+    //     // Prepare the data for insertion
+    //     $validatedData = $request->all();
+    //     $validatedData['id'] = $user->id; // Use the correct field name for user ID
+    //     $validatedData['emp_status'] = 1;
+    //     $validatedData['emp_direct_deposit'] = $request->input('emp_direct_deposit'); // Directly use the input value
+    //     // Convert 'yes'/'no' to 1/0
+    //     $validatedData['emp_vacation_policy'] = $request->input('emp_vacation_policy'); // Assuming this is the ID of the selected vacation policy
+    //     $validatedData['emp_vacation_accural_rate'] = $request->input('emp_vacation_accural_rate'); // Get the value of the new field
+
+    //     // Insert the data into the Employees table
+    //     Employees::create([
+    //         'emp_first_name' => $validatedData['emp_first_name'],
+    //         'emp_last_name' => $validatedData['emp_last_name'],
+    //         'emp_social_security_number' => $validatedData['emp_social_security_number'],
+    //         'emp_hopy_address' => $validatedData['emp_hopy_address'],
+    //         'city_name' => $validatedData['city_name'],
+    //         'state_id' => $validatedData['state_id'],
+    //         'zipcode' => $validatedData['zipcode'],
+    //         'emp_dob' => $validatedData['emp_dob'],
+    //         'emp_email' => $validatedData['emp_email'],
+    //         'emp_work_hours' => $validatedData['emp_work_hours'],
+    //         'emp_doh' => $validatedData['emp_doh'],
+    //         'emp_work_location' => $validatedData['emp_work_location'],
+    //         'emp_wage_type' => $validatedData['emp_wage_type'],
+    //         'emp_wage_amount' => $validatedData['emp_wage_amount'],
+    //         'id' => $validatedData['id'],
+    //         'emp_status' => $validatedData['emp_status'],
+    //         'emp_direct_deposit' => $validatedData['emp_direct_deposit'], // New field
+    //         'emp_vacation_policy' => $validatedData['emp_vacation_policy'], // New field
+    //         'emp_vacation_accural_rate' => $validatedData['emp_vacation_accural_rate'],
+    //     ]);
+    // // dd( $validatedData);
+    //     \MasterLogActivity::addToLog('Employee is created.');
+    
+    //     return redirect()->route('business.employee.index')->with(['employee-add' => __('messages.masteradmin.employee.send_success')]);
+    // }
     public function store(Request $request)
-    {
-        $user = Auth::guard('masteradmins')->user();
+{
+    $user = Auth::guard('masteradmins')->user();
     
         // Validate request data
         $request->validate([
@@ -55,27 +142,41 @@ class EmployeesController extends Controller
                         $fail('The employee must be at least 10 years old.');
                     }
                 },
-            ],            'emp_email' => 'nullable|email|max:255',
-            // 'emp_middle_initial' => 'nullable|string|max:255',
+            ],
+            'emp_email' => 'nullable|email|max:255',
             'emp_doh' => 'required|string|max:255',
             'emp_work_location' => 'required|string|max:255',
             'emp_wage_type' => 'required|string|max:255',
             'emp_wage_amount' => 'required|string|max:255',
+            'emp_work_hours' => 'nullable|string|max:255',
             'emp_status' => 'nullable|string|max:255',
-        ],[
-            'emp_first_name.required' => 'The first name field is required.',
-            'emp_last_name.required' => 'The last name field is required.',
-            'emp_social_security_number.required' => 'The social security number field is required.',
-            'emp_wage_amount.required' => 'The wage amount field is required.',
+            'emp_direct_deposit' => 'required|in:1,0', // Update validation rule        //    'emp_vacation_policy' => 'required|exists:py_vacation_policy,v_id', // New validation rule
+            'emp_vacation_accural_rate' => 'nullable|numeric', // New validation rule for the accrual rate
+
+        ], [
+            'emp_first_name.required' => 'Please enter first name.',
+            'emp_last_name.required' => 'Please enter last name.',
+            'emp_social_security_number.required' => 'Please enter social security number.',
+            'emp_wage_amount.required' => 'Please enter wage amount.',
+            'emp_dob.required' => 'Please enter date of birth.',
+            'emp_doh.required' => 'Please enter doh.',
+            'emp_work_location.required' => 'Please enter work location.',
+            'emp_wage_type.required' => 'Please enter wage type.',
+            'emp_direct_deposit.required' => 'Please select direct deposit option.', // New custom message
+            // 'emp_vacation_policy.required' => 'Please select a vacation policy.', // New custom message
         ]);
     
         // Prepare the data for insertion
         $validatedData = $request->all();
         $validatedData['id'] = $user->id; // Use the correct field name for user ID
         $validatedData['emp_status'] = 1;
-    
+        $validatedData['emp_direct_deposit'] = $request->input('emp_direct_deposit'); // Directly use the input value
+        // Convert 'yes'/'no' to 1/0
+        $validatedData['emp_vacation_policy'] = $request->input('emp_vacation_policy'); // Assuming this is the ID of the selected vacation policy
+        $validatedData['emp_vacation_accural_rate'] = $request->input('emp_vacation_accural_rate'); // Get the value of the new field
+
         // Insert the data into the Employees table
-        Employees::create([
+        $employee =   Employees::create([
             'emp_first_name' => $validatedData['emp_first_name'],
             'emp_last_name' => $validatedData['emp_last_name'],
             'emp_social_security_number' => $validatedData['emp_social_security_number'],
@@ -85,18 +186,33 @@ class EmployeesController extends Controller
             'zipcode' => $validatedData['zipcode'],
             'emp_dob' => $validatedData['emp_dob'],
             'emp_email' => $validatedData['emp_email'],
-            // 'emp_middle_initial' => $validatedData['emp_middle_initial'],
+            'emp_work_hours' => $validatedData['emp_work_hours'],
             'emp_doh' => $validatedData['emp_doh'],
             'emp_work_location' => $validatedData['emp_work_location'],
             'emp_wage_type' => $validatedData['emp_wage_type'],
             'emp_wage_amount' => $validatedData['emp_wage_amount'],
             'id' => $validatedData['id'],
             'emp_status' => $validatedData['emp_status'],
+            'emp_direct_deposit' => $validatedData['emp_direct_deposit'], // New field
+            'emp_vacation_policy' => $validatedData['emp_vacation_policy'], // New field
+            'emp_vacation_accural_rate' => $validatedData['emp_vacation_accural_rate'],
         ]);
-    
-        return redirect()->route('business.employee.index')->with(['employee-add' => __('messages.masteradmin.employee.send_success')]);
-    }
-    
+
+    // Insert the salary-related data into EmployeeComperisation table
+    EmployeeComperisation::create([
+        'emp_id' => $employee->id, // Use the newly created employee's ID
+        'id' => $user->id,
+        'emp_comp_salary_amount' => $validatedData['emp_wage_amount'],
+        'emp_comp_salary_type' => $validatedData['emp_wage_type'],
+        'emp_comp_effective_date' => $validatedData['emp_doh'],
+        'average_hours_per_week' => $validatedData['emp_work_hours'],
+        'emp_comp_status' => 1, // Active status or as needed
+    ]);
+
+    \MasterLogActivity::addToLog('Employee details created.');
+
+    return redirect()->route('business.employee.index')->with(['employee-add' => __('messages.masteradmin.employee.send_success')]);
+}
 
     public function edit($id): View
 {
@@ -111,62 +227,125 @@ class EmployeesController extends Controller
     $taxDetails=EmployeeTaxDetails::where('emp_tax_id', 1)->first();
     $EmployeeComperisation = EmployeeComperisation::where('emp_id' , $id)->first();
     $EmployeeComperisationLIST = EmployeeComperisation::where('emp_id' , $id)->get();
-
+    $vacation = VacationPolicy::all();
     // dd($EmployeeComperisation);
-    return view('masteradmin.payroll_employee.edit', compact('employee', 'Country', 'State','taxDetails','EmployeeComperisation','EmployeeComperisationLIST'));
+    return view('masteradmin.payroll_employee.edit', compact('vacation', 'employee', 'Country', 'State','taxDetails','EmployeeComperisation','EmployeeComperisationLIST'));
 }
+// public function update(Request $request, $id)
+//     {
+//         $user = Auth::guard('masteradmins')->user();
+//         // dd($request->all());
+//         // dd($id);
+//                 // Dynamically create the table name based on the user ID
+//         $dynamicId = $user->user_id;
+//         // $tableName = $dynamicId . '_py_employees';
+//         $employeeModel = Employees::where(['emp_id' => $id, 'id' => $user->id])->firstOrFail();
+// // dd($employeeModel);
+//         // Validate request data
+//         $validatedData = $request->validate([
+//             'emp_first_name' => 'nullable|string|max:255',
+//             'emp_last_name' => 'nullable|string|max:255',
+//             'emp_social_security_number' => 'required|string|max:255',
+//             'emp_hopy_address' => 'nullable|string|max:255',
+//             'city_name' => 'nullable|string|max:255',
+//             'state_id' => 'nullable|numeric',
+//             'zipcode' => 'nullable|string|max:255',
+//             'emp_dob' => 'required|date',
+//             'emp_email' => 'nullable|email|max:255',
+//             'emp_work_hours' => 'nullable|string|max:255',
+//             'emp_work_location' => 'required|string|max:255',
+//             'emp_wage_type' => 'required|string|max:255',
+//             'emp_wage_amount' => 'required|numeric|min:0',
+//         ], [
+//             // 'emp_first_name.required' => 'Please enter first name.',
+//             'emp_social_security_number.required' => 'Please enter social security number.',
+//             'emp_wage_amount.required' => 'Please enter wage amount.',
+//             'emp_dob.required' => 'Please enter date of birth.',
+//             // 'emp_doh.required' => 'Please enter date of hire.',
+//             'emp_work_location.required' => 'Please enter work location.',
+//             'emp_wage_type.required' => 'Please enter wage type.',
+//         ]);
+       
+//         $employee = $employeeModel->where(['emp_id' => $id])->update($validatedData);
+// // dd( $validatedData);
+//         if (!$employee) {
+//             return redirect()->route('business.employee.index')->withErrors('Employee not found.');
+//         }
+
+       
+//         \MasterLogActivity::addToLog('Employee is edited.');
+
+//         return redirect()->route('business.employee.index')->with(['employee-edit' => __('messages.masteradmin.employee.edit_success')]);
+//     }
 public function update(Request $request, $id)
 {
-  
     $user = Auth::guard('masteradmins')->user();
 
-    // Dynamically create the table name based on the user ID
-    $dynamicId = $user->user_id; 
-    $tableName = $dynamicId . '_py_employees'; 
+    // Dynamically fetch the employee record
+    $employeeModel = Employees::where(['emp_id' => $id, 'id' => $user->id])->firstOrFail();
 
-    // Validate request data
+    // Validate the request data
     $validatedData = $request->validate([
-        'emp_first_name' => 'required|string|max:255',
+        'emp_first_name' => 'nullable|string|max:255',
         'emp_last_name' => 'nullable|string|max:255',
-        'emp_social_security_number' => 'nullable|string|max:255',
+        'emp_social_security_number' => 'required|string|max:255',
         'emp_hopy_address' => 'nullable|string|max:255',
         'city_name' => 'nullable|string|max:255',
         'state_id' => 'nullable|numeric',
         'zipcode' => 'nullable|string|max:255',
-        'emp_dob' => 'nullable|string|max:255',
+        'emp_dob' => 'required|date',
         'emp_email' => 'nullable|email|max:255',
-        'emp_doh' => 'nullable|string|max:255',
-        'emp_work_location' => 'nullable|string|max:255',
-        'emp_wage_type' => 'nullable|string|max:255',
-        'emp_wage_amount' => 'nullable|string|max:255',
+        'emp_work_hours' => 'nullable|string|max:255',
+        'emp_work_location' => 'required|string|max:255',
+        'emp_wage_type' => 'required|string|max:255',
+        'emp_wage_amount' => 'required|numeric|min:0',
+        'emp_vacation_policy' => 'nullable|exists:py_vacation_policy,v_id', // Assuming this is the ID of the selected vacation policy
+        'emp_vacation_accural_rate' => 'nullable|numeric',  // Optional field
+        'emp_direct_deposit' => 'required|in:1,0', // Non-boolean type, 1 or 0
+    ], [
+        'emp_social_security_number.required' => 'Please enter social security number.',
+        'emp_wage_amount.required' => 'Please enter wage amount.',
+        'emp_dob.required' => 'Please enter date of birth.',
+        'emp_work_location.required' => 'Please enter work location.',
+        'emp_wage_type.required' => 'Please enter wage type.',
+        'emp_direct_deposit.required' => 'Please select direct deposit option.',
     ]);
 
-    // Find the employee record by ID in the dynamic table
-    $employee = Employees::where('emp_id' , $id)->first();
+    // Prepare the validated data for update
+    $updateData = [
+        'emp_first_name' => $request->input('emp_first_name'),
+        'emp_last_name' => $request->input('emp_last_name'),
+        'emp_social_security_number' => $request->input('emp_social_security_number'),
+        'emp_hopy_address' => $request->input('emp_hopy_address'),
+        'city_name' => $request->input('city_name'),
+        'state_id' => $request->input('state_id'),
+        'zipcode' => $request->input('zipcode'),
+        'emp_dob' => $request->input('emp_dob'),
+        'emp_email' => $request->input('emp_email'),
+        'emp_work_hours' => $request->input('emp_work_hours'),
+        'emp_work_location' => $request->input('emp_work_location'),
+        'emp_wage_type' => $request->input('emp_wage_type'),
+        'emp_wage_amount' => $request->input('emp_wage_amount'),
+        'emp_vacation_policy' => $request->input('emp_vacation_policy'),
+        'emp_vacation_accural_rate' => $request->input('emp_vacation_accural_rate'),
+        'emp_direct_deposit' => $request->input('emp_direct_deposit'), // Non-boolean, use 1 or 0
+    ];
 
+    // Update the employee data
+    $employee = $employeeModel->where(['emp_id' => $id])->update($validatedData);
+
+    // Check if update was successful
     if (!$employee) {
         return redirect()->route('business.employee.index')->withErrors('Employee not found.');
     }
 
-    // Update the employee record
-    Employees::where('emp_id', $id)->update([
-        'emp_first_name' => $request->emp_first_name,
-        'emp_last_name' => $request->emp_last_name,
-        'emp_social_security_number' => $request->emp_social_security_number,
-        'emp_hopy_address' => $request->emp_hopy_address,
-        'city_name' => $request->city_name,
-        'state_id' => $request->state_id,
-        'zipcode' => $request->zipcode,
-        'emp_dob' => $request->emp_dob,
-        'emp_email' => $request->emp_email,
-        'emp_doh' => $request->emp_doh,
-        'emp_work_location' => $request->emp_work_location,
-        'emp_wage_type' => $request->emp_wage_type,
-        'emp_wage_amount' => $request->emp_wage_amount,
-    ]);
+    // Log the activity
+    \MasterLogActivity::addToLog('Employee is edited.');
 
+    // Redirect back with success message
     return redirect()->route('business.employee.index')->with(['employee-edit' => __('messages.masteradmin.employee.edit_success')]);
 }
+
 
 
 public function storeCompensation(Request $request, $id)
@@ -175,8 +354,10 @@ public function storeCompensation(Request $request, $id)
     $user = Auth::guard('masteradmins')->user();
 
     // Find the employee using the provided emp_id and ensure the correct table prefix
-    $employee = Employees::where('emp_id', $id)->firstOrFail(); // Using $id directly
-
+    // $employee = Employees::where('emp_id', $id)->firstOrFail(); // Using $id directly
+    $employee = EmployeeComperisation::where('emp_id', $id)
+    ->orderBy('created_at', 'desc') // Sorting by most recent
+    ->get();
     // Validate compensation form fields
     $request->validate([
         'emp_comp_salary_amount' => 'required|numeric',
@@ -184,9 +365,9 @@ public function storeCompensation(Request $request, $id)
         'emp_comp_effective_date' => 'required|string',
         'average_hours_per_week' => 'nullable|numeric',  // Optional if salary type is not 'Hourly'
     ], [
-        'emp_comp_salary_amount.required' => 'The salary amount is required.',
+        'emp_comp_salary_amount.required' => 'Please enter salary amount.',
         'emp_comp_salary_type.required' => 'Please select a salary type.',
-        'emp_comp_effective_date.required' => 'Please provide an effective date.',
+        'emp_comp_effective_date.required' => 'Please enter an effective date.',
     ]);
 
     // Create a new compensation record (always inserts a new record)
@@ -308,6 +489,16 @@ public function storeTaxDetails(Request $request, $emp_id)
         'emp_tax_california_total_allowances' => 'required|numeric',
         'emp_tax_california_filing_status' => 'required|string',
         // Add other validation rules as needed
+    ],[
+        'emp_tax_deductions.required' => 'Please enter tax deductions.',
+        'emp_tax_dependent_amount.required' => 'Please enter dependent amount.',
+        'emp_tax_filing_status.required' => 'Please enter filing status.',
+        'emp_tax_nra_amount.required' => 'Please enter nra amount.',
+        'emp_tax_other_income.required' => 'Please enter other income.',
+        'emp_tax_job.required' => 'Please enter tax job.',
+        'emp_tax_california_filing_status.required' => 'Please enter california filing status.',
+        'emp_tax_california_total_allowances.required' => 'Please enter total allowances.',
+
     ]);
 
     // Check if tax details exist for this employee
@@ -338,6 +529,7 @@ public function storeTaxDetails(Request $request, $emp_id)
     } else {
         EmployeeTaxDetails::create($data);
     }
+    \MasterLogActivity::addToLog('Employee Tax details is saved.');
 
     return redirect()->back()->with(['employee-add' => __('messages.masteradmin.employee.send_success')]);
 }
@@ -354,7 +546,11 @@ public function storeOffboarding(Request $request, $emp_id)
     $request->validate([
         'emp_off_ending' => 'required|string',
         'emp_off_last_work_date' => 'required|date',
-        'emp_off_notice_date' => 'nullable|date',
+        'emp_off_notice_date' => 'required|date',
+    ],[
+        'emp_off_last_work_date.required' => 'Please enter last work date.',
+        'emp_off_notice_date.required' => 'Please enter notice date.',
+      
     ]);
 
     // Prepare the data for insertion
@@ -371,6 +567,7 @@ public function storeOffboarding(Request $request, $emp_id)
 
    
     EmployeeStartOffboarding::create($offboardingData);
+    \MasterLogActivity::addToLog('Employee Offboarding is saved.');
 
     // Redirect back with success message
     return redirect()->back()->with(['employee-add' => __('messages.masteradmin.employee.send_success')]);
@@ -382,6 +579,12 @@ public function storeLeaveData(Request $request, $emp_id)
     // Validation and data insertion as described in your code
     $request->validate([
         'emp_lev_desc' => 'nullable|string',
+        'emp_lev_start_date' => 'required|date',
+        'emp_lev_end_date' => 'required|date',
+    ],[
+        'emp_lev_start_date.required' => 'Please enter start date.',
+        'emp_lev_end_date.required' => 'Please enter end date.',
+      
     ]);
 
     $user = Auth::guard('masteradmins')->user();
@@ -397,6 +600,7 @@ public function storeLeaveData(Request $request, $emp_id)
     ];
 
     EmployeePlaceLeave::create($offboardingData);
+    \MasterLogActivity::addToLog('Employee Leave Data is saved.');
 
     return redirect()->back()->with(['employee-add' => __('messages.masteradmin.employee.send_success')]);
 }
@@ -419,6 +623,7 @@ public function destroy($emp_id)
 
     // Delete the employee record
     $employee->where('emp_id', $emp_id)->delete();
+    \MasterLogActivity::addToLog('Employee Data is deleted.');
 
     return redirect()->route('business.employee.index')->with('delete_success', __('messages.masteradmin.employee.delete_success'));
 }

@@ -96,13 +96,13 @@
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLongTitle">{{$asset->chart_menu_title}}</h5>
+                                          <h5 class="modal-title" id="exampleModalLongTitle1">{{$asset->chart_menu_title}}</h5> 
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>
                                         <div class="modal-body">
-                                          <form id="editAccountForm" method="POST" action="{{ route('business.chartofaccount.update',['account'=>$account->chart_acc_id]) }}">
+                                          <form id="editAccountForm1" method="POST" action="{{ route('business.chartofaccount.update',['account'=>$account->chart_acc_id]) }}">
                                             @csrf
                                             @method('Patch')
                                             <input type="hidden" id="editAccountId" name="chart_acc_id">
@@ -122,7 +122,8 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                   <label for="editAccountName">Account Name <span class="text-danger">*</span></label>
-                                                  <input type="text" class="form-control" id="editAccountName" name="chart_acc_name" placeholder="Cash on Hand" value="{{ $account->chart_acc_name }}" required>
+                                                  <input type="text" class="form-control" id="editAccountName" name="chart_acc_name" placeholder="Cash on Hand" value="{{ $account->chart_acc_name }}">
+                                                  <span id="accountNameError" class="text-danger mt-2" style="display:none;">Please enter account name.</span>
                                                 </div>
                                               </div>
                                               <div class="col-md-6">
@@ -154,7 +155,7 @@
                                               <div class="col-md-12">
                                                 <div class="form-group">
                                                   <label for="editArchiveAccount">Archive Account</label>
-                                                  <div class="form-check">
+                                                  <div class="form-check d-flex align-items-baseline">
                                                     <input class="form-check-input" type="checkbox" id="editArchiveAccount" name="archive_account" value=1
                                                     @if($account->archive_account == 1) checked @endif>
                                                     <label class="form-check-label" for="editArchiveAccount">
@@ -201,13 +202,13 @@
                   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle2">Add An Account</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
                       </div>
                       <div class="modal-body">
-                      <form action="{{ route('business.chartofaccount.store') }}" method="POST">
+                      <form id="addaccountAsset" action="{{ route('business.chartofaccount.store') }}" method="POST">
                       @csrf
                           <div class="row pxy-15 px-10">
                             <div class="col-md-6">
@@ -225,18 +226,22 @@
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                                <input type="text" class="form-control" id="asset_account_name" name="chart_acc_name" placeholder="">
+                                <span id="assetaddaccountNameError" class="text-danger mt-2" style="display:none;">Please enter account name.</span>
+
                               </div>
                             </div>
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label>Account Currency <span class="text-danger">*</span></label>
-                                <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                                <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" id="assetcurrencyId" name="currency_id" style="width: 100%;">
                                     <option value="">Select a Currency</option>
                                     @foreach($Country as $cur) 
                                         <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
                                     @endforeach
                                   </select>
+                                  <span id="assetaddcurrencyError" class="text-danger mt-2" style="display:none;">Please enter account currency.</span>
+
                               </div>
                             </div>
                             <div class="col-md-6">
@@ -311,13 +316,13 @@
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLongTitle">{{$lccard->chart_menu_title}}</h5>
+                                          <h5 class="modal-title" id="exampleModalLongTitle3">{{$lccard->chart_menu_title}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>
                                         <div class="modal-body">
-                                          <form id="editAccountForm" method="POST" action="{{ route('business.chartofaccount.update',['account'=>$liabilities->chart_acc_id]) }}">
+                                          <form id="editAccountForm2" method="POST" action="{{ route('business.chartofaccount.update',['account'=>$liabilities->chart_acc_id]) }}">
                                             @csrf
                                             @method('Patch')
                                             <input type="hidden" id="editAccountId" name="chart_acc_id">
@@ -337,7 +342,9 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                   <label for="editAccountName">Account Name <span class="text-danger">*</span></label>
-                                                  <input type="text" class="form-control" id="editAccountName" name="chart_acc_name" placeholder="Cash on Hand" value="{{ $liabilities->chart_acc_name }}" required>
+                                                  <input type="text" class="form-control" id="editAccountName" name="chart_acc_name" placeholder="Cash on Hand" value="{{ $liabilities->chart_acc_name }}">
+                                                  <span id="accountNameError" class="text-danger mt-2" style="display:none;">Please enter account name.</span>
+
                                                 </div>
                                               </div>
                                               <div class="col-md-6">
@@ -412,13 +419,13 @@
                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
+                          <h5 class="modal-title" id="exampleModalLongTitle4">Add An Account</h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
                         <div class="modal-body">
-                        <form action="{{ route('business.chartofaccount.store') }}" method="POST">
+                        <form id="addaccountAsset" action="{{ route('business.chartofaccount.store') }}" method="POST">
                         @csrf
                             <div class="row pxy-15 px-10">
                               <div class="col-md-6">
@@ -437,7 +444,8 @@
                               <div class="col-md-6">
                                 <div class="form-group">
                                   <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                                  <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                                  <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="">
+                                  <span id="assetaddaccountNameError" class="text-danger mt-2" style="display:none;">Please enter account name.</span>
                                 </div>
                               </div>
                               <div class="col-md-6">
@@ -525,13 +533,13 @@
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLongTitle">{{$incomes->chart_menu_title}}</h5>
+                                          <h5 class="modal-title" id="exampleModalLongTitle5">{{$incomes->chart_menu_title}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>
                                         <div class="modal-body">
-                                          <form id="editAccountForm" method="POST" action="{{ route('business.chartofaccount.update',['account'=>$incm->chart_acc_id]) }}">
+                                          <form id="editAccountForm3" method="POST" action="{{ route('business.chartofaccount.update',['account'=>$incm->chart_acc_id]) }}">
                                             @csrf
                                             @method('Patch')
                                             <input type="hidden" id="editAccountId" name="chart_acc_id">
@@ -553,7 +561,9 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                   <label for="editAccountName">Account Name <span class="text-danger">*</span></label>
-                                                  <input type="text" class="form-control" id="editAccountName" name="chart_acc_name" placeholder="Cash on Hand" value="{{ $incm->chart_acc_name }}" required>
+                                                  <input type="text" class="form-control" id="editAccountName" name="chart_acc_name" placeholder="Cash on Hand" value="{{ $incm->chart_acc_name }}" >
+                                                  <span id="accountNameError" class="text-danger mt-2" style="display:none;">Please enter account name.</span>
+
                                                 </div>
                                               </div>
                                               <div class="col-md-6">
@@ -627,7 +637,7 @@
                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
+                          <h5 class="modal-title" id="exampleModalLongTitle6">Add An Account</h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
@@ -651,7 +661,7 @@
                               <div class="col-md-6">
                                 <div class="form-group">
                                   <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                                  <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                                  <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="">
                                 </div>
                               </div>
                               <div class="col-md-6">
@@ -735,13 +745,13 @@
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLongTitle">{{$expense->chart_menu_title}}</h5>
+                                          <h5 class="modal-title" id="exampleModalLongTitle7">{{$expense->chart_menu_title}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>
                                         <div class="modal-body">
-                                          <form id="editAccountForm" method="POST" action="{{ route('business.chartofaccount.update',['account'=>$exp->chart_acc_id]) }}">
+                                          <form id="editAccountForm4" method="POST" action="{{ route('business.chartofaccount.update',['account'=>$exp->chart_acc_id]) }}">
                                             @csrf
                                             @method('Patch')
                                             <input type="hidden" id="editAccountId" name="chart_acc_id">
@@ -761,7 +771,9 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                   <label for="editAccountName">Account Name <span class="text-danger">*</span></label>
-                                                  <input type="text" class="form-control" id="editAccountName" name="chart_acc_name" placeholder="Cash on Hand" value="{{ $exp->chart_acc_name }}" required>
+                                                  <input type="text" class="form-control" id="editAccountName" name="chart_acc_name" placeholder="Cash on Hand" value="{{ $exp->chart_acc_name }}">
+                                                  <span id="accountNameError" class="text-danger mt-2" style="display:none;">Please enter account name.</span>
+
                                                 </div>
                                               </div>
                                               <div class="col-md-6">
@@ -834,7 +846,7 @@
                       <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
+                            <h5 class="modal-title" id="exampleModalLongTitle8">Add An Account</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                               <span aria-hidden="true">&times;</span>
                             </button>
@@ -858,7 +870,7 @@
                                 <div class="col-md-6">
                                   <div class="form-group">
                                     <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="">
                                   </div>
                                 </div>
                                 <div class="col-md-6">
@@ -940,13 +952,13 @@
                                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="exampleModalLongTitle">{{$equitys->chart_menu_title}}</h5>
+                                          <h5 class="modal-title" id="exampleModalLongTitle9">{{$equitys->chart_menu_title}}</h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>
                                         <div class="modal-body">
-                                          <form id="editAccountForm" method="POST" action="{{ route('business.chartofaccount.update',['account'=>$eq->chart_acc_id]) }}">
+                                          <form id="editAccountForm5" method="POST" action="{{ route('business.chartofaccount.update',['account'=>$eq->chart_acc_id]) }}">
                                             @csrf
                                             @method('Patch')
                                             <input type="hidden" id="editAccountId" name="chart_acc_id">
@@ -966,7 +978,9 @@
                                               <div class="col-md-6">
                                                 <div class="form-group">
                                                   <label for="editAccountName">Account Name <span class="text-danger">*</span></label>
-                                                  <input type="text" class="form-control" id="editAccountName" name="chart_acc_name" placeholder="Cash on Hand" value="{{ $eq->chart_acc_name }}" required>
+                                                  <input type="text" class="form-control" id="editAccountName" name="chart_acc_name" placeholder="Cash on Hand" value="{{ $eq->chart_acc_name }}">
+                                                  <span id="accountNameError" class="text-danger mt-2" style="display:none;">Please enter account name.</span>
+
                                                 </div>
                                               </div>
                                               <div class="col-md-6">
@@ -1041,7 +1055,7 @@
                     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLongTitle">Add An Account</h5>
+                          <h5 class="modal-title" id="exampleModalLongTitle10">Add An Account</h5>
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
@@ -1065,7 +1079,7 @@
                               <div class="col-md-6">
                                 <div class="form-group">
                                   <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                                  <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                                  <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="">
                                 </div>
                               </div>
                               <div class="col-md-6">
@@ -1114,13 +1128,13 @@
       <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLongTitle">Add an Account</h5>
+            <h5 class="modal-title" id="exampleModalLongTitle11">Add an Account</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-          <form action="{{ route('business.chartofaccount.store') }}" method="POST">
+          <form id="addaccountForm" action="{{ route('business.chartofaccount.store') }}" method="POST">
           @csrf
               <div class="row pxy-15 px-10">
                 <div class="col-md-6">
@@ -1147,18 +1161,21 @@
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="account_name">Account Name <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="" required>
+                    <input type="text" class="form-control" id="account_name" name="chart_acc_name" placeholder="">
+                    <span id="addaccountNameError" class="text-danger mt-2" style="display:none;">Please enter account name.</span>
+
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="form-group">
                     <label>Account Currency <span class="text-danger">*</span></label>
-                    <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" name="currency_id" style="width: 100%;">
+                    <select class="form-control from-select select2 @error('currency_id') is-invalid @enderror" id="currencyId" name="currency_id" style="width: 100%;">
                         <option value="">Select a Currency</option>
                         @foreach($Country as $cur) 
                             <option value="{{ $cur->id }}">{{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}</option>
                         @endforeach
                       </select>
+                      <span id="addcurrencyError" class="text-danger mt-2" style="display:none;">Please enter account currency.</span>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -1190,6 +1207,8 @@
 </div>
  
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment"></script>
+
 
 <script>
   $(document).ready(function() {
@@ -1344,6 +1363,79 @@ $(document).ready(function() {
     });
 });
 
+</script>
+<script>
+$(document).ready(function() {
+    // Generic form validation function
+    function validateForm(formId, fieldConfig) {
+        $(formId).on('submit', function(e) {
+            let isValid = true;
+
+            // Iterate through each field to validate
+            fieldConfig.forEach(config => {
+                let field = $(config.selector);
+                let errorField = $(config.errorSelector);
+
+                if (field.val().trim() === "") {
+                    errorField.show(); // Show the error message
+                    field.addClass("is-invalid"); // Add invalid class to highlight the field
+                    isValid = false; // Mark the form as invalid
+                } else {
+                    errorField.hide(); // Hide the error message if input is valid
+                    field.removeClass("is-invalid"); // Remove invalid class if input is valid
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault(); // Prevent form submission if invalid
+            }
+        });
+    }
+
+    // Generic input field validation
+    function hideErrorOnInput(fieldSelector, errorSelector) {
+        $(fieldSelector).on('input', function() {
+            let errorField = $(errorSelector);
+            if ($(this).val().trim() !== "") {
+                errorField.hide(); // Hide the error message if the field is no longer empty
+                $(this).removeClass("is-invalid"); // Remove the invalid class
+            }
+        });
+    }
+
+    // Configuration for each form
+    const formsConfig = [
+        {
+            formId: '#editAccountForm1',
+            fields: [
+                { selector: '#editAccountName', errorSelector: '#accountNameError' }
+            ]
+        },
+        
+        {
+            formId: '#addaccountForm',
+            fields: [
+                { selector: '#account_name', errorSelector: '#addaccountNameError' },
+                { selector: '#currencyId', errorSelector: '#addcurrencyError' }
+            ]
+        },
+        {
+            formId: '#addaccountAsset',
+            fields: [
+                { selector: '#asset_account_name', errorSelector: '#assetaddaccountNameError' },
+                { selector: '#assetcurrencyId', errorSelector: '#assetaddcurrencyError' }
+            ]
+        }
+    ];
+
+    // Initialize validation for each form
+    formsConfig.forEach(config => {
+        validateForm(config.formId, config.fields);
+        config.fields.forEach(field => {
+            hideErrorOnInput(field.selector, field.errorSelector);
+        });
+    });
+});
 </script>
 
 @endsection

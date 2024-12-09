@@ -40,7 +40,7 @@ class RecurringInvoicesController extends Controller
         $endDate = $request->input('end_date');   
         // \DB::enableQueryLog();
 
-        $query = RecurringInvoices::with('customer')->orderBy('created_at', 'desc');
+        $query = RecurringInvoices::with(['customer', 'currency'])->orderBy('created_at', 'desc');
 
 
         // if ($request->has('start_date') && $request->start_date) {
@@ -62,7 +62,8 @@ class RecurringInvoicesController extends Controller
         $allreInvoices = $filteredreInvoices;
         $salecustomer = SalesCustomers::get();
         
-        
+        $currencys = Countries::get();
+
         if ($request->ajax()) {
             // dd(\DB::getQueryLog()); 
             // dd($allEstimates);
@@ -70,7 +71,7 @@ class RecurringInvoicesController extends Controller
         }
       
         // dd($allEstimates);
-        return view('masteradmin.recurring_invoices.index', compact('activereInvoices', 'draftreInvoices', 'allreInvoices','user_id','salecustomer'));
+        return view('masteradmin.recurring_invoices.index', compact('activereInvoices', 'draftreInvoices', 'allreInvoices','user_id','salecustomer','currencys'));
 
     }
 
@@ -142,9 +143,9 @@ class RecurringInvoicesController extends Controller
             'sale_estim_summary' => 'nullable|string',
             'sale_cus_id' => 'nullable|integer',
             'sale_estim_number' => 'required|string|max:255',
-            'sale_estim_customer_ref' => 'nullable|string|max:255',
+            'sale_estim_customer_ref' => 'required|string|max:255',
             'sale_re_inv_payment_due_id' => 'required|integer',
-            'sale_estim_discount_desc' => 'nullable|string',
+            'sale_estim_discount_desc' => 'required|string',
             'sale_estim_discount_type' => 'required|in:1,2', // 1 for $, 2 for %
             'sale_currency_id' => 'required|integer',
             'sale_estim_sub_total' => 'required|numeric',
@@ -155,6 +156,11 @@ class RecurringInvoicesController extends Controller
             'sale_estim_footer_note' => 'nullable|string',
             'sale_estim_image' => 'nullable|image',
             'sale_estim_item_discount' => 'nullable|integer',
+            'items.*.sale_product_id' => 'required|integer',
+            'items.*.sale_estim_item_desc' => 'required|string',
+            'items.*.sale_estim_item_qty' => 'required|integer|min:1',
+            'items.*.sale_estim_item_price' => 'required|numeric|min:0',
+            'items.*.sale_estim_item_tax' => 'required|integer',
            
             ],[
                 'sale_estim_title.max' => 'The title may not exceed 255 characters.',
@@ -169,6 +175,13 @@ class RecurringInvoicesController extends Controller
                 'sale_estim_tax_amount.required' => 'Please enter the tax amount.',
                 'sale_estim_final_amount.required' => 'Please enter the final amount.',
                 'sale_estim_image.image' => 'The file uploaded must be a valid image.',
+                'items.*.sale_product_id.integer' => 'Please select item.',
+                'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
+                'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
+                'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
+                'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
+                'items.*.sale_estim_item_price.min' => 'The price for each item must be at least 0.',
+                'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
             ]);
           
     
@@ -354,6 +367,31 @@ class RecurringInvoicesController extends Controller
             'sale_estim_image' => 'nullable|image',
             'sale_status' => 'required|integer',
             'sale_estim_item_discount' => 'nullable|integer',
+            'items.*.sale_product_id' => 'required|integer',
+            'items.*.sale_estim_item_desc' => 'required|string',
+            'items.*.sale_estim_item_qty' => 'required|integer|min:1',
+            'items.*.sale_estim_item_price' => 'required|numeric|min:0',
+            'items.*.sale_estim_item_tax' => 'required|integer',
+        ],[
+            'sale_estim_title.max' => 'The title may not exceed 255 characters.',
+            'sale_cus_id.required' => 'Please select a customer.',
+            'sale_cus_id.integer' => 'Please select a customer.',
+            'sale_estim_number.required' => 'The estimate number is required.',
+            'sale_re_inv_payment_due_id.required' => 'Please select the Payment Due.',
+            'sale_estim_discount_type.required' => 'Please select a discount type.',
+            'sale_estim_discount_type.in' => 'The discount type must be either Dollar ($) or Percentage (%).',
+            'sale_estim_sub_total.required' => 'Please enter the sub-total amount.',
+            'sale_estim_discount_total.required' => 'Please enter the total discount amount.',
+            'sale_estim_tax_amount.required' => 'Please enter the tax amount.',
+            'sale_estim_final_amount.required' => 'Please enter the final amount.',
+            'sale_estim_image.image' => 'The file uploaded must be a valid image.',
+            'items.*.sale_product_id.integer' => 'Please select item.',
+            'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
+            'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
+            'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
+            'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
+            'items.*.sale_estim_item_price.min' => 'The price for each item must be at least 0.',
+            'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
         ]);
 
         $user = Auth::guard('masteradmins')->user();

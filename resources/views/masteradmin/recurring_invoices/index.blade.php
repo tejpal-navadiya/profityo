@@ -66,7 +66,7 @@
             <div class="card-body1">
               <div class="tab-content">
                 <div class="tab-pane active" id="activerecurringinvoice">
-                  <div class="col-md-12 table-responsive pad_table">
+                  <div class="col-md-12 pad_table">
                     <table id="example1" class="table table-hover text-nowrap">
                       <thead>
                         <tr>
@@ -88,7 +88,7 @@
                           <td>-</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_re_inv_date)->format('M d, Y') }}</td>
                           <td><span class="status_btn active_status">{{ $value->sale_status }}</span></td>
-                          <td>{{ $value->sale_re_inv_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_re_inv_final_amount }}</td>
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown">
@@ -124,7 +124,7 @@
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="draftrecurringinvoice">
-                  <div class="col-md-12 table-responsive pad_table">
+                  <div class="col-md-12 pad_table">
                     <table id="example5" class="table table-hover text-nowrap">
                       <thead>
                         <tr>
@@ -146,7 +146,7 @@
                           <td>-</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_re_inv_date)->format('M d, Y') }}</td>
                           <td><span class="status_btn active_status">{{ $value->sale_status }}</span></td>
-                          <td>{{ $value->sale_re_inv_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_re_inv_final_amount }}</td>
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown">
@@ -182,7 +182,7 @@
                 </div>
                 <!-- /.tab-pane -->
                 <div class="tab-pane" id="allrecurringinvoice">
-                  <div class="col-md-12 table-responsive pad_table">
+                  <div class="col-md-12 pad_table">
                     <table id="example4" class="table table-hover text-nowrap">
                       <thead>
                         <tr>
@@ -204,7 +204,7 @@
                           <td>-</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_re_inv_date)->format('M d, Y') }}</td>
                           <td><span class="status_btn active_status">{{ $value->sale_status }}</span></td>
-                          <td>{{ $value->sale_re_inv_final_amount }}</td>
+                          <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_re_inv_final_amount }}</td>
                           <td>
                             <ul class="navbar-nav ml-auto float-sm-right">
                               <li class="nav-item dropdown">

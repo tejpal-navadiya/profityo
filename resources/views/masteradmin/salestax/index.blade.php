@@ -16,7 +16,9 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
+            @if(isset($access['add_salestax']) && $access['add_salestax'])
               <a href="{{ route('business.salestax.create') }}"><button class="add_btn"><i class="fas fa-plus add_plus_icon"></i>Create a Sales Tax</button></a>
+              @endif
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -69,10 +71,14 @@
                             <td>{{ $value->sp_amount }}</td>
                             <td>{{ $value->sp_month }}</td> -->
                             <td class="text-right">
+                            @if(isset($access['update_salestax']) && $access['update_salestax'])
                             <a href="{{ route('business.salestax.edit',$value->tax_id) }}"><i
                             class="fas fa-solid fa-pen-to-square edit_icon_grid"></i></a>
+                            @endif
+                            @if(isset($access['delete_salestax']) && $access['delete_salestax'])
                             <a data-toggle="modal" data-target="#delete-role-modal-{{ $value->tax_id }}"><i class="fas fa-solid fa-trash delete_icon_grid"></i></a>
-                            </td>
+                            @endif
+                          </td>
                           </tr>
                           <!-- <div class="modal fade" id="delete-SalesTaxs" tabindex="-1" role="dialog"
                             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

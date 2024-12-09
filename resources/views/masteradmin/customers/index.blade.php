@@ -55,7 +55,7 @@
           @endif
         <div class="card px-20">
           <div class="card-body1">
-            <div class="col-md-12 table-responsive pad_table">
+            <div class="col-md-12 pad_table">
               <table id="example1" class="table table-hover text-nowrap">
                 <thead>
                   <tr>

@@ -21,7 +21,7 @@
       <div class="col-auto">
         <ol class="breadcrumb float-sm-right">
         <a href="{{ route('business.employee.index') }}"><button class="add_btn_br">Cancel</button></a>
-        <a href="#"><button class="add_btn">Save</button></a>
+        <button type="submit" form="items-form" class="add_btn">Save</button>
         </ol>
       </div><!-- /.col -->
       </div><!-- /.row -->
@@ -37,20 +37,26 @@
         <li class="nav-item"><a class="nav-link active" href="#personalinformation" data-toggle="tab">Personal
           Information</a></li>
         <li class="nav-item"><a class="nav-link" href="#compensation" data-toggle="tab">Compensation</a></li>
+        <li class="nav-item"><a class="nav-link" href="#compensation" data-toggle="tab">Vacation</a></li>
         <li class="nav-item"><a class="nav-link" href="#taxdetails" data-toggle="tab">Tax Details</a></li>
+        <li class="nav-item"><a class="nav-link" href="#compensation" data-toggle="tab">Benefits & Deductions</a></li>
+        <li class="nav-item"><a class="nav-link" href="#compensation" data-toggle="tab">Employee Files</a></li>
         <li class="nav-item"><a class="nav-link" href="#employmentstatus" data-toggle="tab">Employment Status</a></li>
       </ul>
       </div><!-- /.card-header -->
+
       <div class="tab-content">
       <div class="tab-pane active" id="personalinformation">
         <div class="card px-20">
         <div class="card-header">
           <h3 class="card-title">Personal Information</h3>
         </div>
+    
+
         <class="card-body2">
           <div class="row pad-5">
           <div class="col-md-4">
-            <form action="{{ route('business.employee.update', $employee->emp_id) }}" method="POST">
+            <form id="items-form" action="{{ route('business.employee.update', $employee->emp_id) }}" method="POST">
             @csrf
             @method('Patch')
             <div class="form-group">
@@ -74,6 +80,10 @@
               name="emp_social_security_number"
               value="{{ old('emp_social_security_number', $employee->emp_social_security_number) }}"
               placeholder="Enter Social Security Number">
+
+              @error('emp_social_security_number')
+        <div class="invalid-feedback">{{ $message }}</div>
+      @enderror
             </div>
           </div>
           <div class="col-md-12">
@@ -115,20 +125,6 @@
             <div class="form-group">
             <label>Date of Birth <span class="text-danger">*</span></label>
 
-            <!-- <div class="input-group date" id="estimatedate" data-target-input="nearest">
-
-      <x-flatpickr 
-      id="from-datepicker" 
-      name="emp_dob" 
-      placeholder="Select a date" 
-      value="{{ old('emp_dob', $employee->emp_dob) }}"
-      />
-      <div class="input-group-append">
-      <div class="input-group-text" id="from-calendar-icon">
-      <i class="fa fa-calendar-alt"></i>
-      </div>
-      </div>
-      </div> -->
             <div class="input-group date" id="estimatedate" data-target-input="nearest">
 
               <input type="hidden" id="from-datepicker-hidden" value="{{ $employee->emp_dob }}" />
@@ -149,18 +145,7 @@
 
             </div>
           </div>
-          <!-- <div class="col-md-4">
-      <div class="form-group">
-        <label>Date of Birth <span class="text-danger">*</span></label>
-        <div class="input-group date" id="employeedob" data-target-input="nearest">
-         <input type="text" class="form-control" id="emp_dob" name="emp_dob" 
-       value="{{ old('emp_dob', $employee->emp_dob) }}">
-        <div class="input-group-append" data-target="#employeedob" data-toggle="datetimepicker">
-        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-        </div>
-        </div>
-      </div>
-      </div> -->
+        
           <div class="col-md-4">
             <div class="form-group">
             <label for="employeeemail">Email</label>
@@ -170,45 +155,113 @@
           </div>
           </div>
           <div class="modal_sub_title">Work Information</div>
-          <div class="row pad-5">
-          <div class="col-md-4">
-            <div class="form-group">
+<div class="row pad-5">
+    <!-- Work Location -->
+    <div class="col-md-4">
+        <div class="form-group">
             <label>Work Location <span class="text-danger">*</span></label>
             <select class="form-control" id="emp_work_location" name="emp_work_location">
-              <option value="">Select State</option>
-              @foreach($State as $state)
-          <option value="{{ $state->id }}" {{ (old('emp_work_location', $employee->emp_work_location) == $state->id) ? 'selected' : '' }}>
-          {{ $state->name }}
-          </option>
-        @endforeach
+                <option value="">Select Work Location</option>
+                <option value="1" {{ (old('emp_work_location', $employee->emp_work_location) == '1') ? 'selected' : '' }}>Employee always works from business location</option>
+                <option value="2" {{ (old('emp_work_location', $employee->emp_work_location) == '2') ? 'selected' : '' }}>Employee always works from home</option>
             </select>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-            <label>Wage Type <span class="text-danger">*</span></label>
-            <select name="emp_wage_type" class="form-control">
-              <option value="">Select</option>
-              <option value="Hourly" {{ (old('emp_wage_type', $employee->emp_wage_type) == 'Hourly') ? 'selected' : '' }}>Hourly</option>
-              <option value="Annual" {{ (old('emp_wage_type', $employee->emp_wage_type) == 'Annual') ? 'selected' : '' }}>Annual</option>
-            </select>
-            </div>
-          </div>
+            @error('emp_work_location')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
 
-          <div class="col-md-4">
-            <div class="form-group">
-            <label for="wagesamount">Wages Amount <span class="text-danger">*</span></label>
+    <!-- Wage Type -->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="emp_wage_type">Wage Type</label>
+            <select id="emp_wage_type" name="emp_wage_type" class="form-control">
+                <option value="Hourly" {{ old('emp_wage_type', $employee->emp_wage_type) == 'Hourly' ? 'selected' : '' }}>Hourly</option>
+                <option value="Annual" {{ old('emp_wage_type', $employee->emp_wage_type) == 'Annual' ? 'selected' : '' }}>Annual</option>
+            </select>
+        </div>
+
+        <!-- Work Hours (Visible only when Wage Type is Annual) -->
+        <div id="work-hours-container" class="form-group" style="display: {{ old('emp_wage_type', $employee->emp_wage_type) == 'Annual' ? 'block' : 'none' }}">
+            <label for="emp_work_hours">Work Hours Per Week</label>
+            <input type="number" id="emp_work_hours" name="emp_work_hours" class="form-control"
+                   value="{{ old('emp_work_hours', $employee->emp_work_hours ?? '') }}">
+        </div>
+    </div>
+
+    <!-- Wage Amount -->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="emp_wage_amount">Wages Amount <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="emp_wage_amount" name="emp_wage_amount"
-              value="{{ old('emp_wage_amount', $employee->emp_wage_amount) }}" placeholder="Enter Wage Amount">
+                   value="{{ old('emp_wage_amount', $employee->emp_wage_amount) }}" placeholder="Enter Wage Amount">
+            @error('emp_wage_amount')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+</div>
+
+<!-- Vacation Policy -->
+<div class="row pad-5">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Vacation Policy <span class="text-danger">*</span></label>
+            <select class="form-control" name="emp_vacation_policy" id="emp_vacation_policy">
+                @foreach($vacation as $policy)
+                    <option value="{{ $policy->v_id }}" {{ old('emp_vacation_policy', $employee->emp_vacation_policy) == $policy->v_id ? 'selected' : '' }}>
+                        {{ $policy->name }}
+                    </option>
+                @endforeach
+            </select>
+            @error('emp_vacation_policy')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+
+    <!-- Vacation Accrual Rate (Visible only when Vacation Policy requires it) -->
+    <div class="col-md-4" id="accrual_rate_container" style="display: {{ old('emp_vacation_policy', $employee->emp_vacation_policy) == '2' ? 'block' : 'none' }}">
+        <div class="form-group">
+            <label>Vacation Accrual Rate</label>
+            <input type="number" class="form-control" name="emp_vacation_accural_rate" id="emp_vacation_accural_rate"
+                   value="{{ old('emp_vacation_accural_rate', $employee->emp_vacation_accural_rate) }}">
+        </div>
+        e.g. 4% of regular hours on a 40 hour/week payroll period translates to 80 hours/year.
+    </div>
+</div>
+
+<!-- Direct Deposit -->
+<div class="row pad-5">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Direct Deposit <span class="text-danger">*</span></label>
+            <div>
+                <label class="radio-inline">
+                    <input type="radio" name="emp_direct_deposit" id="radioYes" value="1" {{ old('emp_direct_deposit', $employee->emp_direct_deposit) == '1' ? 'checked' : '' }}> Yes
+                </label>
+                <small id="message1" class="text-muted d-block">This requires employee bank information.</small>
+                <label class="radio-inline">
+                    <input type="radio" name="emp_direct_deposit" id="radioNo" value="0" {{ old('emp_direct_deposit', $employee->emp_direct_deposit) == '0' ? 'checked' : '' }}> No
+                </label>
+                <small id="message2" class="text-muted d-block">You can change this setting at any time.</small>
             </div>
-          </div>
-          </div>
-          <div class="row py-20 px-10">
-          <div class="col-md-12 text-center">
-            <a href="{{ route('business.employee.index') }}" class="add_btn_br">Cancel</a>
-            <a href="#"><button class="add_btn">Save</button></a>
-          </div>
-          </div>
+            @error('emp_direct_deposit')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+</div>
+
+
+<!-- Save and Cancel Buttons -->
+<div class="row py-20 px-10">
+    <div class="col-md-12 text-center">
+        <a href="{{ route('business.employee.index') }}" class="add_btn_br">Cancel</a>
+        <button class="add_btn">Save</button>
+    </div>
+</div>
+
           </form>
         </div>
 
@@ -353,10 +406,10 @@
                         </div> -->
                         <div class="input-group date" id="estimatedate" data-target-input="nearest">
 
-<input type="hidden" id="effective-datepicker-hidden" value="{{ $EmployeeComperisation->emp_comp_effective_date }}" />
+<input type="hidden" id="effective-datepicker-hidden" value="{{ $EmployeeComperisation->emp_comp_effective_date ?? ''}}" />
 
 @php
-$saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effective_date)->format('m/d/Y');
+$saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effective_date ?? '')->format('m/d/Y');
 @endphp
 
 <x-flatpickr id="effective-datepicker" name="emp_comp_effective_date" placeholder="Select a date"
@@ -412,17 +465,18 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
               </tr>
             </thead>
             <tbody>
-                         @foreach($EmployeeComperisationLIST->where('emp_comp_status', 1) as $employee)
-                                            <tr>
-                                                <td>{{ $employee->emp_comp_salary_amount }}</td>
-                                                <td>{{ $employee->emp_comp_effective_date}}</td>
-                                                <td class="text-right">
-                                                    <a href="{{ route('business.employee.edit', $employee->emp_id) }}">
-                                                        <i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
+            @foreach($EmployeeComperisationLIST as $employee)
+                <tr>
+                    <td>{{ $employee->emp_comp_salary_amount }}</td>
+                    <td>{{ $employee->emp_comp_effective_date }}</td>
+                    <td class="text-right">
+                        <a href="{{ route('business.employee.edit', $employee->emp_id) }}">
+                            <i class="fas fa-solid fa-pen-to-square edit_icon_grid"></i>
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
+
             </tbody>
             </table>
           </div>
@@ -770,11 +824,11 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
               <i class="fa fa-calendar-alt"></i>
             </div>
             </div>
-            @error('emp_off_last_work_date')
+          
+          </div>
+          @error('emp_off_last_work_date')
         <div class="invalid-feedback">{{ $message }}</div>
       @enderror
-          </div>
-
           </div>
         </div>
         <!-- </div> -->
@@ -804,11 +858,11 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
               <i class="fa fa-calendar-alt"></i>
             </div>
             </div>
-            @error('emp_off_notice_date')
+          
+          </div>
+          @error('emp_off_notice_date')
         <div class="invalid-feedback">{{ $message }}</div>
       @enderror
-          </div>
-
           </div>
         </div>
         </div>
@@ -904,13 +958,9 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
             </div>
             </div>
           </div>
-          <!-- <div class="input-group date" id="leavestartdate" data-target-input="nearest">
-        <input type="text" name="emp_lev_start_date" class="form-control datetimepicker-input"
-          placeholder="Start Date" data-target="#leavestartdate">
-        <div class="input-group-append" data-target="#leavestartdate" data-toggle="datetimepicker">
-        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-        </div>
-        </div> -->
+          @error('emp_lev_start_date')
+        <div class="invalid-feedback">{{ $message }}</div>
+      @enderror
           </div>
         </div>
         <div class="col-md-6">
@@ -927,13 +977,9 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
             </div>
             </div>
           </div>
-          <!-- <div class="input-group date" id="leaveenddate" data-target-input="nearest">
-        <input type="text" name="emp_lev_end_date" class="form-control datetimepicker-input"
-          placeholder="End Date" data-target="#leaveenddate">
-        <div class="input-group-append" data-target="#leaveenddate" data-toggle="datetimepicker">
-        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-        </div>
-        </div> -->
+          @error('emp_lev_end_date')
+        <div class="invalid-feedback">{{ $message }}</div>
+      @enderror
           </div>
         </div>
         <div class="col-md-12">
@@ -988,6 +1034,57 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const radioYes = document.getElementById('radioYes');
+        const radioNo = document.getElementById('radioNo');
+        const message1 = document.getElementById('message1');
+        const message2 = document.getElementById('message2');
+
+        // Function to adjust the position of messages
+        function adjustMessages() {
+            if (radioYes.checked) {
+                // Show message2 under message1
+                message1.insertAdjacentElement('afterend', message2);
+            } else if (radioNo.checked) {
+                // Restore message2 under radioNo
+                radioNo.parentElement.insertAdjacentElement('afterend', message2);
+            }
+        }
+
+        // Initialize message positioning on page load
+        adjustMessages();
+
+        // Add event listeners for radio button changes
+        radioYes.addEventListener('change', adjustMessages);
+        radioNo.addEventListener('change', adjustMessages);
+    });
+</script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const wageTypeSelect = document.getElementById('emp_wage_type');
+        const workHoursContainer = document.getElementById('work-hours-container');
+        const workHoursInput = document.getElementById('emp_work_hours');
+
+        function toggleWorkHoursField() {
+            if (wageTypeSelect.value === 'Annual') {
+                workHoursContainer.style.display = 'block';
+                workHoursInput.setAttribute('required', 'required');
+            } else {
+                workHoursContainer.style.display = 'none';
+                workHoursInput.removeAttribute('required');
+            }
+        }
+
+        // Initialize on page load
+        toggleWorkHoursField();
+
+        // Listen for changes in the wage type dropdown
+        wageTypeSelect.addEventListener('change', toggleWorkHoursField);
+    });
+</script>
+
   <script>
     function toggleSalary() {
     const salaryElement = document.getElementById('Salary');
@@ -1128,6 +1225,44 @@ $saleEstimDate = \Carbon\Carbon::parse($EmployeeComperisation->emp_comp_effectiv
     }
     });
   </script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
 
+// Get references to the elements
+var wageTypeSelect = document.getElementById('emp_wage_type');
+var workHoursContainer = document.getElementById('work-hours-container');
+var vacationPolicySelect = document.getElementById('emp_vacation_policy');
+var accrualRateContainer = document.getElementById('accrual_rate_container');
+
+// Function to toggle work hours visibility based on wage type
+function toggleWorkHoursField() {
+    if (wageTypeSelect.value === 'Annual') {
+        workHoursContainer.style.display = 'block';
+    } else {
+        workHoursContainer.style.display = 'none';
+    }
+}
+
+// Function to toggle accrual rate visibility based on vacation policy
+function toggleAccrualRateField() {
+    if (vacationPolicySelect.value === '2') {  // Change condition as needed
+        accrualRateContainer.style.display = 'block';  // Show the accrual rate field
+    } else {
+        accrualRateContainer.style.display = 'none';  // Hide the accrual rate field
+    }
+}
+
+// Initialize visibility on page load
+toggleWorkHoursField();
+toggleAccrualRateField();
+
+// Listen for changes in wage type
+wageTypeSelect.addEventListener('change', toggleWorkHoursField);
+
+// Listen for changes in vacation policy
+vacationPolicySelect.addEventListener('change', toggleAccrualRateField);
+});
+
+</script>
   @endsection
 @endif

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class Employees extends Model
 {
     use HasFactory;
-    protected $fillable = ['id','emp_first_name', 'emp_last_name', 'emp_social_security_number', 'emp_hopy_address', 'city_name', 'state_id', 'zipcode', 'emp_dob', 'emp_email', 'emp_middle_initial', 'emp_doh', 'emp_work_location','emp_wage_type','emp_wage_amount','emp_status'];
+    protected $fillable = ['id','emp_first_name', 'emp_last_name', 'emp_social_security_number', 'emp_hopy_address', 'city_name', 'state_id', 'zipcode', 'emp_dob', 'emp_email', 'emp_middle_initial', 'emp_doh', 'emp_work_location','emp_wage_type','emp_wage_amount','emp_status','emp_work_hours','emp_direct_deposit','emp_vacation_policy','emp_vacation_accural_rate'];
    
     public function __construct(array $attributes = [])
     {

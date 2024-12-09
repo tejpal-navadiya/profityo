@@ -42,7 +42,7 @@ class HomeController extends Controller
         $totalcustomer = SalesCustomers::where('id',$user->id)->count();
         $totalInvoices = InvoicesDetails::where('id',$user->id)->count();
         $totalvendor = PurchasVendor::where('id',$user->id)->count();
-        $accounts = ChartAccount::all();
+        $accounts = ChartAccount::all()->take(5);
 
         $recordPayments = RecordPayment::with( 'chartOfAccount')->where('id', $user->id)->get();
         // dd($recordPayments);

@@ -20,8 +20,11 @@ class EstimatesItems extends Model
         $user = Auth::guard('masteradmins')->user();
         $uniq_id = $user->user_id;
         $this->setTable($uniq_id . '_py_estimates_items');
+        
     }
-
+    protected $casts = [
+        'sale_estim_item_tax' => 'string', // Ensure it's treated as a string
+    ];
     public function estimate_product()
     {
         return $this->belongsTo(SalesProduct::class, 'sale_product_id','sale_product_id');

@@ -59,40 +59,40 @@
                         <div class="col-md-12">
                           <div class="form-group">
                             <x-input-label for="bus_company_name" :value="__('Business Name')" /><span class="text-danger">*</span>
-                            <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name" name="bus_company_name" required autofocus autocomplete="bus_company_name" :value="old('bus_company_name', $BusinessDetails->bus_company_name ?? '')" />
+                            <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name" name="bus_company_name"  autofocus autocomplete="bus_company_name" :value="old('bus_company_name', $BusinessDetails->bus_company_name ?? '')" />
                             <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="bus_address1" :value="__('Address Line 1')" />
-                            <x-text-input type="text" class="form-control" id="bus_address1" placeholder="Enter A Address Line 1" name="bus_address1" required autofocus autocomplete="bus_address1" :value="old('bus_address1', $BusinessDetails->bus_address1 ?? '')"/>
+                            <x-text-input type="text" class="form-control" id="bus_address1" placeholder="Enter A Address Line 1" name="bus_address1"  autofocus autocomplete="bus_address1" :value="old('bus_address1', $BusinessDetails->bus_address1 ?? '')"/>
                             <x-input-error class="mt-2" :messages="$errors->get('bus_address1')" />
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="bus_address2" :value="__('Address Line 2')" />
-                            <x-text-input type="text" class="form-control" id="bus_address2" placeholder="Enter A Address Line 2" name="bus_address2" required autofocus autocomplete="bus_address2" :value="old('bus_address2', $BusinessDetails->bus_address2 ?? '')" />
+                            <x-text-input type="text" class="form-control" id="bus_address2" placeholder="Enter A Address Line 2" name="bus_address2"  autofocus autocomplete="bus_address2" :value="old('bus_address2', $BusinessDetails->bus_address2 ?? '')" />
                             <x-input-error class="mt-2" :messages="$errors->get('bus_address2')" />
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="country" :value="__('Country')" /><span class="text-danger">*</span>
-                            <select class="form-control select2" style="width: 100%;" id="country" name="country_id" required>
+                            <select class="form-control select2" style="width: 100%;" id="country" name="country_id" >
                               <option default>Select a Country...</option>
                               @foreach($countries as $country)
                                 <option value="{{ $country->id }}" {{ old('country_id', $BusinessDetails->country_id ?? '') == $country->id ? 'selected' : '' }}>{{ $country->name }} ({{ $country->iso2 }})</option>
                               @endforeach
                             </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('Country')" />
+                            <x-input-error class="mt-2" :messages="$errors->get('country_id')" />
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="state" :value="__('Province/State')" /><span class="text-danger">*</span>
-                            <select class="form-control select2" style="width: 100%;" id="state" name="state_id" required>
+                            <select class="form-control select2" style="width: 100%;" id="state" name="state_id" >
                               <option default>Select a State...</option>
                               @foreach($states as $state)
                                   <option value="{{ $state->id }}" {{ $state->id == old('state_id', $BusinessDetails -> state_id ) ? 'selected' : '' }}>
@@ -100,54 +100,54 @@
                                   </option>
                               @endforeach
                             </select>
-                            <x-input-error class="mt-2" :messages="$errors->get('state')" />
+                            <x-input-error class="mt-2" :messages="$errors->get('state_id')" />
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="city_name" :value="__('City')" />
-                            <x-text-input type="text" class="form-control" id="city_name" placeholder="Enter A City" name="city_name" required autofocus autocomplete="city_name" :value="old('city_name', $BusinessDetails->city_name ?? '')"/>
+                            <x-text-input type="text" class="form-control" id="city_name" placeholder="Enter A City" name="city_name"  autofocus autocomplete="city_name" :value="old('city_name', $BusinessDetails->city_name ?? '')"/>
                             <x-input-error class="mt-2" :messages="$errors->get('city_name')" />
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="zipcode" :value="__('Postal/ZIP Code')" />
-                            <x-text-input type="text" class="form-control" id="zipcode" placeholder="Enter a Zip Code"  name="zipcode" required autofocus autocomplete="zipcode" :value="old('zipcode', $BusinessDetails->zipcode ?? '')" />
+                            <x-text-input type="text" class="form-control" id="zipcode" placeholder="Enter a Zip Code"  name="zipcode"  autofocus autocomplete="zipcode" :value="old('zipcode', $BusinessDetails->zipcode ?? '')" />
                             <x-input-error class="mt-2" :messages="$errors->get('zipcode')"  />
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="bus_phone" :value="__('Phone')" />
-                            <x-text-input type="text" class="form-control" id="bus_phone" placeholder="Enter a Phone" name="bus_phone" required autofocus autocomplete="bus_phone" :value="old('bus_phone', $BusinessDetails->bus_phone ?? '')"/>
+                            <x-text-input type="text" class="form-control" id="bus_phone" placeholder="Enter a Phone" name="bus_phone"  autofocus autocomplete="bus_phone" :value="old('bus_phone', $BusinessDetails->bus_phone ?? '')"/>
                             <x-input-error class="mt-2" :messages="$errors->get('bus_phone')" />
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="bus_mobile" :value="__('Mobile')" />
-                            <x-text-input type="text" class="form-control" id="bus_mobile" placeholder="Enter a Mobile" name="bus_mobile" required autofocus autocomplete="bus_mobile" :value="old('bus_mobile', $BusinessDetails->bus_mobile ?? '')" />
+                            <x-text-input type="text" class="form-control" id="bus_mobile" placeholder="Enter a Mobile" name="bus_mobile"  autofocus autocomplete="bus_mobile" :value="old('bus_mobile', $BusinessDetails->bus_mobile ?? '')" />
                             <x-input-error class="mt-2" :messages="$errors->get('bus_mobile')"  />
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="bus_website" :value="__('Website')" />
-                            <x-text-input type="text" class="form-control" id="bus_website" placeholder="Enter a Website" name="bus_website" required autofocus autocomplete="bus_website" :value="old('bus_website', $BusinessDetails->bus_website ?? '')" />
+                            <x-text-input type="text" class="form-control" id="bus_website" placeholder="Enter a Website" name="bus_website"  autofocus autocomplete="bus_website" :value="old('bus_website', $BusinessDetails->bus_website ?? '')" />
                             <x-input-error class="mt-2" :messages="$errors->get('bus_website')"  />
                           </div>
                         </div>
                         <div class="col-md-6">
                           <div class="form-group">
                             <label for="currency">Business Currency </label>
-                            <h4 for="currency">
+                            <h5 for="currency">
                             @if ($currency)
-                              <h4 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h4>
+                              <h5 for="currency">{{ $currency->currency }} - {{ $currency->currency_name }}</h5>
                             @else
-                              <h4 for="currency">No currency information available</h4>
+                              <h5 for="currency">No currency information available</h5>
                             @endif
-                            </h4>
+                            </h5>
                           </div>
                         </div>
                         <div class="col-md-12">

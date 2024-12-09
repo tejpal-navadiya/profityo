@@ -18,8 +18,8 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
-              <a href="#"><button class="add_btn_br">Cancel</button></a>
-              <a href="#"><button class="add_btn">Save</button></a>
+            <a href="{{ route('business.role.index') }}"><button class="add_btn_br">Cancel</button></a>
+            <button type="submit" form="items-form" class="add_btn">Save</button>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -47,7 +47,7 @@
             <h3 class="card-title">Edit User Role</h3>
           </div>
           <!-- /.card-header -->
-          <form method="POST" action="{{ route('business.role.update', ['role' => $role->role_id]) }}">
+          <form id="items-form" method="POST" action="{{ route('business.role.update', ['role' => $role->role_id]) }}">
           @csrf
           @method('patch')
           <div class="card-body2">

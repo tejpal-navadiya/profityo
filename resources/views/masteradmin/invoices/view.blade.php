@@ -307,8 +307,8 @@
                                             <td>{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_tax_amount }}</td>
                                         </tr>
                                         <tr>
-                                            <td>Total:</td>
-                                            <td>{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_final_amount }}</td>
+                                            <td><strong>Total:</strong></td>
+                                            <td><strong>{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_final_amount }}</strong></td>
                                         </tr>
                                     </table>
                                 </div>

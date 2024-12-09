@@ -19,7 +19,7 @@
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
             <a href="{{route('business.purchasproduct.index')}}" class="add_btn_br">Cancel</a>
-            <a href="#"><button class="add_btn">Save</button></a>
+            <button type="submit" form="items-form" class="add_btn">Save</button>
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -35,7 +35,7 @@
           <h3 class="card-title">Create New Product Or Service</h3>
         </div>
         <!-- /.card-header -->
-        <form method="POST" action="{{ route('business.purchasproduct.store') }}">
+        <form id="items-form" method="POST" action="{{ route('business.purchasproduct.store') }}">
           @csrf
           <div class="card-body">
             <p>Products and services that you buy from vendors are used as items on Bills to record those purchases, and
@@ -57,7 +57,7 @@
                   <label>Price</label>
                   <div class="d-flex">
                     <input type="number" class="form-control form-controltext" name="purchases_product_price"
-                      aria-describedby="inputGroupPrepend" placeholder="0.00" value="{{ old('purchases_product_price') }}">
+                      aria-describedby="inputGroupPrepend" min="0" placeholder="0.00" value="{{ old('purchases_product_price') }}">
                     <select class="form-select form-selectcurrency" name="purchases_product_currency_id"
                       id="purchases_product_currency_id">
                       <!-- <option value="">Select</option> -->
@@ -75,8 +75,8 @@
                   <select class="form-control select2" name="purchases_product_tax" id="purchases_product_tax">
                     <option value="">Select Tax</option>
                     @foreach($SalesTax as $salesTax)
-            <option value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }}</option>
-          @endforeach
+                       <option value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }}({{ $salesTax->tax_rate }}%)</option>
+                    @endforeach
                   </select>
                 </div>
               </div>

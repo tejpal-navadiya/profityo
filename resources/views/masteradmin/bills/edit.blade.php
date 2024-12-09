@@ -71,7 +71,8 @@
                   <p class="mb-0">{{ $bill->vendor->purchases_vendor_city_name }}, {{ $bill->vendor->state->name }} {{ $bill->vendor->purchases_vendor_zipcode }}</p>
                   <p class="mb-0">{{ $bill->vendor->country->name }}</p>
                   <p class="mb-0">{{ $bill->vendor->purchases_vendor_email }}</p>
-                  
+                  <span class="error-message" id="error_sale_vendor_id" style="color: red;"></span> 
+
                 </div>
 
               </div>
@@ -115,6 +116,7 @@
                         </option>
                     @endforeach
                   </select>
+                  <span class="error-message" id="error_sale_currency_id" style="color: red;"></span> 
                 </div>
               </div>
               <div class="col-md-4">
@@ -155,13 +157,13 @@
                 <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
                   <thead>
                   <tr>
-                    <th style="width: 300px;">Items</th>
-                    <th style="width: 300px;">Expense Category</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
+                    <th style="width: 22%;">Items<span class="text-danger">*</span></th>
+                    <th style="width: 22%;">Expense Category<span class="text-danger">*</span></th>
+                    <th style="width: 15%;">Quantity<span class="text-danger">*</span></th>
+                    <th style="width: 15%;">Price<span class="text-danger">*</span></th>
                     <th>Tax</th>
                     <th class="text-right">Amount</th>
-                    <th>Action</th>
+                    <th class="text-right">Action</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -217,9 +219,18 @@
                         </option>
                       @endforeach
                     </select>
+                    <div class="px-10"></div>
+                    <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
+                      @foreach($salestax as $salesTax)
+                        <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
+                        {{ $salesTax->tax_id == $item->sale_bill_item_tax ? 'selected' : '' }} >
+                        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                        </option>
+                      @endforeach
+                    </select>
                     </td>
                     <td class="text-right item-price">{{ number_format( $item->sale_bill_item_price * $item->sale_bill_item_qty, 2) }}</td>
-                    <td><i class="fa fa-trash delete-item"></i></td>
+                    <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item"></i></td>
                   </tr>
                   @endforeach
                   </tbody>
@@ -227,7 +238,6 @@
               </div>
               <!-- /.col -->
             </div>
-            <hr />
             <input type="hidden" name="sale_bill_sub_total" value="{{ $bill->sale_bill_sub_total }}">
             <input type="hidden" name="sale_bill_tax_amount" value="{{ $bill->sale_bill_tax_amount }}">
             <input type="hidden" name="sale_bill_final_amount" value="{{ $bill->sale_bill_final_amount }}">
@@ -338,7 +348,8 @@ $(document).ready(function () {
       // alert(selectedProductId);
       if (selectedProductId) {
       $.ajax({
-        url: '{{ route('business.bill.getProductDetails', '') }}/' + selectedProductId,        method: 'GET',
+        url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/bill/get-product-details/' + selectedProductId,
+        method: 'GET',
         success: function (response) {
         $row.find('input[name="items[][sale_bill_item_price]"]').val(response.purchases_product_price);
         $row.find('input[name="items[][sale_bill_item_desc]"]').val(response.purchases_product_desc);
@@ -406,14 +417,20 @@ $(document).ready(function () {
       </div>
       </td>
       <td>
-      <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
-      @foreach($salestax as $salesTax)
-      <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
-    @endforeach
-      </select>
+        <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
+        @foreach($salestax as $salesTax)
+        <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
+      @endforeach
+        </select>
+        <div class="px-10"></div>
+        <select class="form-control select2" name="items[][sale_bill_item_tax]" style="width: 100%;">
+        @foreach($salestax as $salesTax)
+        <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%</option>
+      @endforeach
+        </select>
       </td>
       <td class="text-right item-price">0.00</td>
-      <td><i class="fa fa-trash delete-item" id="${rowCount}"></i></td>
+      <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item" id="${rowCount}"></i></td>
       </tr>
       `);
 

@@ -42,13 +42,13 @@ class PlanController extends Controller
         $validatedData = $request->validate([
             'sp_name' => 'required|string|max:255',
             'sp_amount' => 'required|numeric',
-            'sp_month' => 'required|integer',
+            // 'sp_month' => 'required|integer',
             'sp_desc' => 'nullable|string',
             'sp_user' => 'nullable|integer',
         ], [
             'sp_name.required' => 'The name field is required.',
             'sp_amount.required' => 'The amount field is required.',
-            'sp_month.required' => 'The validity field is required.',
+            // 'sp_month.required' => 'The validity field is required.',
             'sp_desc.string' => 'The description must be a string.',
             'sp_user.integer' => 'The user field must be an integer.',
         ]);
@@ -90,13 +90,13 @@ class PlanController extends Controller
         $validatedData = $request->validate([
             'sp_name' => 'required|string|max:255',
             'sp_amount' => 'required|numeric',
-            'sp_month' => 'required|integer',
+            // 'sp_month' => 'required|integer',
             'sp_desc' => 'nullable|string',
             'sp_user' => 'nullable|integer',
         ], [
             'sp_name.required' => 'The name field is required.',
             'sp_amount.required' => 'The amount field is required.',
-            'sp_month.required' => 'The validity field is required.',
+            // 'sp_month.required' => 'The validity field is required.',
             'sp_desc.string' => 'The description must be a string.',
             'sp_user.integer' => 'The user field must be an integer.',
         ]);
@@ -132,7 +132,7 @@ class PlanController extends Controller
         $plan = Plan::where('sp_id', $sp_id)->firstOrFail();
         $permissions = AdminMenu::where('pmenu', 0)
             ->where('is_deleted', 0)
-            ->whereIn('mid', range(1, 20))
+            ->where('mid', '!=', 21)
             ->get();
         $reports = AdminMenu::where('pmenu', 21)
             ->where('is_deleted', 0)

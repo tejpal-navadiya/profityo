@@ -19,8 +19,8 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
-            <a href="{{route('business.purchasproduct.index')}}"><button class="add_btn_br">Cancel</button></a>
-            <a href="#"><button class="add_btn">Save</button></a>
+          <a href="{{route('business.purchasproduct.index')}}" class="add_btn_br">Cancel</a>
+          <button type="submit" form="items-form" class="add_btn">Save</button>
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -47,7 +47,7 @@
           <h3 class="card-title">Edit New Product Or Service</h3>
         </div>
         <!-- /.card-header -->
-        <form method="POST"
+        <form id="items-form" method="POST"
           action="{{ route('business.purchasproduct.update', ['PurchasesProduct' => $PurchasProducte->purchases_product_id]) }}">
           @csrf
           @method('Patch')
@@ -75,7 +75,7 @@
                       value="{{ $PurchasProducte->purchases_product_price }}">
                     <select
                       class="form-select form-selectcurrency @error('purchases_product_currency_id') is-invalid @enderror"
-                      name="purchases_product_currency_id" style="width: 100%;">
+                      name="purchases_product_currency_id">
                       <!-- <option value="">Select a Currency</option> -->
                       @foreach($Country as $curr)
               <option value="{{ $curr->id }}" @if($curr->id == $PurchasProducte->purchases_product_currency_id) selected
@@ -102,7 +102,7 @@
                     @foreach($SalesTax as $salesTax)
             <option value="{{ $salesTax->tax_id }}" @if($salesTax->tax_id == $PurchasProducte->purchases_product_tax)
         selected @endif>
-              {{ $salesTax->tax_name }}
+              {{ $salesTax->tax_name }}({{ $salesTax->tax_rate }}%)
             </option>
           @endforeach
                   </select>

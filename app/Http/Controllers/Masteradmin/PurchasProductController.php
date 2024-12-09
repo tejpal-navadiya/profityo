@@ -15,8 +15,10 @@ class PurchasProductController extends Controller
     //
     public function index(): View
     {
-        $PurchasProduct = PurchasProduct::with('tax')->get();
-        return view('masteradmin.product_purchas.index')->with('PurchasProduct', $PurchasProduct);
+        $PurchasProduct = PurchasProduct::with(['tax', 'currency'])->get();
+        $currencys = Countries::get();
+
+        return view('masteradmin.product_purchas.index')->with('PurchasProduct', $PurchasProduct)->with('currencys', $currencys);
     }
 
     public function create(): View
@@ -39,7 +41,7 @@ class PurchasProductController extends Controller
             'purchases_product_price' => 'nullable|string|max:255',
             'purchases_product_desc' => 'nullable|string|max:255',
         ], [
-            'purchases_product_name.required' => 'The name field is required.',
+            'purchases_product_name.required' => 'Please enter item name.',
             'purchases_product_price.required' => 'The Price field is required.',
             'purchases_product_tax.required' => 'The Tax field is required.',
         ]);
@@ -100,6 +102,10 @@ class PurchasProductController extends Controller
             'purchases_product_expense_account' => 'nullable|numeric',
             'purchases_product_desc' => 'nullable|string|max:255',
             'purchases_product_tax' =>'nullable',
+        ],[
+            'purchases_product_name.required' => 'Please enter item name.',
+            'purchases_product_price.required' => 'The Price field is required.',
+            'purchases_product_tax.required' => 'The Tax field is required.',
         ]);
 
         $validatedData['purchases_product_sell'] = $request->has('purchases_product_sell') ? 'on' : 'off';

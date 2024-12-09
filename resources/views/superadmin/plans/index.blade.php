@@ -74,7 +74,7 @@
                       <th>Name</th>
                       <th>Description</th>
                       <th>Amount</th>
-                      <th>Validity (In Months)</th>
+                      <!-- <th>Validity (In Months)</th> -->
                       <th>Create User</th>
                       <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
                     </tr>
@@ -87,7 +87,7 @@
                             <td>{{ $value->sp_name }}</td>
                             <td>{{ $value->sp_desc }}</td>
                             <td>{{ $value->sp_amount }}</td>
-                            <td>{{ $value->sp_month }}</td>
+                            <!-- <td>{{ $value->sp_month }}</td> -->
                             <td>{{ $value->sp_user }}</td>
                             <td class="text-right">
                             <a href="{{ route('plans.planrole',$value->sp_id) }}"><i class="fas ffa-solid fa-key view_icon_grid"></i></a>

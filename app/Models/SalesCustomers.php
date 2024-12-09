@@ -73,4 +73,8 @@ class SalesCustomers extends Model
     {
         return $this->belongsTo(Countries::class, 'sale_bill_country_id');
     }
+    public function currency()
+{
+    return $this->belongsTo(Countries::class, 'sale_bill_currency_id', 'id');
+}
 }

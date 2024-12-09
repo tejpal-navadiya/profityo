@@ -74,7 +74,7 @@
                       value="{{ $SalesProducte->sale_product_price }}">
                     <select
                       class="form-select form-selectcurrency @error('sale_product_currency_id') is-invalid @enderror"
-                      name="sale_product_currency_id" style="width: 100%;">
+                      name="sale_product_currency_id">
                       <!-- <option value="">Select a Currency</option> -->
                       @foreach($Country as $curr)
               <option value="{{ $curr->id }}" @if($curr->id == $SalesProducte->sale_product_currency_id) selected
@@ -97,7 +97,7 @@
                   <label>Tax</label>
                   <select class="form-control from-select select2 @error('sale_product_tax') is-invalid @enderror"
                     name="sale_product_tax" style="width: 100%;">
-                    <option value="">Select a Currency</option>
+                    <option value="">Select Tax</option>
                     @foreach($SalesTax as $salesTax)
             <option value="{{ $salesTax->tax_id }}" @if($salesTax->tax_id == $SalesProducte->sale_product_tax)
         selected @endif>

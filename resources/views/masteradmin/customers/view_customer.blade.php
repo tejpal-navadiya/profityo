@@ -190,8 +190,8 @@
                       <!-- <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td> -->
                       <td>{{ $value->sale_inv_number }}</td>
                       <td>{{ $value->sale_inv_date }}</td>
-                      <td>{{ $value->sale_inv_final_amount }}</td>
-                      <td>{{ $value->sale_inv_due_amount }}</td>
+                      <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_final_amount }}</td>
+                      <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_due_amount }}</td>
                       <td>
                       @php
             // Calculate the due date
@@ -357,13 +357,13 @@
                 <div class="form-group">
                 <label>Amount</label>
                 <div class="d-flex">
-                <select class="form-select amount_currency_input"
-                name="payment_amount">
-                <option>$</option>
-                <option>€</option>
-                <option>(CFA)</option>
-                <option>£</option>
-                </select>
+                <span class="form-control" style="width: 20%;">
+        @if ($value->sale_currency_id)
+            {{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}
+        @else
+            {{ 'Currency not set' }} <!-- Fallback if currency_id is not set -->
+        @endif
+    </span>
                 <input type="text" name="payment_amount"
                 class="form-control amount_input"
                 value="{{ $value->sale_inv_due_amount }}"
@@ -649,8 +649,8 @@
                       </td>
                       <td>{{ $value->sale_inv_number }}</td>
                       <td>{{ $value->sale_inv_date }}</td>
-                      <td>{{ $value->sale_inv_final_amount }}</td>
-                      <td>{{ $value->sale_inv_due_amount }}</td>
+                      <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_final_amount }}</td>
+                      <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_due_amount }}</td>
                       <td>
                       @php
             // Calculate the due date
@@ -820,13 +820,13 @@
                 <div class="form-group">
                 <label>Amount</label>
                 <div class="d-flex">
-                <select class="form-select amount_currency_input"
-                name="payment_amount">
-                <option>$</option>
-                <option>€</option>
-                <option>(CFA)</option>
-                <option>£</option>
-                </select>
+                <span class="form-control" style="width: 20%;">
+                    @if ($value->sale_currency_id)
+                        {{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}
+                    @else
+                        {{ 'Currency not set' }} <!-- Fallback if currency_id is not set -->
+                    @endif
+                </span>
                 <input type="text" name="payment_amount"
                 class="form-control amount_input"
                 value="{{ $value->sale_inv_due_amount }}"
@@ -1221,10 +1221,10 @@
                     <a href="#"><button class="add_btn_br">View related events</button></a>
 
                     @if($log->log_type == 1)
-            <a href="{{ route('business.estimates.view', $log->estimate->sale_estim_id ?? '') }}"><button
+            <a href="{{ route('business.estimates.view', $log->estimate->sale_estim_id) }}"><button
               class="add_btn">View Estimate</button></a>
           @elseif($log->log_type == 2 && $log->invoice)
-      <a href="{{ route('business.invoices.view', $log->invoice->sale_inv_id ?? '') }}">
+      <a href="{{ route('business.invoices.view', $log->invoice->sale_inv_id) }}">
       <button class="add_btn">View Invoice</button>
       </a>
     @endif
@@ -1675,7 +1675,7 @@
     </div>
   </div>
   </div>
-  <!-- ./wrapper -->
+  <!-- ./wrapper --> 
   @include('masteradmin.layouts.footerlink')
 
 

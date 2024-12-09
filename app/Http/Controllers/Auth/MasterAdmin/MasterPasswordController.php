@@ -18,11 +18,14 @@ class MasterPasswordController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
+        dd($request->all());
         $validated = $request->validateWithBag('updatePassword', [
             'current_password' => ['required', 'string', 'max:255'],
+            'password_confirmation' => ['required', 'string', 'max:255'],
             'user_password' => ['required', 'string', Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
         ], [
             'user_password.required' => 'The Password field is required.',
+            'password_confirmation.required' => 'The Password field is required.',
         ]);
 
         $user = Auth::guard('masteradmins')->user();

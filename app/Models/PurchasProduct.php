@@ -38,5 +38,8 @@ class PurchasProduct extends Model
         return $this->belongsTo(SalesTax::class, 'purchases_product_tax','tax_id');
     }
 
-    
+    public function currency()
+{
+    return $this->belongsTo(Countries::class, 'purchases_product_currency_id', 'id');
+}
 }

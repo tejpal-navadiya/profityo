@@ -19,7 +19,7 @@
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
             <a href="{{route('business.purchasvendor.index')}}" class="add_btn_br">Cancel</a>
-              <a href="#"><button class="add_btn">Save</button></a>
+            <button type="submit" form="items-form" class="add_btn">Save</button>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -47,7 +47,7 @@
           </div>
          
           <!-- /.card-header -->
-          <form method="POST"
+          <form id="items-form" method="POST"
           action="{{ route('business.purchasvendor.update', ['PurchasesVendor' => $PurchasVendore->purchases_vendor_id]) }}">
           @csrf
           @method('Patch')
@@ -63,81 +63,48 @@
                 </div>
               </div>
               <div class="col-md-8">
-    <!-- <div class="form-group">
-        <label for="vendorname">Type</label>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-check d-flex">
-                    <input class="form-check-input mr-2" type="radio" name="vendor_type" value="purchases_vendor_type" {{ old('vendor_type', $PurchasVendore->purchases_vendor_type) == 'on' ? 'checked' : '' }} id="regularType">
-                    <label class="form-check-label">
-                        <strong>Regular</strong> (Companies That Provide Goods and Services to your Business (E.G. Internet and Utility Providers).)
-                    </label>
+                <div class="form-group">
+                    <label for="vendorname">Type</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check d-flex">
+                                <input class="form-check-input mr-2" type="radio" name="type" value="Vendor" {{ old('type', $PurchasVendore->purchases_vendor_type) == 'Vendor' ? 'checked' : '' }} id="regularType">
+                                <label class="form-check-label" for="regularType">
+                                    <strong>Regular</strong> (Companies That Provide Goods and Services to your Business (E.G. Internet and Utility Providers).)
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check d-flex">
+                                <input class="form-check-input mr-2" type="radio" name="type" value="1099-NEC Contractor" {{ old('type', $PurchasVendore->purchases_vendor_type) == '1099-NEC Contractor' ? 'checked' : '' }} id="contractorType">
+                                <label class="form-check-label" for="contractorType">
+                                    <strong>1099-NEC Contractor</strong> (Contractors that Perform a Service for Which you Pay them and Provide a 1099-NEC Form.)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+              </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-check d-flex">
-                    <input class="form-check-input mr-2" type="radio" name="vendor_type" value="purchases_vendor_type" {{ old('vendor_type', $PurchasVendore->purchases_vendor_contractor_type) == 'on' ? 'checked' : '' }} id="contractorType">
-                    <label class="form-check-label">
-                        <strong>1099-NEC Contractor</strong> (Contractors that Perform a Service for Which you Pay them and Provide a 1099-NEC Form.)
-                    </label>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
-<div class="form-group">
-    <label for="vendorname">Type</label>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-check d-flex">
-                <input class="form-check-input mr-2" type="radio" name="type" value="Vendor" {{ old('type', $PurchasVendore->purchases_vendor_type) == 'Vendor' ? 'checked' : '' }} id="regularType">
-                <label class="form-check-label" for="regularType">
-                    <strong>Regular</strong> (Companies That Provide Goods and Services to your Business (E.G. Internet and Utility Providers).)
-                </label>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-check d-flex">
-                <input class="form-check-input mr-2" type="radio" name="type" value="1099-NEC Contractor" {{ old('type', $PurchasVendore->purchases_vendor_type) == '1099-NEC Contractor' ? 'checked' : '' }} id="contractorType">
-                <label class="form-check-label" for="contractorType">
-                    <strong>1099-NEC Contractor</strong> (Contractors that Perform a Service for Which you Pay them and Provide a 1099-NEC Form.)
-                </label>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
-
-
-            <!-- <div id="vendorregular">
-              <div class="modal_sub_title">Primary Contact</div>
-              <div class="row pad-5"> -->
-<!--  -->
-
-<div id="vendorregular">
+            <div id="vendorregular">
               <div class="modal_sub_title">Primary Contact</div>
               <div class="row pad-5">
-
-              <div class="col-md-6" id="contractorFields" style="display: none;">
-                <div class="form-group">
-                    <label for="vendorfirstname">Contractor Type</label>
-                    <select class="form-control select2" name="purchases_contractor_type" style="width: 100%;">
-                        <option value="">Select Contractor Type</option>
-                        <option value="Individual" {{ old('purchases_contractor_type', $PurchasVendore->purchases_contractor_type) == 'Individual' ? 'selected' : '' }}>Individual</option>
-                        <option value="Business" {{ old('purchases_contractor_type', $PurchasVendore->purchases_contractor_type) == 'Business' ? 'selected' : '' }}>Business</option>
-                    </select>
+                <div class="col-md-6" id="contractorFields" style="display: none;">
+                  <div class="form-group">
+                      <label for="vendorfirstname">Contractor Type</label>
+                      <select class="form-control select2" name="purchases_contractor_type" style="width: 100%;">
+                          <option value="">Select Contractor Type</option>
+                          <option value="Individual" {{ old('purchases_contractor_type', $PurchasVendore->purchases_contractor_type) == 'Individual' ? 'selected' : '' }}>Individual</option>
+                          <option value="Business" {{ old('purchases_contractor_type', $PurchasVendore->purchases_contractor_type) == 'Business' ? 'selected' : '' }}>Business</option>
+                      </select>
+                  </div>
                 </div>
-            </div>
-
-
-            <div class="col-md-6" id="ssnField" style="display: none;">
-                <div class="form-group">
-                    <label for="vendorsocialsecuritynumber">Social Security Number</label>
-                    <input type="text" class="form-control" id="purchases_vendor_security_number" name="purchases_vendor_security_number" value="{{ $PurchasVendore->purchases_vendor_security_number }}" placeholder="Enter Number">
+                <div class="col-md-6" id="ssnField" style="display: none;">
+                    <div class="form-group">
+                        <label for="vendorsocialsecuritynumber">Social Security Number</label>
+                        <input type="text" class="form-control" id="purchases_vendor_security_number" name="purchases_vendor_security_number" value="{{ $PurchasVendore->purchases_vendor_security_number }}" placeholder="Enter Number">
+                    </div>
                 </div>
-            </div>
-
-<!--  -->
                 <div class="col-md-4">
                   <div class="form-group">
                     <label for="vendorfirstname">First Name</label>
@@ -276,15 +243,15 @@
                 </div>
               </div>
             </div>
-         
-          <div class="row py-20 px-10">
-            <div class="col-md-12 text-center">
-            <a href="{{route('business.purchasvendor.index')}}" class="add_btn_br">Cancel</a>
-              <a href="#"><button class="add_btn">Save</button></a>
-            </div>
-          </div><!-- /.col -->
+            <div class="row py-20 px-10">
+              <div class="col-md-12 text-center">
+              <a href="{{route('business.purchasvendor.index')}}" class="add_btn_br">Cancel</a>
+                <a href="#"><button class="add_btn">Save</button></a>
+              </div>
+            </div><!-- /.col -->
+          </div>
+          </form>
         </div>
-        </form>
         <!-- /.card -->
       </div><!-- /.container-fluid -->
     </section>

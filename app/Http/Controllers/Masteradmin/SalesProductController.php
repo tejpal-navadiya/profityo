@@ -20,8 +20,12 @@ class SalesProductController extends Controller
 {
     public function index(): View
     {
-        $SalesProduct = SalesProduct::with('tax')->get();
-        return view('masteradmin.product.index')->with('SalesProduct', $SalesProduct);
+        $SalesProduct = SalesProduct::with(['tax','currency'])->get();
+        $currencys = Countries::get();
+        return view('masteradmin.product.index')
+        ->with('SalesProduct', $SalesProduct)
+        ->with('currencys', $currencys);
+    
     }
 
     public function create(): View
@@ -44,7 +48,7 @@ class SalesProductController extends Controller
             'sale_product_price' => 'nullable|string|max:255',
             'sale_product_desc' => 'nullable|string|max:255',
         ], [
-            'sale_product_name.required' => 'The name field is required.',
+            'sale_product_name.required' => 'Please enter name.',
             'sale_product_price.required' => 'The Price field is required.',
             'sale_product_tax.required' => 'The Tax field is required.',
         ]);
@@ -105,6 +109,10 @@ class SalesProductController extends Controller
             'sale_product_expense_account' => 'nullable|numeric',
             'sale_product_desc' => 'nullable|string|max:255',
             'sale_product_tax' => 'nullable',
+        ],[
+            'sale_product_name.required' => 'Please enter name.',
+            'sale_product_price.required' => 'The Price field is required.',
+            'sale_product_tax.required' => 'The Tax field is required.',
         ]);
 
         $validatedData['sale_product_sell'] = $request->has('sale_product_sell') ? 'on' : 'off';

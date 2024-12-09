@@ -17,8 +17,8 @@
                 <div class="col-auto">
                     <ol class="breadcrumb float-sm-right">
                         <a href="{{ route('business.userdetail.index') }}"><button class="add_btn_br">Cancel</button></a>
-                        <a href="#"><button class="add_btn">Save</button></a>
-                    </ol>
+                        <button type="submit" form="items-form" class="add_btn">Save</button>
+                        </ol>
                 </div>
             </div>
         </div>
@@ -30,7 +30,7 @@
                 <div class="card-header">
                     <h3 class="card-title">New User</h3>
                 </div>
-                <form method="POST" action="{{ route('business.userdetail.store') }}">
+                <form id="items-form" method="POST" action="{{ route('business.userdetail.store') }}">
                     @csrf
                     <div class="card-body2">
                         <div class="row pad-5">
@@ -57,7 +57,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="users_phone">Phone</label>
+                                    <label for="users_phone">Phone<span class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('users_phone') is-invalid @enderror" id="taxnumber"
                                            name="users_phone" placeholder="Phone" value="{{ old('users_phone') }}">
                                     @error('users_phone')
@@ -67,7 +67,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>User Role</label>
+                                    <label>User Role<span class="text-danger">*</span></label>
                                     <select class="form-control from-select select2 {{ $errors->has('role_id') ? 'is-invalid' : '' }}" name="role_id" style="width: 100%;">
                                         <option>Select User Role</option>
                                         @foreach($roles as $role)

@@ -19,7 +19,7 @@
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
               <a href="{{ route('business.employee.index') }}"><button class="add_btn_br">Cancel</button></a>
-              <a href="#"><button class="add_btn">Save</button></a>
+              <button type="submit" form="items-form" class="add_btn">Save</button>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -36,7 +36,7 @@
           </div>
           
           <!-- /.card-header -->
-          <form method="POST" action="{{ route('business.employee.store') }}">
+          <form id="items-form" method="POST" action="{{ route('business.employee.store') }}">
           @csrf
           <div class="card-body2">
             <div class="row pad-5">
@@ -107,10 +107,10 @@
                     <i class="fa fa-calendar-alt"></i>
                 </div>
               </div>
-              @error('emp_dob')
+            </div>
+            @error('emp_dob')
                     <div class="invalid-feedback">{{ $message }}</div>
                   @enderror
-            </div>
             </div>
           </div>
           <div class="col-md-4">
@@ -120,79 +120,134 @@
             </div>
           </div>
         </div>
+     
+
         <div class="modal_sub_title">Work Information</div>
-        <div class="row pad-5">
-          <div class="col-md-4">
-            <div class="form-group @error('emp_doh') is-invalid @enderror">
-              <label>Date of hire <span class="text-danger">*</span></label>
-             
-              <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-          
-            <x-flatpickr 
+<div class="row pad-5">
+    <!-- Date of Hire -->
+    <div class="col-md-4">
+        <div class="form-group @error('emp_doh') is-invalid @enderror">
+            <label>Date of hire <span class="text-danger">*</span></label>
+            <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+                <x-flatpickr 
                     id="to-datepicker" 
                     name="emp_doh" 
                     placeholder="Select a date" 
                 />
-              <div class="input-group-append">
-                <div class="input-group-text" id="to-calendar-icon">
-                    <i class="fa fa-calendar-alt"></i>
+                <div class="input-group-append">
+                    <div class="input-group-text" id="to-calendar-icon">
+                        <i class="fa fa-calendar-alt"></i>
+                    </div>
                 </div>
-              </div>
-              @error('emp_doh')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
             </div>
+            @error('emp_doh')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
 
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label>Work Location <span class="text-danger">*</span></label>
-              <!-- <select class="form-control" name="emp_work_location" style="width: 100%;" required>
-                <option value="">Choose an item...</option>
-              </select> -->
-              <select class="form-control @error('emp_work_location') is-invalid @enderror" name="emp_work_location" id="emp_work_location">
-                <option value="">Select State</option>
-                @foreach($State as $state)
-                  <option value="{{ $state->id }}" {{ old('emp_work_location') == $state->id ? 'selected' : '' }}>{{ $state->name }}</option>
-                @endforeach
-              </select>
-              @error('emp_work_location')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label>Wage Type <span class="text-danger">*</span></label>
-              <select class="form-control @error('emp_wage_type') is-invalid @enderror" id="emp_wage_type" name="emp_wage_type">
+    <!-- Work Location -->
+    <div class="col-md-4">
+        <div class="form-group @error('emp_work_location') is-invalid @enderror">
+            <label>Work Location <span class="text-danger">*</span></label>
+            <select class="form-control" name="emp_work_location" id="emp_work_location">
+                <option value="">Select Work Location</option>
+                <option value="1">Employee always works from business location</option>
+                <option value="2">Employee always works from home</option>
+            </select>
+            @error('emp_work_location')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+
+    <!-- Wage Type -->
+    <div class="col-md-4">
+        <div class="form-group @error('emp_wage_type') is-invalid @enderror">
+            <label for="emp_wage_type">Wage Type <span class="text-danger">*</span></label>
+            <select class="form-control" id="emp_wage_type" name="emp_wage_type">
                 <option value="{{ old('emp_wage_amount') }}">Select</option>
                 <option value="Hourly">Hourly</option>
                 <option value="Annual">Annual</option>
-              </select>
-              @error('emp_wage_type')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-              <!-- <select class="form-control" name="emp_wage_type" style="width: 100%;" required> -->
-              <!-- <select class="form-control" name="emp_wage_type" id="emp_wage_type">
-                
-                <option value="">Select State</option>
-                @foreach($State as $state)
-                  <option value="{{ $state->id }}" {{ old('emp_wage_type') == $state->id ? 'selected' : '' }}>{{ $state->name }}</option>
-                @endforeach
-              </select> -->
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label for="wagesamount">Wages Amount <span class="text-danger">*</span></label>
-              <input type="number" class="form-control @error('emp_wage_amount') is-invalid @enderror" id="wagesamount" name="emp_wage_amount" value="{{ old('emp_wage_amount') }}" placeholder="0.00">
-              @error('emp_wage_amount')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-            </div>
-          </div>
+            </select>
+            @error('emp_wage_type')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
+
+        <!-- Work Hours -->
+        <div id="work-hours-container" class="form-group" style="display: none;">
+            <label for="emp_work_hours">Work Hours Per Week</label>
+            <input type="text" id="emp_work_hours" name="emp_work_hours" 
+                   class="form-control" value="{{ old('emp_work_hours') }}">
+        </div>
+    </div>
+
+    <!-- Wages Amount -->
+    <div class="col-md-4">
+        <div class="form-group @error('emp_wage_amount') is-invalid @enderror">
+            <label for="wagesamount">Wages Amount <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="wagesamount" name="emp_wage_amount" 
+                   value="{{ old('emp_wage_amount') }}" placeholder="0.00">
+            @error('emp_wage_amount')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <!-- Direct Deposit -->
+    <div class="col-md-4">
+        <div class="form-group @error('emp_direct_deposit') is-invalid @enderror">
+            <label>Direct Deposit <span class="text-danger">*</span></label>
+            <div>
+                <label class="radio-inline">
+                    <input type="radio" name="emp_direct_deposit" value="1" id="radioYes" {{ old('emp_direct_deposit') == '1' ? 'checked' : '' }}> Yes
+                </label>
+                <small id="message1" class="text-muted d-block">This requires employee bank information.</small>
+
+                <label class="radio-inline">
+                    <input type="radio" name="emp_direct_deposit" value="0" id="radioNo" {{ old('emp_direct_deposit') == '0' ? 'checked' : '' }}> No
+                </label>
+                <small id="message2" class="text-muted d-block">You can change this setting at any time.</small>
+            </div>
+            @error('emp_direct_deposit')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+    </div>
+</div>
+
+
+
+    <!-- Vacation Policy --> 
+<div class="col-md-4">
+    <div class="form-group @error('emp_vacation_policy') is-invalid @enderror">
+        <label>Vacation Policy <span class="text-danger">*</span></label>
+        <select class="form-control" name="emp_vacation_policy" id="emp_vacation_policy">
+            @foreach($vacation as $policy)
+                <option value="{{ $policy->v_id }}" {{ old('emp_vacation_policy') == $policy->v_id ? 'selected' : '' }}>{{ $policy->name }}</option>
+            @endforeach
+        </select>
+        @error('emp_vacation_policy')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+</div>
+
+<!-- Accrual Rate Field -->
+<div class="col-md-4" id="accrual_rate_container" style="display: none;">
+    <div class="form-group">
+        <label>Vacation Accrual Rate</label>
+        <input type="number" class="form-control" name="emp_vacation_accural_rate" id="emp_vacation_accural_rate" value="{{ old('emp_vacation_accural_rate') }}">
+    </div>
+    <small>e.g. 4% of regular hours on a 40 hour/week payroll period translates to 80 hours/year.</small>
+</div>
+
+
+
           <div class="row py-20 px-10">
             <div class="col-md-12 text-center">
               <a href="{{ route('business.employee.index') }}" class="add_btn_br">Cancel</a>
@@ -210,6 +265,54 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+  <script>
+    // Add an event listener for radio button changes
+    document.addEventListener('DOMContentLoaded', function () {
+        const radioYes = document.getElementById('radioYes');
+        const radioNo = document.getElementById('radioNo');
+        const message1 = document.getElementById('message1');
+        const message2 = document.getElementById('message2');
+
+        // Add event listeners for radio buttons
+        radioYes.addEventListener('change', function () {
+            if (radioYes.checked) {
+                // Show message2 under message1 and hide it under radioNo
+                message1.insertAdjacentElement('afterend', message2);
+            }
+        });
+
+        radioNo.addEventListener('change', function () {
+            if (radioNo.checked) {
+                // Restore message2 under radioNo
+                radioNo.parentElement.insertAdjacentElement('afterend', message2);
+            }
+        });
+    });
+</script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const wageTypeSelect = document.getElementById('emp_wage_type');
+        const workHoursContainer = document.getElementById('work-hours-container');
+        const workHoursInput = document.getElementById('emp_work_hours');
+
+        function toggleWorkHoursField() {
+            if (wageTypeSelect.value === 'Annual') {
+                workHoursContainer.style.display = 'block';
+                workHoursInput.setAttribute('required', 'required');
+            } else {
+                workHoursContainer.style.display = 'none';
+                workHoursInput.removeAttribute('required');
+            }
+        }
+
+        // Initialize on page load
+        toggleWorkHoursField();
+
+        // Listen for changes in the wage type dropdown
+        wageTypeSelect.addEventListener('change', toggleWorkHoursField);
+    });
+</script>
 
   <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -274,24 +377,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const sellCheckbox = document.getElementById('purchases_product_sell');
-    const buyCheckbox = document.getElementById('purchases_product_buy');
-    const incomeAccountGroup = document.getElementById('income_account_group');
-    const expenseAccountGroup = document.getElementById('expense_account_group');
+ document.getElementById('emp_vacation_policy').addEventListener('change', function() {
+    var selectedValue = this.value;
+    var accrualRateContainer = document.getElementById('accrual_rate_container');
+    var accrualRateInput = document.getElementById('emp_vacation_accural_rate');
 
-    function toggleVisibility() {
-      incomeAccountGroup.style.display = sellCheckbox.checked ? 'block' : 'none';
-      expenseAccountGroup.style.display = buyCheckbox.checked ? 'block' : 'none';
+    if (selectedValue === '2') { // Adjust this condition based on your actual logic
+        accrualRateContainer.style.display = 'block'; // Show the textbox
+    } else {
+        accrualRateContainer.style.display = 'none'; // Hide the textbox
+        accrualRateInput.value = ''; // Clear the value if hidden
     }
+});
 
-    toggleVisibility();
+// Log the value before form submission to ensure it's being submitted
+document.querySelector('form').addEventListener('submit', function() {
+    console.log("Accrual Rate Value: ", document.getElementById('emp_vacation_accural_rate').value);
+});
 
-    sellCheckbox.addEventListener('change', toggleVisibility);
-    buyCheckbox.addEventListener('change', toggleVisibility);
-  });
 </script>
-
-
 @endsection
 @endif

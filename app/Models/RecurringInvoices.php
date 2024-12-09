@@ -32,4 +32,8 @@ class RecurringInvoices extends Model
     {
         return $this->hasMany(SentLog::class, 'sale_re_inv_id', 'id');
     }
+    public function currency()
+{
+    return $this->belongsTo(Countries::class, 'sale_currency_id', 'id');
+}
 }

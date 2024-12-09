@@ -16,7 +16,7 @@
                 <div class="col-auto">
                     <ol class="breadcrumb float-sm-right">
                         <a href="{{route('business.salestax.index')}}"><button class="add_btn_br">Cancel</button></a>
-                        <a href="#"><button class="add_btn">Save</button></a>
+                        <button type="submit" form="items-form" class="add_btn">Save</button>
                     </ol>
                 </div>
             </div>
@@ -30,7 +30,7 @@
                     <h3 class="card-title">New Sales Taxes</h3>
                 </div>
 
-                <form method="POST" action="{{ route('business.salestax.store') }}">
+                <form id="items-form" method="POST" action="{{ route('business.salestax.store') }}">
                     @csrf
                     <div class="card-body2">
                         <div class="row pad-5">

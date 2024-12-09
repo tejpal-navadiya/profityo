@@ -149,7 +149,7 @@ class ChartOfAccountController extends Controller
         $validatedData = $request->validate([
             // 'type_id' => 'required|integer',
             'acc_type_id' => 'nullable|integer',
-            'chart_acc_name' => 'nullable|string|max:255',
+            'chart_acc_name' => 'required|string|max:255',
             'currency_id' => 'nullable|integer',
             'chart_account_id' => 'nullable|string|max:255',
             'sale_acc_desc' => 'nullable|string|max:255',
