@@ -6,508 +6,512 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
+  <div id="preview-container">
   <!-- Content Header (Page header) -->
-  <div class="content-header">
-    <div class="container-fluid">
-      <div class="row mb-2 align-items-center justify-content-between">
-        <div class="col-auto">
-          <h1 class="m-0">{{ __('Edit Estimate') }}</h1>
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
-            <li class="breadcrumb-item">{{ __('Edit Estimate') }}</li>
-            <li class="breadcrumb-item active">#{{ $newId }}</li>
-          </ol>
-        </div><!-- /.col -->
-        <div class="col-auto">
-          <ol class="breadcrumb float-sm-right">
-            <a class="add_btn_br">Preview</a>
-            <a href="#"><button class="add_btn">Save & Continue</button></a>
-          </ol>
-        </div><!-- /.col -->
-      </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </div>
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2 align-items-center justify-content-between">
+          <div class="col-auto">
+            <h1 class="m-0">{{ __('Edit Estimate') }}</h1>
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
+              <li class="breadcrumb-item">{{ __('Edit Estimate') }}</li>
+              <li class="breadcrumb-item active">#{{ $newId }}</li>
+            </ol>
+          </div><!-- /.col -->
+          <div class="col-auto">
+            <ol class="breadcrumb float-sm-right">
+              <button type="button" value="true" id="preview-btn" class="add_btn_br">Preview</button>
+              <!-- <a href="#"><button class="add_btn_br">Preview</button></a> -->
+              <button type="submit" form="items-form" class="add_btn">Save & Continue</button>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
   <!-- /.content-header -->
   <!-- Main content -->
-  <section class="content px-10">
-    <div class="container-fluid">
-      <!-- card -->
-      @if(Session::has('estimate-edit'))
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-          {{ Session::get('estimate-edit') }}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-          </div>
-          @php
-          Session::forget('estimate-edit');
-      @endphp
-      @endif
-      <div class="card card-default">
-        <div class="card-header">
-          <h3 class="card-title">Business Address and Contact Details, Title, Summary, and Logo</h3>
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-          </div>
-        </div>
-        <form id="items-form" action="{{ route('business.estimates.duplicateStore', ['id' => $estimates->sale_estim_id]) }}"
-        method="POST">
-          @csrf
-          @method('Patch')
-          <!-- /.card-header -->
-          <div class="card-body">
-            <div class="row justify-content-between">
-              <div class="col-md-3 px-10">
-                <div class="business_logo_uplod_box">
-                  @if($businessDetails && $businessDetails->bus_image)
-                  <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
-                  class="elevation-2 img-box" target="_blank">
-                  <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
-
-                  <div class="modal fade" id="removebusinessimage" tabindex="-1" role="dialog"
-                  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                    <div class="modal-body pad-1 text-center">
-                      <i class="fas fa-solid fa-trash delete_icon"></i>
-                      <p class="company_details_text">Removing your logo will remove it from all existing and future
-                      invoices and estimates. Are you sure you want to remove your business logo?</p>
-                      <a type="button" class="add_btn px-15" data-dismiss="modal">Cancel</a>
-                      <a type="submit" class="delete_btn px-15">Delete</a>
-                    </div>
-                    </div>
-                  </div>
-                  </div>
-                @else
-              <form method="post" id="editBusinessImageForm" class="mt-6 space-y-6" enctype="multipart/form-data">
-              @csrf
-              @method('patch')
-
-              <!-- <input type="file" name="image" id="image" class="form-control" >  -->
-              <img src="{{url('public/dist/img/upload_icon.png')}}" class="upload_icon_img">
-              <p class="upload_text">Browse or Drop your Logo Here Maximum 5MB in Size. JPG, PNG, or GIF Formats.
-                Recommended Size: 300 x 200 Pixels.</p>
-              </form>
-            @endif
-
-                </div>
-              </div>
-              <!-- /.col -->
-              <div class="col-md-7 px-10">
-                <div class="row justify-content-end">
-                  <div class="col-md-7 float-sm-right">
-                    <input type="text" class="form-control text-right" name="sale_estim_title" id="estimatetitle"
-                      placeholder="Estimate Title" value="{{ $estimates->sale_estim_title }}">
-                  </div>
-                </div>
-                <div class="row justify-content-end">
-                  <div class="col-md-7 float-sm-right px-10">
-                    <input type="text" class="form-control text-right" name="sale_estim_summary" id="estimatesummary"
-                      placeholder="Summary (e.g. project name, description of estimate)" value="{{ $estimates->sale_estim_summary }}">
-                  </div>
-                </div>
-                <div class="px-10">
-                  <p class="company_business_name text-right">{{ $businessDetails->bus_company_name }}</p>
-                  <p class="company_details_text text-right">{{  $businessDetails->bus_address1 }}</p>
-                  <p class="company_details_text text-right">{{  $businessDetails->bus_address2 }}</p>
-                  <p class="company_details_text text-right">{{ $businessDetails->state->name ?? '' }},
-                    {{  $businessDetails->city_name }} {{ $businessDetails->zipcode }}
-                  </p>
-                  <p class="company_details_text text-right">{{  $businessDetails->country->name ?? '' }}</p>
-                  <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone }}</p>
-                  <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile }}</p>
-                  <p class="company_details_text text-right">{{  $businessDetails->bus_website }}</p>
-                </div>
-                <h3 class="card-title float-sm-right px-10" data-toggle="modal"
-                  data-target="#editbusiness_companyaddress"><img src="{{url('public/dist/img/dot.png')}}"
-                    class="dot_img">Edit your business address and contact details</h3>
-              </div>
-              <!-- /.col -->
-            </div>
-            <!-- /.row -->
-          </div>
-      </div>
-      <!-- /.card -->
-
-      <!-- card -->
-        <div class="card card-default">
-          <!-- /.card-header -->
-          <div class="card-body2">
-            <div class="row justify-content-between pad-3">
-              <div class="col-md-3">
-                <div id="customerInfo">
-                  <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
-                  <p class="company_details_text">{{ $estimates->customer->sale_cus_business_name }}</p>
-                  <p class="company_details_text">{{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}</p>
-                  <p class="company_details_text">{{ $estimates->customer->sale_cus_email }}</p>
-                  <p class="company_details_text">{{ $estimates->customer->sale_cus_phone }}</p>
-                  <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_{{ $estimates->customer->sale_cus_id }}" data-id="{{ $estimates->customer->sale_cus_id }}">
-                    <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit {{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}
-                  </div>
-                </div>
-
-                <div class="edit_es_text customer_list list2">
-                  <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
-                </div>
-
-                <div class="add_customer_list" style="display: none;">
-                <label for="customerSelect">Select Customer</label>
-                  <select id="customerSelect" name="sale_cus_id" class="form-control select2" style="width: 100%;">
-                      <!-- <option>Select Items</option> -->
-                      @foreach($salecustomer as $customer)
-                      <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
-                          {{ $customer->sale_cus_business_name }}
-                      </option>
-                      @endforeach
-                  </select>
-                  <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
-                </div>
-                
-              </div>
-              <!-- /.col -->
-              <div class="col-md-9">
-                <div class="row">
-                  <div class="col-md-3">
-                    <div class="form-group">
-                      <label for="estimatenumber">Estimate Number</label>
-                      <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $newId }}">
-                      <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
-                    </div>
-                  </div>
-                  <div class="col-md-3">
-                    <div class="form-group">
-                      <label for="estimatecustomerref">Customer Ref</label>
-                      <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"  placeholder="" value="{{ $estimates->sale_estim_customer_ref }}">
-                      <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
-                    </div>
-                  </div>
-                  <div class="col-md-3">
-                    <div class="form-group">
-                      <label>Date</label>
-                      <div class="input-group date" id="estimatedate" data-target-input="nearest">
-                        <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
-                        data-target="#estimatedate" value="{{ $estimates->sale_estim_date }}"/>
-                        <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                        </div> -->
-                        <input type="hidden" id="from-datepicker-hidden" value="{{ $estimates->sale_estim_date }}" /> 
-
-                        @php
-                        $saleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_date)->format('m/d/Y');
-                        @endphp
-
-                        <x-flatpickr 
-                              id="from-datepicker" 
-                              name="sale_estim_date" 
-                              placeholder="Select a date" 
-                              :value="$saleEstimDate" 
-                          />
-
-                        <div class="input-group-append">
-                          <div class="input-group-text" id="from-calendar-icon">
-                              <i class="fa fa-calendar-alt"></i>
-                          </div>
-                        </div>
-                        <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-3">
-                    <div class="form-group">
-                      <label>Valid Until</label>
-                      <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-                        <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
-                        data-target="#estimatevaliddate" name="sale_estim_valid_date" value="{{ $estimates->sale_estim_valid_date }}"/>
-                        <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
-                        </div> -->
-
-                        <input type="hidden" id="to-datepicker-hidden" value="{{ $estimates->sale_estim_valid_date }}" />
-                       
-                       @php
-                           $formattedSaleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('m/d/Y');
-                       @endphp
-
-                       <x-flatpickr 
-                             id="to-datepicker" 
-                             name="sale_estim_valid_date" 
-                             placeholder="Select a date" 
-                             :value="$formattedSaleEstimDate" 
-                         />
-                      <div class="input-group-append">
-                        <div class="input-group-text" id="to-calendar-icon">
-                            <i class="fa fa-calendar-alt"></i>
-                        </div>
-                      </div>
-
-                      </div>
-                      <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
-                      <!-- <p class="within_day">Within 7 days</p> -->
-                      <p class="within_day">Within <span id="total-days">{{ $estimates->sale_total_days ?? '0' }}</span> days</p>
-                      <input type="hidden" id="hidden-total-days" name="sale_total_days" value="{{ $estimates->sale_total_days ?? '0' }}">
-                      <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- /.col -->
-            </div>
-            <div class="row px-10">
-              <div class="col-md-12 text-right">
-              <a class="editcolum_btn" data-toggle="modal" data-target="#editcolum"><i
-              class="fas fa-solid fa-pen-to-square mr-2"></i>Edit Columns</a>
-                <a id="add" class="additem_btn"><i class="fas fa-plus add_plus_icon"></i>Add Item</a>
-              </div>
-              <div class="col-md-12 table-responsive ">
-                <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
-                <thead>
-                  <tr>
-                  <?php
-                // dd($estimatesCustomizeMenu);
-                      $hasData = false; // Flag to check if any data is displayed
-                    ?>
-
-                  @php
-                      // Initialize $isChecked array
-                      $isChecked1 = [];
-
-                      // Populate $isChecked based on $HideMenus
-                      foreach ($HideMenus as $hmenu) {
-                          $isChecked1[$hmenu->mname] = (old($hmenu->mname) || $estimateCustomizeMenu->where('mname', $hmenu->mname)->first()?->is_access);
-                      }
-                  @endphp
-
-                  @foreach($estimatesCustomizeMenu as $menu)
-                    @if($menu->is_access == 1 && $menu->esti_cust_menu_title !== "on")
-                        @php
-                          //dd($isChecked);
-                          $hasData = true;
-                            $headerText =  $menu->esti_cust_menu_title ?? ucfirst($menu->mname);
-                            $mname = strtolower($menu->mname);  
-                            //$hideIcon = strpos($mname, 'hide') !== false; 
-                            $hideIcon = ''; 
-                            if ($headerText === 'Items (Default)' ) {
-                                $headerText = 'Items';
-                            }elseif ($headerText === 'Quantity (Default)' ) {
-                                $headerText = 'Quantity';
-                            }elseif ($headerText === 'Price (Default)' ) {
-                                $headerText = 'Price';
-                            }elseif ($headerText === 'Amount (Default)' ) {
-                                $headerText = 'Amount';
-                            }
-
-                            $currentChecked = $isChecked1['hide ' . $mname] ?? false; 
-
-                        @endphp
-                      
-                        @if(strpos($mname, 'item') !== false)
-                            <th style="width: 30%;" id="itemsHeader">
-                                {!! $headerText !!} 
-                                @if($currentChecked)
-                                    {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
-                                @endif
-                            </th>
-                          @elseif(strpos($mname, 'units') !== false)
-                            <th style="width: 15%;" id="unitsHeader">
-                                {!! $headerText !!} 
-                                @if($currentChecked)
-                                  {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
-                              @endif
-                            </th>
-                        @elseif(strpos($mname, 'price') !== false)
-                            <th style="width: 15%;" id="priceHeader">
-                                {!! $headerText !!} 
-                                @if($currentChecked)
-                                    {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
-                                @endif
-                            </th>
-                            <th>Tax</th> <!-- Always include Tax when price is available -->
-                        @elseif(strpos($mname, 'amount') !== false)
-                            <th id="amountHeader" class="text-right">
-                                {!! $headerText !!} 
-                                @if($currentChecked)
-                                  {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
-                              @endif
-                            </th>
-                            <th class="text-right">Actions</th>
-                        @endif
-                    @endif
-                  @endforeach
-
-
-
-                  @if(!$hasData)
-              <!-- Default Headers -->
-                  <th style="width: 30%;" id="itemsHeader">Items</th>
-                  <th style="width: 15%;" id="unitsHeader">Units</th>
-                  <th style="width: 15%;" id="priceHeader">Price</th>
-                  <th>Tax</th>
-                  <th id="amountHeader" class="text-right">Amount</th>
-                  <th class="text-right">Actions</th> <!-- New column for actions -->
-                  @endif
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach($estimatesItems as $item)
-                    <tr class="item-row">
-                        <td>
-                            <div>
-                                <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
-                                    <option>Select Items</option>
-                                    @foreach($products as $product)
-                                        <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == $item->sale_product_id ? 'selected' : '' }}>
-                                            {{ $product->sale_product_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <span class="error-message" id="error_items_0_sale_product_id" style="color: red;"></span>
-                                <input type="text" class="form-control px-10" name="items[][sale_estim_item_desc]"
-                                    placeholder="Enter item description" value="{{ $item->sale_estim_item_desc }}">
-                                <span class="error-message" id="error_items_0_sale_estim_item_desc" style="color: red;"></span>
-                            </div>
-                        </td>
-                        <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]" value="{{ $item->sale_estim_item_qty }}" min="1" placeholder="Enter item Quantity">
-                        <span class="error-message" id="error_items_0_sale_estim_item_qty" style="color: red;"></span>
-                        </td>
-                        <td>
-                            <div class="d-flex">
-                              <input type="text" name="items[][sale_estim_item_price]" class="form-control"
-                                    aria-describedby="inputGroupPrepend" value="{{ $item->sale_estim_item_price }}" placeholder="Enter item Price">
-                            </div>
-                            <span class="error-message" id="error_items_0_sale_estim_item_price" style="color: red;"></span>
-                        </td>
-                        <td>
-                            <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
-                                @foreach($salestax as $salesTax)
-                                    <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
-                                        {{ $salesTax->tax_id == $item->sale_estim_item_tax ? 'selected' : '' }}>
-                                        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-                                    </option>
-                                @endforeach
-                            </select>
-                            <div class="px-10"></div>
-                            <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
-                                @foreach($salestax as $salesTax)
-                                    <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
-                                        {{ $salesTax->tax_id == $item->sale_estim_item_tax ? 'selected' : '' }}>
-                                        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-                                    </option>
-                                @endforeach
-                            </select>
-                        </td>
-                        <td class="text-right item-price">{{ number_format($item->sale_estim_item_price * $item->sale_estim_item_qty, 2) }}</td>
-                        <td  class="text-right"><i class="fa fa-trash delete_icon_grid delete-item"></i></td>
-                    </tr>
-                  @endforeach
-
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.col -->
-            </div>
-            <br />
-            <input type="hidden" name="sale_estim_sub_total" value="{{ $estimates->sale_estim_sub_total }}">
-            <input type="hidden" name="sale_estim_discount_total" value="{{ $estimates->sale_estim_discount_total }}">
-            <input type="hidden" name="sale_estim_tax_amount" value="{{ $estimates->sale_estim_tax_amount }}">
-            <input type="hidden" name="sale_estim_final_amount" value="{{ $estimates->sale_estim_final_amount }}">
-            <div class="row pad-2">
-              <div class="col-md-4">
-                  <div class="d-flex align-items-center">
-                    <label style="margin-right: 10px;">Discount</label>
-                    <input type="text" class="form-control" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_discount_desc }}" placeholder="Description (optional)">
-                  </div>
-              </div>
-              <div class="col-md-4">
-                  <div class="d-flex">
-                  <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
-                      aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_item_discount }}" min="1" placeholder="Enter a discount value">
-                  <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type" >
-                      <option value="1" {{ $estimates->sale_estim_discount_type == 1 ? 'selected' : '' }} >{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}</option>
-                      <option value="2" {{ $estimates->sale_estim_discount_type == 2 ? 'selected' : '' }}>%</option>
-                  </select>
-                  </div>
-              </div>
-              <div class="col-md-4">
-                  <div class="table-responsive">
-                  <table class="table total_table">
-                      <tr>
-                      <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" style="width: 100%;" required>
-                        @foreach($currencys as $curr)
-                          <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
-                          <option value="{{ $curr->id }}" {{ $curr->id == $estimates->sale_currency_id ? 'selected' : '' }} data-symbol="{{ $curr->currency_symbol }}">
-                          {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
-                        </option>
-                        @endforeach
-                      </select>
-                      <td style="width:50%">Sub Total :</td>
-                      <td id="sub-total">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_sub_total }}</td>
-                      </tr>
-                      <tr>
-                      <td>Discount :</td>
-                      <td id="discount">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_discount_total }}</td>
-                      </tr>
-                      <tr>
-                      <td>Tax :</td>
-                      <td id="tax">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_tax_amount }}</td>
-                      </tr>
-                      <tr>
-                      <td><strong>Total:</strong></td>
-                      <td id="total"><strong>{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_final_amount }}</strong></td>
-                      </tr>
-                  </table>
-
-                  </div>
-              </div>
-            </div>
-            <div class="dropdown-divider"></div>
-            <div class="row pad-2">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="inputDescription">Notes / Terms</label>
-                  <textarea id="inputDescription" class="form-control" name="sale_estim_notes" rows="3" placeholder="Enter notes or terms of service that are visible to your customer">{{ $estimates->sale_estim_notes }}</textarea>
-                </div>
-              </div>
-            </div>
-            <!-- /.row -->
-          </div>
-        </div>
-        <!-- /.card -->
+    <section class="content px-10">
+      <div class="container-fluid">
         <!-- card -->
+        @if(Session::has('estimate-edit'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ Session::get('estimate-edit') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            @php
+            Session::forget('estimate-edit');
+        @endphp
+        @endif
         <div class="card card-default">
           <div class="card-header">
-            <h3 class="card-title">Footer</h3>
+            <h3 class="card-title">Business Address and Contact Details, Title, Summary, and Logo</h3>
             <div class="card-tools">
               <button type="button" class="btn btn-tool" data-card-widget="collapse">
                 <i class="fas fa-minus"></i>
               </button>
             </div>
           </div>
-          <!-- /.card-header -->
-          <div class="card-body">
-            <div class="row justify-content-between">
-              <div class="col-md-12">
-                <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
-                  placeholder="Enter a footer for this estimate (e.g. tax information, thank you note)">{{ $estimates->sale_estim_footer_note }}</textarea>
+          <form id="items-form" action="{{ route('business.estimates.duplicateStore', ['id' => $estimates->sale_estim_id]) }}"
+          method="POST">
+            @csrf
+            @method('Patch')
+            <!-- /.card-header -->
+            <div class="card-body">
+              <div class="row justify-content-between">
+                <div class="col-md-3 px-10">
+                  <div class="business_logo_uplod_box">
+                    @if($businessDetails && $businessDetails->bus_image)
+                    <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                    class="elevation-2 img-box" target="_blank">
+                    <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
+
+                    <div class="modal fade" id="removebusinessimage" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                      <div class="modal-body pad-1 text-center">
+                        <i class="fas fa-solid fa-trash delete_icon"></i>
+                        <p class="company_details_text">Removing your logo will remove it from all existing and future
+                        invoices and estimates. Are you sure you want to remove your business logo?</p>
+                        <a type="button" class="add_btn px-15" data-dismiss="modal">Cancel</a>
+                        <a type="submit" class="delete_btn px-15">Delete</a>
+                      </div>
+                      </div>
+                    </div>
+                    </div>
+                  @else
+                <form method="post" id="editBusinessImageForm" class="mt-6 space-y-6" enctype="multipart/form-data">
+                @csrf
+                @method('patch')
+
+                <!-- <input type="file" name="image" id="image" class="form-control" >  -->
+                <img src="{{url('public/dist/img/upload_icon.png')}}" class="upload_icon_img">
+                <p class="upload_text">Browse or Drop your Logo Here Maximum 5MB in Size. JPG, PNG, or GIF Formats.
+                  Recommended Size: 300 x 200 Pixels.</p>
+                </form>
+              @endif
+
+                  </div>
+                </div>
+                <!-- /.col -->
+                <div class="col-md-7 px-10">
+                  <div class="row justify-content-end">
+                    <div class="col-md-7 float-sm-right">
+                      <input type="text" class="form-control text-right" name="sale_estim_title" id="estimatetitle"
+                        placeholder="Estimate Title" value="{{ $estimates->sale_estim_title }}">
+                    </div>
+                  </div>
+                  <div class="row justify-content-end">
+                    <div class="col-md-7 float-sm-right px-10">
+                      <input type="text" class="form-control text-right" name="sale_estim_summary" id="estimatesummary"
+                        placeholder="Summary (e.g. project name, description of estimate)" value="{{ $estimates->sale_estim_summary }}">
+                    </div>
+                  </div>
+                  <div class="px-10">
+                    <p class="company_business_name text-right">{{ $businessDetails->bus_company_name }}</p>
+                    <p class="company_details_text text-right">{{  $businessDetails->bus_address1 }}</p>
+                    <p class="company_details_text text-right">{{  $businessDetails->bus_address2 }}</p>
+                    <p class="company_details_text text-right">{{ $businessDetails->state->name ?? '' }},
+                      {{  $businessDetails->city_name }} {{ $businessDetails->zipcode }}
+                    </p>
+                    <p class="company_details_text text-right">{{  $businessDetails->country->name ?? '' }}</p>
+                    <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone }}</p>
+                    <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile }}</p>
+                    <p class="company_details_text text-right">{{  $businessDetails->bus_website }}</p>
+                  </div>
+                  <h3 class="card-title float-sm-right px-10" data-toggle="modal"
+                    data-target="#editbusiness_companyaddress"><img src="{{url('public/dist/img/dot.png')}}"
+                      class="dot_img">Edit your business address and contact details</h3>
+                </div>
+                <!-- /.col -->
               </div>
+              <!-- /.row -->
             </div>
-            <!-- /.row -->
-          </div>
         </div>
         <!-- /.card -->
 
-        <div class="row py-20">
-          <div class="col-md-12 text-center">
-            <a class="add_btn_br">Preview</a>
-            <button class="add_btn">Save & Continue</button>
+        <!-- card -->
+          <div class="card card-default">
+            <!-- /.card-header -->
+            <div class="card-body2">
+              <div class="row justify-content-between pad-3">
+                <div class="col-md-3">
+                  <div id="customerInfo">
+                    <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
+                    <p class="company_details_text">{{ $estimates->customer->sale_cus_business_name }}</p>
+                    <p class="company_details_text">{{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}</p>
+                    <p class="company_details_text">{{ $estimates->customer->sale_cus_email }}</p>
+                    <p class="company_details_text">{{ $estimates->customer->sale_cus_phone }}</p>
+                    <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_{{ $estimates->customer->sale_cus_id }}" data-id="{{ $estimates->customer->sale_cus_id }}">
+                      <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit {{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}
+                    </div>
+                  </div>
+
+                  <div class="edit_es_text customer_list list2">
+                    <i class="fas fa-solid fa-user-plus mr-2"></i>Choose a Different Customer
+                  </div>
+
+                  <div class="add_customer_list" style="display: none;">
+                  <label for="customerSelect">Select Customer</label>
+                    <select id="customerSelect" name="sale_cus_id" class="form-control select2" style="width: 100%;">
+                        <!-- <option>Select Items</option> -->
+                        @foreach($salecustomer as $customer)
+                        <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
+                            {{ $customer->sale_cus_business_name }}
+                        </option>
+                        @endforeach
+                    </select>
+                    <span class="error-message" id="error_sale_cus_id" style="color: red;"></span>
+                  </div>
+                  
+                </div>
+                <!-- /.col -->
+                <div class="col-md-9">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="estimatenumber">Estimate Number</label>
+                        <input type="text" class="form-control" name="sale_estim_number" id="estimatenumber" placeholder="" value="{{ $newId }}">
+                        <span class="error-message" id="error_sale_estim_number" style="color: red;"></span>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="estimatecustomerref">Customer Ref</label>
+                        <input type="text" class="form-control" name="sale_estim_customer_ref" id="estimatecustomerref"  placeholder="" value="{{ $estimates->sale_estim_customer_ref }}">
+                        <span class="error-message" id="error_sale_estim_customer_ref" style="color: red;"></span>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label>Date</label>
+                        <div class="input-group date" id="estimatedate" data-target-input="nearest">
+                          <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
+                          data-target="#estimatedate" value="{{ $estimates->sale_estim_date }}"/>
+                          <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
+                              <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                          </div> -->
+                          <input type="hidden" id="from-datepicker-hidden" value="{{ $estimates->sale_estim_date }}" /> 
+
+                          @php
+                          $saleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_date)->format('m/d/Y');
+                          @endphp
+
+                          <x-flatpickr 
+                                id="from-datepicker" 
+                                name="sale_estim_date" 
+                                placeholder="Select a date" 
+                                :value="$saleEstimDate" 
+                            />
+
+                          <div class="input-group-append">
+                            <div class="input-group-text" id="from-calendar-icon">
+                                <i class="fa fa-calendar-alt"></i>
+                            </div>
+                          </div>
+                          <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label>Valid Until</label>
+                        <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+                          <!-- <input type="text" class="form-control datetimepicker-input" placeholder=""
+                          data-target="#estimatevaliddate" name="sale_estim_valid_date" value="{{ $estimates->sale_estim_valid_date }}"/>
+                          <div class="input-group-append" data-target="#estimatevaliddate" data-toggle="datetimepicker">
+                              <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+                          </div> -->
+
+                          <input type="hidden" id="to-datepicker-hidden" value="{{ $estimates->sale_estim_valid_date }}" />
+                        
+                        @php
+                            $formattedSaleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('m/d/Y');
+                        @endphp
+
+                        <x-flatpickr 
+                              id="to-datepicker" 
+                              name="sale_estim_valid_date" 
+                              placeholder="Select a date" 
+                              :value="$formattedSaleEstimDate" 
+                          />
+                        <div class="input-group-append">
+                          <div class="input-group-text" id="to-calendar-icon">
+                              <i class="fa fa-calendar-alt"></i>
+                          </div>
+                        </div>
+
+                        </div>
+                        <span class="error-message" id="error_sale_estim_valid_date" style="color: red;"></span>
+                        <!-- <p class="within_day">Within 7 days</p> -->
+                        <p class="within_day">Within <span id="total-days">{{ $estimates->sale_total_days ?? '0' }}</span> days</p>
+                        <input type="hidden" id="hidden-total-days" name="sale_total_days" value="{{ $estimates->sale_total_days ?? '0' }}">
+                        <span class="error-message" id="error_sale_total_days" style="color: red;"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.col -->
+              </div>
+              <div class="row px-10">
+                <div class="col-md-12 text-right">
+                <a class="editcolum_btn" data-toggle="modal" data-target="#editcolum"><i
+                class="fas fa-solid fa-pen-to-square mr-2"></i>Edit Columns</a>
+                  <a id="add" class="additem_btn"><i class="fas fa-plus add_plus_icon"></i>Add Item</a>
+                </div>
+                <div class="col-md-12 table-responsive ">
+                  <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
+                  <thead>
+                    <tr>
+                    <?php
+                  // dd($estimatesCustomizeMenu);
+                        $hasData = false; // Flag to check if any data is displayed
+                      ?>
+
+                    @php
+                        // Initialize $isChecked array
+                        $isChecked1 = [];
+
+                        // Populate $isChecked based on $HideMenus
+                        foreach ($HideMenus as $hmenu) {
+                            $isChecked1[$hmenu->mname] = (old($hmenu->mname) || $estimateCustomizeMenu->where('mname', $hmenu->mname)->first()?->is_access);
+                        }
+                    @endphp
+
+                    @foreach($estimatesCustomizeMenu as $menu)
+                      @if($menu->is_access == 1 && $menu->esti_cust_menu_title !== "on")
+                          @php
+                            //dd($isChecked);
+                            $hasData = true;
+                              $headerText =  $menu->esti_cust_menu_title ?? ucfirst($menu->mname);
+                              $mname = strtolower($menu->mname);  
+                              //$hideIcon = strpos($mname, 'hide') !== false; 
+                              $hideIcon = ''; 
+                              if ($headerText === 'Items (Default)' ) {
+                                  $headerText = 'Items';
+                              }elseif ($headerText === 'Quantity (Default)' ) {
+                                  $headerText = 'Quantity';
+                              }elseif ($headerText === 'Price (Default)' ) {
+                                  $headerText = 'Price';
+                              }elseif ($headerText === 'Amount (Default)' ) {
+                                  $headerText = 'Amount';
+                              }
+
+                              $currentChecked = $isChecked1['hide ' . $mname] ?? false; 
+
+                          @endphp
+                        
+                          @if(strpos($mname, 'item') !== false)
+                              <th style="width: 30%;" id="itemsHeader">
+                                  {!! $headerText !!} 
+                                  @if($currentChecked)
+                                      {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
+                                  @endif
+                              </th>
+                            @elseif(strpos($mname, 'units') !== false)
+                              <th style="width: 15%;" id="unitsHeader">
+                                  {!! $headerText !!} 
+                                  @if($currentChecked)
+                                    {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
+                                @endif
+                              </th>
+                          @elseif(strpos($mname, 'price') !== false)
+                              <th style="width: 15%;" id="priceHeader">
+                                  {!! $headerText !!} 
+                                  @if($currentChecked)
+                                      {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
+                                  @endif
+                              </th>
+                              <th>Tax</th> <!-- Always include Tax when price is available -->
+                          @elseif(strpos($mname, 'amount') !== false)
+                              <th id="amountHeader" class="text-right">
+                                  {!! $headerText !!} 
+                                  @if($currentChecked)
+                                    {!! '<i class="fas fa-eye-slash" aria-hidden="true"></i>' !!}
+                                @endif
+                              </th>
+                              <th class="text-right">Actions</th>
+                          @endif
+                      @endif
+                    @endforeach
+
+
+
+                    @if(!$hasData)
+                <!-- Default Headers -->
+                    <th style="width: 30%;" id="itemsHeader">Items</th>
+                    <th style="width: 15%;" id="unitsHeader">Units</th>
+                    <th style="width: 15%;" id="priceHeader">Price</th>
+                    <th>Tax</th>
+                    <th id="amountHeader" class="text-right">Amount</th>
+                    <th class="text-right">Actions</th> <!-- New column for actions -->
+                    @endif
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($estimatesItems as $item)
+                      <tr class="item-row">
+                          <td>
+                              <div>
+                                  <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
+                                      <option>Select Items</option>
+                                      @foreach($products as $product)
+                                          <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == $item->sale_product_id ? 'selected' : '' }}>
+                                              {{ $product->sale_product_name }}
+                                          </option>
+                                      @endforeach
+                                  </select>
+                                  <span class="error-message" id="error_items_0_sale_product_id" style="color: red;"></span>
+                                  <input type="text" class="form-control px-10" name="items[][sale_estim_item_desc]"
+                                      placeholder="Enter item description" value="{{ $item->sale_estim_item_desc }}">
+                                  <span class="error-message" id="error_items_0_sale_estim_item_desc" style="color: red;"></span>
+                              </div>
+                          </td>
+                          <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]" value="{{ $item->sale_estim_item_qty }}" min="1" placeholder="Enter item Quantity">
+                          <span class="error-message" id="error_items_0_sale_estim_item_qty" style="color: red;"></span>
+                          </td>
+                          <td>
+                              <div class="d-flex">
+                                <input type="text" name="items[][sale_estim_item_price]" class="form-control"
+                                      aria-describedby="inputGroupPrepend" value="{{ $item->sale_estim_item_price }}" placeholder="Enter item Price">
+                              </div>
+                              <span class="error-message" id="error_items_0_sale_estim_item_price" style="color: red;"></span>
+                          </td>
+                          <td>
+                              <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                                  @foreach($salestax as $salesTax)
+                                      <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
+                                          {{ $salesTax->tax_id == $item->sale_estim_item_tax ? 'selected' : '' }}>
+                                          {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                                      </option>
+                                  @endforeach
+                              </select>
+                              <div class="px-10"></div>
+                              <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
+                                  @foreach($salestax as $salesTax)
+                                      <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
+                                          {{ $salesTax->tax_id == $item->sale_estim_item_tax ? 'selected' : '' }}>
+                                          {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                                      </option>
+                                  @endforeach
+                              </select>
+                          </td>
+                          <td class="text-right item-price">{{ number_format($item->sale_estim_item_price * $item->sale_estim_item_qty, 2) }}</td>
+                          <td  class="text-right"><i class="fa fa-trash delete_icon_grid delete-item"></i></td>
+                      </tr>
+                    @endforeach
+
+                    </tbody>
+                  </table>
+                </div>
+                <!-- /.col -->
+              </div>
+              <br />
+              <input type="hidden" name="sale_estim_sub_total" value="{{ $estimates->sale_estim_sub_total }}">
+              <input type="hidden" name="sale_estim_discount_total" value="{{ $estimates->sale_estim_discount_total }}">
+              <input type="hidden" name="sale_estim_tax_amount" value="{{ $estimates->sale_estim_tax_amount }}">
+              <input type="hidden" name="sale_estim_final_amount" value="{{ $estimates->sale_estim_final_amount }}">
+              <div class="row pad-2">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center">
+                      <label style="margin-right: 10px;">Discount</label>
+                      <input type="text" class="form-control" name="sale_estim_discount_desc"  aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_discount_desc }}" placeholder="Description (optional)">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex">
+                    <input type="number" class="form-control form-controltext" name="sale_estim_item_discount"
+                        aria-describedby="inputGroupPrepend" value="{{ $estimates->sale_estim_item_discount }}" min="1" placeholder="Enter a discount value">
+                    <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type" >
+                        <option value="1" {{ $estimates->sale_estim_discount_type == 1 ? 'selected' : '' }} >{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}</option>
+                        <option value="2" {{ $estimates->sale_estim_discount_type == 2 ? 'selected' : '' }}>%</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="table-responsive">
+                    <table class="table total_table">
+                        <tr>
+                        <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" style="width: 100%;" required>
+                          @foreach($currencys as $curr)
+                            <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
+                            <option value="{{ $curr->id }}" {{ $curr->id == $estimates->sale_currency_id ? 'selected' : '' }} data-symbol="{{ $curr->currency_symbol }}">
+                            {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
+                          </option>
+                          @endforeach
+                        </select>
+                        <td style="width:50%">Sub Total :</td>
+                        <td id="sub-total">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_sub_total }}</td>
+                        </tr>
+                        <tr>
+                        <td>Discount :</td>
+                        <td id="discount">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_discount_total }}</td>
+                        </tr>
+                        <tr>
+                        <td>Tax :</td>
+                        <td id="tax">{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_tax_amount }}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Total:</strong></td>
+                        <td id="total"><strong>{{ $currencys->find($estimates->sale_currency_id)->currency_symbol }}{{ $estimates->sale_estim_final_amount }}</strong></td>
+                        </tr>
+                    </table>
+
+                    </div>
+                </div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div class="row pad-2">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="inputDescription">Notes / Terms</label>
+                    <textarea id="inputDescription" class="form-control" name="sale_estim_notes" rows="3" placeholder="Enter notes or terms of service that are visible to your customer">{{ $estimates->sale_estim_notes }}</textarea>
+                  </div>
+                </div>
+              </div>
+              <!-- /.row -->
+            </div>
           </div>
-        </div><!-- /.col -->
-      </div>
-        <!-- /.card -->
-    </form>
-  </section>
+          <!-- /.card -->
+          <!-- card -->
+          <div class="card card-default">
+            <div class="card-header">
+              <h3 class="card-title">Footer</h3>
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <div class="row justify-content-between">
+                <div class="col-md-12">
+                  <textarea id="inputDescription" name="sale_estim_footer_note" class="form-control" rows="3"
+                    placeholder="Enter a footer for this estimate (e.g. tax information, thank you note)">{{ $estimates->sale_estim_footer_note }}</textarea>
+                </div>
+              </div>
+              <!-- /.row -->
+            </div>
+          </div>
+          <!-- /.card -->
+
+          <div class="row py-20">
+            <div class="col-md-12 text-center">
+              <button type="button" value="true" id="preview-btn-footer" class="add_btn_br">Preview</button>
+              <!-- Save & Continue Button -->
+              <button type="button" id="save-btn" value="false" class="add_btn">Save & Continue</button>
+            </div>
+          </div><!-- /.col -->
+        </div>
+          <!-- /.card -->
+      </form>
+    </section>
   <!-- /.content -->
+  </div>
 </div>
 <!-- /.content-wrapper -->
 
@@ -1843,11 +1847,45 @@
       }
     });
 
-    $('#items-form').on('submit', function (e) {
-      e.preventDefault();
+    $('#preview-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
+
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
+
+    $('#preview-btn-footer').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
+
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
+
+    // Handle the click event for the Save & Continue button
+    $('#save-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    function getFormData() {
 
       let formData = {};
-
       $('.item-row').each(function (index) {
         const rowIndex = index;
         formData[`items[${rowIndex}][sale_product_id]`] = $(this).find('select[name="items[][sale_product_id]"]').val();
@@ -1876,68 +1914,72 @@
       formData['sale_status'] = 0;
       formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
       formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
+        return formData;
+    }
 
+    function submitFormViaAjax(formData) {
+        $.ajax({
+          url: "{{ route('business.estimates.duplicateStore', ['id' => $estimates->sale_estim_id]) }}",
+          method: 'PATCH',
+          data: formData,
+          success: function(response) {
+              if (response.preview_view) {
+                  // Inject the preview HTML into the container
 
-      $.ajax({
-        url: "{{ route('business.estimates.duplicateStore', ['id' => $estimates->sale_estim_id]) }}",
-        method: 'PATCH',
-        data: formData,
-        success: function (response) {
-          window.location.href = response.redirect_url;
+                  $('#preview-container').html(response.preview_view).fadeIn();
 
-          // alert('Items saved successfully!');
+                  
+                 
+                  // Optionally, scroll to the preview container if needed
+                  $('html, body').animate({ scrollTop: $('#preview-container').offset().top }, 500);
 
-          // $('#items-form')[0].reset();
-          // $('#dynamic_field').find('.item-row').remove();
-        },
-        error: function (xhr) {
-        if (xhr.status === 422) {
-        var errors = xhr.responseJSON.errors;
-        console.log(errors); // Debug the errors object
+                  if (response.preview_data && response.preview_data.items) {
+                      response.preview_data.items.forEach(function(item, index) {
+                          // Example: Update the product name in a specific element
+                          let productElement = $('#product-name-' + index); // Use an appropriate selector
+                          if (productElement.length) {
+                              productElement.text(item.product_name || 'N/A');
+                          }
+                      });
+                  }
 
-        // Clear previous error messages
-        $('.error-message').html('');
-        $('input, select').removeClass('is-invalid');
+              } else if (response.redirect_url) {
+                  // Redirect for save success
+                  window.location.href = response.redirect_url;
+              }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $('.error-message').html('');
+                    $('input, select').removeClass('is-invalid');
 
-        var firstErrorField = null; // Variable to store the first error field
+                    var firstErrorField = null;
+                    $.each(errors, function(field, messages) {
+                        var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
+                        var errorMessageContainerId = 'error_' + fieldId;
+                        var errorMessageContainer = $('#' + errorMessageContainerId);
 
-        $.each(errors, function (field, messages) {
-          // Replace characters to match the format of your HTML IDs
-          var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
-          var errorMessageContainerId = 'error_' + fieldId;
-          var errorMessageContainer = $('#' + errorMessageContainerId);
-
-          if (errorMessageContainer.length) {
-          errorMessageContainer.html(messages.join('<br>'));
-
-          // Find the input field related to the error
-          var $field = $('[name="' + field + '"]');
-
-          if ($field.length > 0) {
-            $field.addClass('is-invalid');
-            
-            // Set first error field for scrolling
-            if (!firstErrorField) {
-            firstErrorField = $field;
+                        if (errorMessageContainer.length) {
+                            errorMessageContainer.html(messages.join('<br>'));
+                            var $field = $('[name="' + field + '"]');
+                            if ($field.length > 0) {
+                                $field.addClass('is-invalid');
+                                if (!firstErrorField) {
+                                    firstErrorField = $field;
+                                }
+                                scrollToCenter($field);
+                            }
+                        }
+                    });
+                }
             }
-            scrollToCenter($field);
-          } else {
-            // console.log('Field not found for:', field);
-          }
-          } else {
-          // console.log('Error container not found for:', errorMessageContainerId);
-          }
         });
+    }
 
 
-        } else {
-        // console.log('An error occurred: ' + xhr.statusText);
-        }
-      }
-     
-      });
-    });
 
+  
   });
 
   function scrollToCenter($element) {

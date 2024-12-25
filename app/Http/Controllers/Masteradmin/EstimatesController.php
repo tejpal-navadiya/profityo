@@ -818,7 +818,7 @@ class EstimatesController extends Controller
         // Pass form data back to the form
     }
 
-    dD($request->all());
+    // dD($request->all());
         // dd($request);
         // \DB::enableQueryLog();
 
@@ -1215,9 +1215,116 @@ class EstimatesController extends Controller
 
     public function duplicateStore(Request $request)
     {
-       
 
         $user = Auth::guard('masteradmins')->user();
+
+        if ($request->has('preview') && $request->input('preview') === 'true') {
+
+            // Retrieve all data from the request
+            $previewData = $request->all();
+            session()->put('previewData', $previewData);
+            // Ensure items are part of the request
+            $previewData['items'] = $request->input('items'); 
+        
+            // Loop through the items and add the product_name
+            foreach ($previewData['items'] as &$item) {
+                // Fetch the product based on the sale_product_id
+                $product = SalesProduct::where('sale_product_id',$item['sale_product_id'])->first();
+                
+                // If product is found, add the product_name to the item
+                if ($product) {
+                    $item['product_name'] = $product->sale_product_name; // Assign the product name
+                } else {
+                    // If no product is found, set 'product_name' to 'N/A'
+                    $item['product_name'] = 'N/A';
+                }
+            }
+        
+            // Now previewData['items'] will have the 'product_name' field
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+            $salecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+            $currencys = Countries::where('id', $previewData['sale_currency_id'])->first();
+        
+            // Pass the data to the view
+            $view = view('masteradmin.estimates.preview', compact('previewData', 'businessDetails', 'salecustomer', 'currencys'))->render();
+        
+            return response()->json(['preview_view' => $view, 'preview_data' => $previewData]);
+        }
+        
+
+
+         // Handle redirect back with input data if the user clicks "Back to Edit"
+    if ($request->has('back_to')) {
+        // $previewData = $request->all();
+        $previewData = session('previewData');
+        // dd($previewData);
+        // dD($previewData);
+        $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+        $countries = Countries::all();
+        $states = collect();
+        $currency = null;
+        if (isset($businessDetails->bus_currency)) {
+            $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+        }
+        // dD($currency);
+
+        if ($businessDetails && $businessDetails->country_id) {
+            $states = States::where('country_id', $businessDetails->country_id)->get();
+        }
+
+        $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+        $products = SalesProduct::where('id', $user->id)->get();
+        $currencys = Countries::get();
+      
+        
+        $salestax = SalesTax::all();
+
+        $customers = SalesCustomers::where('id', $user->id)->first();
+
+        $singlecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+
+        // dD($salecustomer1);
+        $specificMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [1, 2, 3, 4])
+        ->get();
+
+        $HideMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [5, 6, 7, 8])
+        ->get();
+
+        $HideSettings = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [10])
+        ->get();
+        
+        $HideDescription = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [9])
+        ->get();
+
+       
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
+
+        $lastEstimate = Estimates::orderBy('sale_estim_id', 'desc')->first();
+
+        $newId = $lastEstimate ? $lastEstimate->sale_estim_id + 1 : 1;
+        $sessionData = session('form_data') ?? [];
+
+
+        $view = view('masteradmin.estimates.create_edit_preview', compact('previewData','businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId','singlecustomer','sessionData'))->render();
+
+        return response()->json(['preview_view' => $view,'form_data' => $previewData]);
+
+        // Pass form data back to the form
+    }
 
         $dynamicId = $user->user_id; 
 
