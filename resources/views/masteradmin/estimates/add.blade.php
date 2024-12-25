@@ -7,6 +7,8 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
+    <div id="preview-container">
+
     <div class="content-header">
     <div class="container-fluid">
       <div class="row mb-2 align-items-center justify-content-between">
@@ -19,13 +21,19 @@
       </div><!-- /.col -->
       <div class="col-auto">
         <ol class="breadcrumb float-sm-right">
-        <a href="#"><button class="add_btn_br">Preview</button></a>
-        <button type="submit" form="items-form" class="add_btn">Save & Continue</button>
+        <button type="button" value="true" id="preview-btn" class="add_btn_br">Preview</button>
+
+        <!-- <a href="#"><button class="add_btn_br">Preview</button></a> -->
+               <button type="submit" form="items-form" class="add_btn">Save & Continue</button>
+
         </ol>
       </div><!-- /.col -->
       </div><!-- /.row -->
     </div><!-- /.container-fluid -->
     </div>
+    
+
+
     <!-- /.content-header -->
     <!-- Main content -->
     <section class="content px-10">
@@ -67,15 +75,16 @@
         </div>
         </div>
       @else
-       <form method="post" id="editBusinessImageForm" class="mt-6 space-y-6" enctype="multipart/form-data">
-      @csrf
-      @method('patch')
-      <!-- <input type="file" name="image" id="image" class="form-control" >  -->
-      <img src="{{url('public/dist/img/upload_icon.png')}}" class="upload_icon_img">
-      <p class="upload_text">Browse or Drop your Logo Here Maximum 5MB in Size. JPG, PNG, or GIF Formats.
-        Recommended Size: 300 x 200 Pixels.</p>
-      </form>
-        @endif
+    <form method="post" id="editBusinessImageForm" class="mt-6 space-y-6" enctype="multipart/form-data">
+    @csrf
+    @method('patch')
+
+    <!-- <input type="file" name="image" id="image" class="form-control" >  -->
+    <img src="{{url('public/dist/img/upload_icon.png')}}" class="upload_icon_img">
+    <p class="upload_text">Browse or Drop your Logo Here Maximum 5MB in Size. JPG, PNG, or GIF Formats.
+      Recommended Size: 300 x 200 Pixels.</p>
+    </form>
+  @endif
 
           </div>
           </div>
@@ -103,6 +112,7 @@
 
             </div>
           </div>
+        
           <div class="px-10">
             <p class="company_business_name text-right">{{ $businessDetails->bus_company_name ?? '' }}</p>
             <p class="company_details_text text-right">{{  $businessDetails->bus_address1 ?? '' }}</p>
@@ -141,7 +151,7 @@
                 <label for="customerSelect">Select Customer</label>
                 <select id="customerSelect" name="sale_cus_id" required class="form-control select2"
                         style="width: 100%;">
-                        <option>Select Customer</option>
+                        <option value="">Select Customer</option>
                         @foreach($salecustomer as $customer)
                     <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
                     {{ $customer->sale_cus_business_name }}
@@ -151,8 +161,7 @@
               </div>
             </div>
             <!-- /.col -->
-
-            <div class="col-lg-9 col-md-12"> 
+            <div class="col-lg-9 col-md-12">
               <div class="row">
                 <div class="col-md-3">
                   <div class="form-group">
@@ -244,10 +253,10 @@
                 <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
                 <option>Select Items</option>
                 @foreach($products as $product)
-                  <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == old('sale_product_id') ? 'selected' : '' }}>
-                  {{ $product->sale_product_name }}
-                  </option>
-                @endforeach
+            <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == old('sale_product_id') ? 'selected' : '' }}>
+            {{ $product->sale_product_name }}
+            </option>
+          @endforeach
                 </select>
                 <span class="error-message" id="error_items_0_sale_product_id" style="color: red;"></span>
 
@@ -256,111 +265,36 @@
                 <span class="error-message" id="error_items_0_sale_estim_item_desc" style="color: red;"></span>
               </div>
               </td>
-              <td><input type="number" class="form-control" min="1" name="items[][sale_estim_item_qty]"
+              <td><input type="number" class="form-control" min="0" name="items[][sale_estim_item_qty]"
                 placeholder="Enter item Quantity">
               <span class="error-message" id="error_items_0_sale_estim_item_qty" style="color: red;"></span>
               </td>
               <td>
               <div class="d-flex">
-                <input type="text" name="items[][sale_estim_item_price]" class="form-control"
+                <input type="text" name="items[][sale_estim_item_price]" min="0" class="form-control"
                 aria-describedby="inputGroupPrepend" placeholder="Enter item Price">
 
               </div>
               <span class="error-message" id="error_items_0_sale_estim_item_price" style="color: red;"></span>
               </td>
 
-              <!-- <td>
+              <td>
               <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
-              <option for="">Select Tax</option>
-              @foreach($salestax as $salesTax)
+                @foreach($salestax as $salesTax)
                   <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
                   {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
                   </option>
                 @endforeach
               </select>
               <div class="px-10"></div>
-             
-              <select class="form-control select2" name="items[][sale_estim_item_tax2]" style="width: 100%;">
-              <option for="">Select Tax</option>
+              <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
                 @foreach($salestax as $salesTax)
                   <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
                   {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
                   </option>
                 @endforeach
               </select>
-              </td> -->
-
-                      <!-- <td>
-            <select id="dropdown1" class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
-                <option value="">Select Tax</option>
-                @foreach($salestax as $salesTax)
-                    <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-                    </option>
-                @endforeach
-            </select>
-            <div class="px-10"></div>
-
-            <select id="dropdown2" class="form-control select2" name="items[][sale_estim_item_tax2]" style="width: 100%;">
-                <option value="">Select Tax</option>
-                @foreach($salestax as $salesTax)
-                    <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-                    </option>
-                @endforeach
-            </select>
-        </td> -->
-
-    <!-- <td>
-        <select id="dropdown1" class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
-            <option value="">Select Tax</option>
-            @foreach($salestax as $salesTax)
-                <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                    {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-                </option>
-            @endforeach
-        </select>
-        <div class="px-10"></div>
-
-        <select id="dropdown2" class="form-control select2" name="items[][sale_estim_item_tax2]" style="width: 100%;">
-            <option value="">Select Tax</option>
-            @foreach($salestax as $salesTax)
-                <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                    {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-                </option>
-            @endforeach
-        </select>
-
-        <!-- Container for dynamically added dropdowns --
-        <div id="additional-dropdowns" class="px-10"></div>
-    </td> -->
-<td>
-    <select id="dropdown1" class="form-control select2 tax-dropdown text-select" name="items[][sale_estim_item_tax]" style="width: 100%;">
-        <option value="">Select Tax</option>
-        @foreach($salestax as $salesTax)
-            <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-            </option>
-        @endforeach
-    </select>
-    <div class="px-10"></div>
-
-    <select id="dropdown2" class="form-control select2 tax-dropdown text-select" name="items[][sale_estim_item_tax2]" style="width: 100%;">
-        <option value="">Select Tax</option>
-        @foreach($salestax as $salesTax)
-            <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-            </option>
-        @endforeach
-    </select>
-
-    <!-- Container for dynamically added dropdowns -->
-    <div id="additional-dropdowns" class="px-10"></div>
-</td>
-
-
-
-
+              </td>
               <td class="item-price text-right">0.00</td>
               <td class="text-right"><i class="fa fa-trash delete_icon_grid delete-item"></i></td>
             </tr>
@@ -389,7 +323,7 @@
               placeholder="Enter a discount value" min="1" aria-describedby="inputGroupPrepend">
               <select class="form-select form-selectcurrency" id="sale_estim_discount_type"
               name="sale_estim_discount_type">
-              <option value="1">{{ $currency->currency_symbol }}</option>
+              <option value="1">{{ $currency->currency_symbol ?? ''}}</option>
               <option value="2">%</option>
               </select>
             </div>
@@ -405,11 +339,10 @@
                 <td>Discount :</td>
                 <td id="discount">{{ $currency->currency_symbol }}0.00</td>
               </tr>
-               <tr>
-                <td id="tax-name">Tax :</td>
+              <tr>
+                <td>Tax :</td>
                 <td id="tax">{{ $currency->currency_symbol }}0.00</td>
               </tr>
-              
               <tr>
                 <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2 mb-2" style="width: 100%;"
                         required>
@@ -467,8 +400,14 @@
 
       <div class="row py-20">
         <div class="col-md-12 text-center">
-          <a href="{{ route('business.estimates.preview') }}" class="add_btn_br">Preview</a>
-          <a href="#"><button class="add_btn">Save & Continue</button></a>
+          <!-- <a href="#" id="preview-link" class="add_btn_br">Preview</a> -->
+         <!-- Preview Button -->
+          <button type="button" value="true" id="preview-btn-footer" class="add_btn_br">Preview</button>
+
+          <!-- Save & Continue Button -->
+          <button type="button" id="save-btn" value="false" class="add_btn">Save & Continue</button>
+
+          <!-- <a href="#"><button class="add_btn">Save & Continue</button></a> -->
         </div>
       </div><!-- /.col -->
 
@@ -476,6 +415,7 @@
     <!-- /.card -->
     </form>
     </section>
+    </div>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
@@ -502,15 +442,19 @@
         <div class="row pxy-15 px-10">
         <div class="col-md-12">
           <div class="form-group">
-          <!-- <x-input-label for="company-business" :value="__('Company/Business')"> <span
-            class="text-danger">*</span></x-input-label> -->
-              <x-input-label for="company-business" :value="__('Company/Business')" />
+          <!--<x-input-label for="company-business" :value="__('Company/Business')"> <span-->
+          <!--  class="text-danger">*</span></x-input-label>-->
+          <!--<x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"-->
+          <!--  name="bus_company_name" required autofocus autocomplete="bus_company_name"-->
+          <!--  :value="old('bus_company_name', $businessDetails->bus_company_name)" />-->
+          <!--<x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />-->
+           <x-input-label for="company-business" :value="__('Company/Business')" />
               <span class="text-danger">*</span>
               <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"
                             name="bus_company_name"  autofocus autocomplete="bus_company_name"
                             :value="old('bus_company_name', $businessDetails->bus_company_name)" />
               <!-- Error message span -->
-              <span id="companyNameError" class="text-danger mt-2" style="display:none;">Please enter company name.</span>
+              <span id="companyNameError" class="text-danger mt-2" style="display:none;">Please enter business name.</span>
               <x-input-error class="mt-2" :messages="$errors->get('bus_company_name')" />
           </div>
         </div>
@@ -648,25 +592,25 @@
       <h2 class="edit-colum_title">{{ $menu->mtitle }}</h2>
       @if($menu->children->count() > 0)
       <div class="row align-items-center justify-content-between">
-      <!-- @foreach($menu->children as $child)
-      @if($child->mtitle == 'Other')
-      <div class="col-md-3">
-      <div class="icheck-primary d-flex align-items-center">
-      <input type="radio" id="{{ $child->mname }}" name="{{ $menu->mtitle }}" value="{{ $child->mname }}">
-      <label for="{{ $child->mname }}">{{ $child->mtitle }}</label>
-      <input type="text" class="form-control mar_15" placeholder="" name="{{ $menu->mtitle }}_other">
-      </div>
-      </div>
-    @else
-      <div class="col-md-3">
-      <div class="icheck-primary">
-      <input type="radio" id="{{ $child->mtitle }}" name="{{ $menu->mtitle }}" value="{{ $child->mtitle }}">
-      <label for="{{ $child->mtitle }}">{{ $child->mtitle }}</label>
-      </div>
-      </div>
-    @endif
-    @endforeach -->
-    @foreach($menu->children as $index => $child)
+    <!--  @foreach($menu->children as $child)-->
+    <!--  @if($child->mtitle == 'Other')-->
+    <!--  <div class="col-md-3">-->
+    <!--  <div class="icheck-primary d-flex align-items-center">-->
+    <!--  <input type="radio" id="{{ $child->mname }}" name="{{ $menu->mtitle }}" value="{{ $child->mname }}">-->
+    <!--  <label for="{{ $child->mname }}">{{ $child->mtitle }}</label>-->
+    <!--  <input type="text" class="form-control mar_15" placeholder="" name="{{ $menu->mtitle }}_other">-->
+    <!--  </div>-->
+    <!--  </div>-->
+    <!--@else-->
+    <!--  <div class="col-md-3">-->
+    <!--  <div class="icheck-primary">-->
+    <!--  <input type="radio" id="{{ $child->mtitle }}" name="{{ $menu->mtitle }}" value="{{ $child->mtitle }}">-->
+    <!--  <label for="{{ $child->mtitle }}">{{ $child->mtitle }}</label>-->
+    <!--  </div>-->
+    <!--  </div>-->
+    <!--@endif-->
+    <!--@endforeach-->
+      @foreach($menu->children as $index => $child)
     @if($child->mtitle == 'Other')
     <div class="col-md-3">
         <div class="icheck-primary d-flex align-items-center">
@@ -684,7 +628,6 @@
     </div>
     @endif
 @endforeach
-
       </div>
     @endif
       </div>
@@ -745,113 +688,41 @@
   <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/moment"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Function to update the Tax row dynamically 
-        function updateTaxNames() {
-            const selectedTaxNames = [];
+// document.getElementById('preview-link').addEventListener('click', function (event) {
+//     event.preventDefault(); // Prevent the default link behavior
+    
+//     // Get the form element
+//     const form = document.getElementById('items-form');
+    
+//     // Create a new FormData object to collect form data
+//     const formData = new FormData(form);
+    
+//     // Initialize an empty string to collect the form data for preview
+//     let dataString = '';
+    
+//     // Iterate through form data entries
+//     for (let [key, value] of formData.entries()) {
+//         // We want to collect all the "items" related fields for preview
+//         if (key.includes('items[')) {
+//             dataString += `${key}: ${value}\n`;
+//         }
+//     }
 
-            // Collect selected tax names from all tax dropdowns
-            document.querySelectorAll('.tax-dropdown').forEach(function (dropdown) {
-                const selectedOption = dropdown.options[dropdown.selectedIndex];
-                if (selectedOption && selectedOption.text.trim() !== "Select Tax") {
-                    selectedTaxNames.push(selectedOption.text.trim());
-                }
-            });
+//     // Show the collected form data in an alert (for quick debugging)
+//     alert(dataString);
 
-            // Update the Tax row in the table
-            const taxCell = document.getElementById('tax');
-            taxCell.textContent = selectedTaxNames.join(', ') || "{{ $currency->currency_symbol }}0.00";
+//     // Change the form action to the preview route
+//     form.action = "{{ route('business.estimates.preview') }}";
 
-            // For debugging
-            console.log("Selected Tax Names:", selectedTaxNames);
-        }
+//     // Submit the form for preview
+//     form.submit();
+// });
 
-        // Attach change event listeners to all dropdowns
-        document.querySelectorAll('.tax-dropdown').forEach(function (dropdown) {
-            dropdown.addEventListener('change', updateTaxNames);
-        });
-    });
+
+
+
+
 </script>
-
-<script>
-$(document).ready(function () {
-    function disableSelectedOptions() {
-        // Collect all selected values from the dropdowns
-        const selectedValues = [];
-        $('.select2').each(function () {
-            const value = $(this).val();
-            if (value) {
-                selectedValues.push(value);
-            }
-        });
-
-        // Disable the selected values in all dropdowns
-        $('.select2').each(function () {
-            const dropdown = $(this);
-            dropdown.find('option').prop('disabled', false); // Enable all options first
-            selectedValues.forEach((value) => {
-                if (dropdown.val() !== value) {
-                    dropdown.find(`option[value="${value}"]`).prop('disabled', true);
-                }
-            });
-            dropdown.select2(); // Refresh Select2
-        });
-    }
-
-    $('#dropdown1').on('change', function () {
-        disableSelectedOptions();
-    });
-
-    $('#dropdown2').on('change', function () {
-        disableSelectedOptions();
-
-        const selectedValue = $(this).val();
-        if (selectedValue) {
-            const newDropdown = `
-            <div class="mt-2">
-                <div class="additional-dropdown-wrapper">
-                    <select class="form-control select2" name="items[][sale_estim_item_tax_new][]" style="width: 100%;">
-                        <option value="">Select Tax</option>
-                        @foreach($salestax as $salesTax)
-                            <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                                {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>`;
-            $('#additional-dropdowns').append(newDropdown);
-            $('#additional-dropdowns .select2').select2();
-            disableSelectedOptions(); // Reapply logic after adding a new dropdown
-        }
-    });
-
-    $('#additional-dropdowns').on('change', '.select2', function () {
-        disableSelectedOptions();
-
-        const selectedValue = $(this).val();
-        if (selectedValue) {
-            const newDropdown = `
-            <div class="mt-2">
-                <div class="additional-dropdown-wrapper">
-                    <select class="form-control select2" name="items[][sale_estim_item_tax_new][]" style="width: 100%;">
-                        <option value="">Select Tax</option>
-                        @foreach($salestax as $salesTax)
-                            <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                                {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>`;
-            $('#additional-dropdowns').append(newDropdown);
-            $('#additional-dropdowns .select2').select2();
-            disableSelectedOptions(); // Reapply logic after adding a new dropdown
-        }
-    });
-});
-</script>
-
   <script>
     $(document).ready(function () {
     $('.select2').select2();
@@ -860,7 +731,8 @@ $(document).ready(function () {
       // alert(countryId);
       if (countryId) {
       $.ajax({
-        url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/states/' + countryId,
+        // url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/states/' + countryId,
+        url: '{{ route('business.states', ['countryId' => '__countryId__']) }}'.replace('__countryId__', countryId),
         type: 'GET',
         dataType: 'json',
         success: function (data) {
@@ -1027,15 +899,15 @@ $(document).ready(function () {
             </div>
             <div class="col-lg-4 col-md-4">
               <h5><strong>Ship to</strong></h5>
-              <p>${customer.sale_ship_address1}, ${customer.sale_ship_address2}, ${customer.sale_ship_city_name}, ${customer.sale_ship_zipcode}</p>
-              <p>${customer.sale_ship_phone}</p>
-              <p>${customer.sale_cus_email}</p>
-              <p>${customer.sale_cus_phone}</p>
+              <p>${customer.sale_ship_address1 ?? ''}, ${customer.sale_ship_address2 ?? ''}, ${customer.sale_ship_city_name ?? ''}, ${customer.sale_ship_zipcode ?? ''}</p>
+              <p>${customer.sale_ship_phone ?? ''}</p>
+              <p>${customer.sale_cus_email ?? '' }</p>
+              <p>${customer.sale_cus_phone ?? ''}</p>
             </div>
             <div class="col-lg-4 col-md-4">
               <h5><strong>More</strong></h5>
-              <p>${customer.sale_cus_account_number}</p>
-              <p>${customer.sale_cus_website}</p>
+              <p>${customer.sale_cus_account_number ?? ''}</p>
+              <p>${customer.sale_cus_website ?? ''}</p>
             </div>
           </div>
 
@@ -1087,8 +959,8 @@ $(document).ready(function () {
             <div class="row pxy-15 px-10">
               <div class="col-md-12">
               <div class="form-group">
-               <label for="customer">Customer<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="customer_${customer.sale_cus_id}" name="sale_cus_business_name" placeholder="Business Or Person"  value="${customer.sale_cus_business_name}">
+                  <label for="customer">Customer <span class="text-danger">*</span></label>
+                 <input type="text" class="form-control" id="customer_${customer.sale_cus_id}" name="sale_cus_business_name" placeholder="Business Or Person" value="${customer.sale_cus_business_name ?? ''}">
                     <!-- Error message span -->
                     <span id="customerError_${customer.sale_cus_id}" class="text-danger mt-2" style="display:none;">Customer name is required.</span>
               </div>
@@ -1096,25 +968,25 @@ $(document).ready(function () {
               <div class="col-md-6">
               <div class="form-group">
                 <label for="customer_email">Email</label>
-                <input type="email" class="form-control" name="sale_cus_email" id="customer_email" placeholder="Enter Email" value="${customer.sale_cus_email}">
+                <input type="email" class="form-control" name="sale_cus_email" id="customer_email" placeholder="Enter Email" value="${customer.sale_cus_email ?? ''}">
               </div>
               </div>
               <div class="col-md-6">
               <div class="form-group">
                 <label for="customer_phonenumber">Phone</label>
-                <input type="Number" name="sale_cus_phone" class="form-control" id="customer_phonenumber" placeholder="Enter Phone Number" value="${customer.sale_cus_phone}">
+                <input type="Number" name="sale_cus_phone" class="form-control" id="customer_phonenumber" placeholder="Enter Phone Number" value="${customer.sale_cus_phone ?? ''}">
               </div>
               </div>
               <div class="col-md-6">
               <div class="form-group">
                 <label for="customer_firstname">First Name</label>
-                <input type="text"  class="form-control" name="sale_cus_first_name" id="customer_firstname" placeholder="First Name" value="${customer.sale_cus_first_name}">
+                <input type="text"  class="form-control" name="sale_cus_first_name" id="customer_firstname" placeholder="First Name" value="${customer.sale_cus_first_name ?? ''}">
               </div>
               </div>
               <div class="col-md-6">
               <div class="form-group">
                 <label for="customer_lastname">Last Name</label>
-                <input type="text" name="sale_cus_last_name" class="form-control" id="customer_lastname" placeholder="Last Name" value="${customer.sale_cus_last_name}">
+                <input type="text" name="sale_cus_last_name" class="form-control" id="customer_lastname" placeholder="Last Name" value="${customer.sale_cus_last_name ?? ''}">
               </div>
               </div>
             </div>
@@ -1132,7 +1004,7 @@ $(document).ready(function () {
 
                   @foreach($currencys as $cur)
           <option value="{{ $cur->id }}" ${customer.sale_bill_currency_id === "{{ $cur->id }}" ? 'selected' : ''}>
-            {{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name }}
+            {{ $cur->currency }} ({{ $cur->currency_symbol }}) - {{ $cur->currency_name ?? ''}}
           </option>
           @endforeach
                 </select>
@@ -1144,25 +1016,25 @@ $(document).ready(function () {
               <div class="col-md-6">
               <div class="form-group">
                 <label for="company-businessaddress1">Address Line 1</label>
-                <input type="text" class="form-control" id="company-businessaddress1" name="sale_bill_address1" value="${customer.sale_bill_address1}" placeholder="Enter a Location">
+                <input type="text" class="form-control" id="company-businessaddress1" name="sale_bill_address1" value="${customer.sale_bill_address1 ?? ''}" placeholder="Enter a Location">
               </div>
               </div>
               <div class="col-md-6">
               <div class="form-group">
                 <label for="company-businessaddress2">Address Line 2</label>
-                <input type="text" class="form-control" id="company-businessaddress2" name="sale_bill_address2" value="${customer.sale_bill_address2}" placeholder="Enter a Location">
+                <input type="text" class="form-control" id="company-businessaddress2" name="sale_bill_address2" value="${customer.sale_bill_address2 ?? ''}" placeholder="Enter a Location">
               </div>
               </div>
               <div class="col-md-6">
               <div class="form-group">
                 <label for="company-businesscity">City</label>
-                <input type="text" class="form-control" id="bill_city"  id="company-businesscity" value="${customer.sale_bill_city_name}" placeholder="Enter A City">
+                <input type="text" class="form-control" id="bill_city"  id="company-businesscity" value="${customer.sale_bill_city_name ?? ''}" placeholder="Enter A City">
               </div>
               </div>
               <div class="col-md-6">
               <div class="form-group">
                 <label for="company-businesszipcode">Postal/ZIP Code</label>
-                <input type="text" class="form-control" name="sale_bill_zipcode" id="company-businesszipcode" placeholder="Enter a Zip Code" value="${customer.sale_bill_zipcode}">
+                <input type="text" class="form-control" name="sale_bill_zipcode" id="company-businesszipcode" placeholder="Enter a Zip Code" value="${customer.sale_bill_zipcode ?? ''}">
               </div>
               </div>
               <div class="col-md-6">
@@ -1172,7 +1044,7 @@ $(document).ready(function () {
                   <option value="" default>Select a Country...</option>
                   @foreach($countries as $con)
           <option value="{{ $con->id }}" ${customer.sale_bill_country_id === "{{ $cur->id }}" ? 'selected' : ''}>
-           {{ $con->name }}
+           {{ $con->name ?? ''}}
           </option>
           @endforeach
                 </select>
@@ -1185,7 +1057,7 @@ $(document).ready(function () {
                   <option value="" default>Select a State...</option>
                   @foreach($customer_states as $state)
           <option value="{{ $state->id }}" ${customer.sale_bill_state_id === "{{ $cur->id }}" ? 'selected' : ''}>
-           {{ $state->name }}
+           {{ $state->name ?? ''}}
           </option>
           @endforeach
                 </select>
@@ -1252,7 +1124,7 @@ $(document).ready(function () {
                   <option value="" default>Select a Country...</option>
                   @foreach($currencys as $cont)
           <option value="{{ $cont->id }}" >
-           {{ $cont->name ?? '' }}
+           {{ $cont->name ?? ''}}
           </option>
           @endforeach
                 </select>
@@ -1266,7 +1138,7 @@ $(document).ready(function () {
                   <option value="" default>Select a State...</option>
                   @foreach($ship_state as $statest)
           <option value="{{ $statest->id }}" ${customer.sale_ship_state_id === "{{ $cur->id }}" ? 'selected' : ''}>
-           {{ $statest->name ?? '' }}
+           {{ $statest->name ?? ''}}
           </option>
           @endforeach
                 </select>
@@ -1276,7 +1148,7 @@ $(document).ready(function () {
               <div class="col-md-12">
               <div class="form-group">
                 <label for="deliveryinstructions">Delivery instructions</label>
-                <input type="text" class="form-control" name="sale_ship_delivery_desc" id="deliveryinstructions" placeholder="" value="${customer.sale_ship_delivery_desc}">
+                <input type="text" class="form-control" name="sale_ship_delivery_desc" id="deliveryinstructions" placeholder="" value="${customer.sale_ship_delivery_desc ?? ''}">
               </div>
               </div>
             </div>
@@ -1289,14 +1161,14 @@ $(document).ready(function () {
               <div class="col-md-6">
               <div class="form-group">
                 <label for="customeraccountnumber">Account Number</label>
-                <input type="Number" class="form-control" name="sale_cus_account_number" id="customeraccountnumber" placeholder="" value="${customer.sale_cus_account_number}">
+                <input type="Number" class="form-control" name="sale_cus_account_number" id="customeraccountnumber" placeholder="" value="${customer.sale_cus_account_number ?? ''}">
               </div>
               </div>
 
               <div class="col-md-6">
               <div class="form-group">
                 <label for="customerwebsite">Website</label>
-                <input type="text" class="form-control" name="sale_cus_website"  id="customerwebsite" placeholder="" value="${customer.sale_cus_website}">
+                <input type="text" class="form-control" name="sale_cus_website"  id="customerwebsite" placeholder="" value="${customer.sale_cus_website ?? ''}">
               </div>
               </div>
 
@@ -1576,7 +1448,6 @@ $(document).ready(function () {
       let totalDiscount = 0;
       let totalTax = 0;
       let total = 0;
-      
 
       // Calculate item totals
       $('.item-row').each(function () {
@@ -1593,20 +1464,12 @@ $(document).ready(function () {
       // Tax rate from the 
       const itemTaxRate = parseFloat($(this).find('select[name="items[][sale_estim_item_tax]"] option:selected').data('tax-rate')) || 0;
       const itemTax = taxableAmount * (itemTaxRate / 100);
-      // totalTax += itemTax;
-    // Tax rate from the second tax dropdown
-        const itemTaxRate2 = parseFloat($(this).find('select[name="items[][sale_estim_item_tax2]"] option:selected').data('tax-rate')) || 0;
-        const itemTax2 = taxableAmount * (itemTaxRate2 / 100);
-        
-        const itemTaxRate3 = parseFloat($(this).find('select[name="items[][sale_estim_item_tax3]"] option:selected').data('tax-rate')) || 0;
-        const itemTax3= taxableAmount * (itemTaxRate3 / 100);
-        
-          // Update the price for the current item
-          // Add both taxes to totalTax
-        totalTax += itemTax + itemTax2+itemTax3;
-          const itemTotalPrice = itemTotal;
-          $(this).find('.item-price').text(`${itemTotalPrice.toFixed(2)}`);
-          });
+      totalTax += itemTax;
+
+      // Update the price for the current item
+      const itemTotalPrice = itemTotal;
+      $(this).find('.item-price').text(`${itemTotalPrice.toFixed(2)}`);
+      });
 
       // apply discount
       const globalDiscountValue = parseFloat($('input[name="sale_estim_item_discount"]').val()) || 0;
@@ -1653,9 +1516,9 @@ $(document).ready(function () {
         $row.find('input[name="items[][sale_estim_item_qty]"]').val(1);
         // $row.find('select[name="items[][sale_currency_id]"]').val(response.sale_product_currency_id).trigger('change');
         $row.find('select[name="items[][sale_estim_item_tax]"]').val(response.sale_product_tax).trigger('change');
-        $row.find('select[name="items[][sale_estim_item_tax2]"]').val(response.sale_product_tax2).trigger('change');
-        $row.find('select[name="items[][sale_estim_item_tax_new]"]').val(response.sale_product_tax2).trigger('change');
+
         $row.find('.item-price').text('$' + parseFloat(response.sale_product_price).toFixed(2));
+
         calculateTotals();
         }
       });
@@ -1663,7 +1526,7 @@ $(document).ready(function () {
     });
 
     //changes in quantity, price, discount, and tax inputs
-    $(document).on('input', 'input[name="items[][sale_estim_item_qty]"], input[name="items[][sale_estim_item_price]"], input[name="sale_estim_item_discount"], select[name="items[][sale_estim_item_tax]"],select[name="items[][sale_estim_item_tax2]"],select[name="items[][sale_estim_item_tax_new]"], select[name="sale_estim_discount_type"]', function () {
+    $(document).on('input', 'input[name="items[][sale_estim_item_qty]"], input[name="items[][sale_estim_item_price]"], input[name="sale_estim_item_discount"], select[name="items[][sale_estim_item_tax]"], select[name="sale_estim_discount_type"]', function () {
       calculateTotals();
     });
 
@@ -1686,7 +1549,7 @@ $(document).ready(function () {
 
   </script>
 
-  <script>
+<script>
     $(document).ready(function () {
     let rowCount = 1;
 
@@ -1743,147 +1606,66 @@ $(document).ready(function () {
 
 
     });
-    // //insert estimate data
-    // $(document).ready(function () {
-    // $.ajaxSetup({
-    //   headers: {
-    //   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    //   }
-    // });
-
-    // $('#items-form').on('submit', function (e) {
-    //   e.preventDefault();
-
-    //   let formData = {};
-
-
-    //   $('.item-row').each(function (index) {
-    //   const rowIndex = index;
-    //   formData[`items[${rowIndex}][sale_product_id]`] = $(this).find('select[name="items[][sale_product_id]"]').val();
-    //   formData[`items[${rowIndex}][sale_estim_item_desc]`] = $(this).find('input[name="items[][sale_estim_item_desc]"]').val();
-    //   formData[`items[${rowIndex}][sale_estim_item_qty]`] = $(this).find('input[name="items[][sale_estim_item_qty]"]').val();
-    //   formData[`items[${rowIndex}][sale_estim_item_price]`] = $(this).find('input[name="items[][sale_estim_item_price]"]').val();
-    //   // formData[`items[${rowIndex}][sale_currency_id]`] = $(this).find('select[name="items[][sale_currency_id]"]').val();
-    //   formData[`items[${rowIndex}][sale_estim_item_tax]`] = $(this).find('select[name="items[][sale_estim_item_tax]"]').val();
-    //   formData[`items[${rowIndex}][sale_estim_item_discount]`] = $(this).find('input[name="items[][sale_estim_item_discount]"]').val();
-    //   });
-
-    //   formData['sale_estim_item_discount'] = $('input[name="sale_estim_item_discount"]').val();
-    //   formData['sale_estim_discount_type'] = $('select[name="sale_estim_discount_type"]').val();
-    //   formData['sale_estim_title'] = $('input[name="sale_estim_title"]').val();
-    //   formData['sale_estim_summary'] = $('input[name="sale_estim_summary"]').val();
-    //   formData['sale_cus_id'] = $('select[name="sale_cus_id"]').val();
-    //   formData['sale_estim_number'] = $('input[name="sale_estim_number"]').val();
-    //   formData['sale_estim_customer_ref'] = $('input[name="sale_estim_customer_ref"]').val();
-    //   formData['sale_estim_date'] = $('input[name="sale_estim_date"]').val();
-    //   formData['sale_estim_valid_date'] = $('input[name="sale_estim_valid_date"]').val();
-    //   formData['sale_estim_discount_desc'] = $('input[name="sale_estim_discount_desc"]').val();
-    //   formData['sale_estim_sub_total'] = $('input[name="sale_estim_sub_total"]').val();
-    //   formData['sale_estim_discount_total'] = $('input[name="sale_estim_discount_total"]').val();
-    //   formData['sale_estim_tax_amount'] = $('input[name="sale_estim_tax_amount"]').val();
-    //   formData['sale_estim_final_amount'] = $('input[name="sale_estim_final_amount"]').val();
-    //   formData['sale_estim_notes'] = $('#inputDescription[name="sale_estim_notes"]').val();
-    //   formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
-    //   formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
-    //   formData['sale_estim_status'] = 1;
-    //   formData['sale_status'] = 0;
-    //   formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
-
-    //   console.log(formData);
-
-    //   $.ajax({
-    //   url: "{{ route('business.estimates.store') }}",
-    //   method: 'POST',
-    //   data: formData,
-    //   success: function (response) {
-    //     window.location.href = response.redirect_url;
-    //   },
-    //   error: function (xhr) {
-    //     if (xhr.status === 422) {
-    //     var errors = xhr.responseJSON.errors;
-    //     // console.log(errors); 
-
-    //     $('.error-message').html('');
-    //     $('input, select').removeClass('is-invalid');
-
-    //     var firstErrorField = null;
-
-    //     $.each(errors, function (field, messages) {
-    //       // console.log(messages); 
-
-
-    //       var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
-    //       var errorMessageContainerId = 'error_' + fieldId;
-    //       var errorMessageContainer = $('#' + errorMessageContainerId);
-
-    //       if (errorMessageContainer.length) {
-    //       errorMessageContainer.html(messages.join('<br>'));
-
-    //       var $field = $('[name="' + field + '"]');
-
-    //       if ($field.length > 0) {
-    //         $field.addClass('is-invalid');
-
-    //         if (!firstErrorField) {
-    //         // console.log(firstErrorField); 
-    //         firstErrorField = $field;
-    //         }
-    //         scrollToCenter($field);
-    //       } else {
-    //         // console.log('Field not found for:', field);
-    //       }
-    //       } else {
-    //       // console.log('Error container not found for:', errorMessageContainerId);
-    //       }
-    //     });
-
-
-    //     } else {
-    //     // console.log('An error occurred: ' + xhr.statusText);
-    //     }
-    //   }
-    //   });
-    // });
-    // });
-
-// add by me............
-$(document).ready(function () {
+    //insert estimate data
+    $(document).ready(function () {
     $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+      headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
     });
 
-    $('#items-form').on('submit', function (e) {
-        e.preventDefault();
+    $('#preview-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
 
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
+
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
+
+    $('#preview-btn-footer').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
+
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
+
+    // Handle the click event for the Save & Continue button
+    $('#save-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    // Function to collect form data into an object
+    function getFormData() {
         let formData = {};
 
-        $('.item-row').each(function (index) {
+        // Loop through each item row and collect the data
+        $('.item-row').each(function(index) {
             const rowIndex = index;
-            
-            // Capture the tax values from both fields
             formData[`items[${rowIndex}][sale_product_id]`] = $(this).find('select[name="items[][sale_product_id]"]').val();
             formData[`items[${rowIndex}][sale_estim_item_desc]`] = $(this).find('input[name="items[][sale_estim_item_desc]"]').val();
             formData[`items[${rowIndex}][sale_estim_item_qty]`] = $(this).find('input[name="items[][sale_estim_item_qty]"]').val();
             formData[`items[${rowIndex}][sale_estim_item_price]`] = $(this).find('input[name="items[][sale_estim_item_price]"]').val();
-            // Capture the tax values (both sale_estim_item_tax and sale_estim_item_tax2)
             formData[`items[${rowIndex}][sale_estim_item_tax]`] = $(this).find('select[name="items[][sale_estim_item_tax]"]').val();
-            formData[`items[${rowIndex}][sale_estim_item_tax2]`] = $(this).find('select[name="items[][sale_estim_item_tax2]"]').val(); // Capture tax2
             formData[`items[${rowIndex}][sale_estim_item_discount]`] = $(this).find('input[name="items[][sale_estim_item_discount]"]').val();
-            // Collect all dynamic tax dropdown values
-            const taxValues = [];
-                  $(this).find('select[name^="items[][sale_estim_item_tax_new]"]').each(function () {
-                      if ($(this).val()) {
-                          taxValues.push($(this).val());
-                      }
-                  });
-                  formData[`items[${rowIndex}][sale_estim_item_tax_new]`] = taxValues;
-                  formData[`items[${rowIndex}][sale_estim_item_discount]`] = $(this).find('input[name="items[][sale_estim_item_discount]"]').val();
-              });
-                // });
+        });
 
-        // Capture the main estimate form fields
+        // Collect the rest of the form data
         formData['sale_estim_item_discount'] = $('input[name="sale_estim_item_discount"]').val();
         formData['sale_estim_discount_type'] = $('select[name="sale_estim_discount_type"]').val();
         formData['sale_estim_title'] = $('input[name="sale_estim_title"]').val();
@@ -1904,32 +1686,50 @@ $(document).ready(function () {
         formData['sale_estim_status'] = 1;
         formData['sale_status'] = 0;
         formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
-      
-        console.log(formData);  // Log the form data to ensure both tax fields are included
 
-        // Send the form data via AJAX
-
-        $.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        return formData;
     }
-});
+
+    // Function to send the form data via AJAX
+    function submitFormViaAjax(formData) {
         $.ajax({
-            url: "{{ route('business.estimates.store') }}",
+            url: "{{ route('business.estimates.store') }}",  // The route for your form submission
             method: 'POST',
             data: formData,
-            success: function (response) {
-                window.location.href = response.redirect_url;  // Redirect to the desired URL
+            success: function(response) {
+              if (response.preview_view) {
+                  // Inject the preview HTML into the container
+
+                  $('#preview-container').html(response.preview_view).fadeIn();
+
+                  
+                 
+                  // Optionally, scroll to the preview container if needed
+                  $('html, body').animate({ scrollTop: $('#preview-container').offset().top }, 500);
+
+                  if (response.preview_data && response.preview_data.items) {
+                      response.preview_data.items.forEach(function(item, index) {
+                          // Example: Update the product name in a specific element
+                          let productElement = $('#product-name-' + index); // Use an appropriate selector
+                          if (productElement.length) {
+                              productElement.text(item.product_name || 'N/A');
+                          }
+                      });
+                  }
+
+              } else if (response.redirect_url) {
+                  // Redirect for save success
+                  window.location.href = response.redirect_url;
+              }
             },
-            error: function (xhr) {
+            error: function(xhr) {
                 if (xhr.status === 422) {
                     var errors = xhr.responseJSON.errors;
-                    // Handle validation errors here
                     $('.error-message').html('');
                     $('input, select').removeClass('is-invalid');
-                    var firstErrorField = null;
 
-                    $.each(errors, function (field, messages) {
+                    var firstErrorField = null;
+                    $.each(errors, function(field, messages) {
                         var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
                         var errorMessageContainerId = 'error_' + fieldId;
                         var errorMessageContainer = $('#' + errorMessageContainerId);
@@ -1937,7 +1737,6 @@ $(document).ready(function () {
                         if (errorMessageContainer.length) {
                             errorMessageContainer.html(messages.join('<br>'));
                             var $field = $('[name="' + field + '"]');
-
                             if ($field.length > 0) {
                                 $field.addClass('is-invalid');
                                 if (!firstErrorField) {
@@ -1950,11 +1749,11 @@ $(document).ready(function () {
                 }
             }
         });
-    });
-});
+    }
 
+  
+  });
 
-// end by me...
     function scrollToCenter($element) {
     // console.log('hiii');
     if ($element.length) {
@@ -2102,7 +1901,7 @@ $(document).ready(function () {
     });
 
   </script>
- <script>
+  <script>
 $(document).ready(function() {
     // Form submit event
     $('#editBusinessForm').on('submit', function(e) {
@@ -2130,9 +1929,6 @@ $(document).ready(function() {
     });
 });
 </script>
-
-
-<!-- validation -->
 <script>
 $(document).ready(function() {
     // Handle form submission validation for customer field
@@ -2160,6 +1956,5 @@ $(document).ready(function() {
     });
 });
 </script>
-
   @endsection
 @endif
