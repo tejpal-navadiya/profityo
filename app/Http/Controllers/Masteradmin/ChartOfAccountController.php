@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;  // Add this to use DB facade
 use Illuminate\View\View;
 use App\Models\Countries;
 use App\Models\ChartAccount;
+use App\Models\BusinessDetails;
 
 
 
@@ -67,7 +68,7 @@ class ChartOfAccountController extends Controller
     //     ));
     // }
     
-    public function index(): View
+   public function index(): View
     {
         // Fetching all countries
         $Country = Countries::all();
@@ -126,7 +127,13 @@ class ChartOfAccountController extends Controller
         ->whereIn('menu_id', [0, 1, 2, 3, 4, 5])
         ->get()
         ->groupBy('menu_id'); 
-        
+
+        $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+        if (isset($businessDetails->bus_currency)) {
+            $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+            // dD($currency);
+        }
+      
         // Pass all data to the view
         return view('masteradmin.chartofaccount.index', compact(
             'assets', 
@@ -138,13 +145,14 @@ class ChartOfAccountController extends Controller
             'list',
             'tabs',
             'counts',
-            'subMenus'
+            'subMenus',
+            'currency'
+            
         ));
     }
 
     public function store(Request $request)
     {
-        // dd($request);
         $user = Auth::guard('masteradmins')->user(); // Get the authenticated user
         $validatedData = $request->validate([
             // 'type_id' => 'required|integer',
@@ -185,6 +193,7 @@ class ChartOfAccountController extends Controller
     // Add this method to handle the update request
     public function update(Request $request,$chart_acc_id)
     {
+       // dd($request->all());
     // dd($chart_acc_id);
         $validatedData = $request->validate([
             'chart_acc_name' => 'nullable|string|max:255',

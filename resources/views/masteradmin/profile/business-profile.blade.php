@@ -80,7 +80,7 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="country" :value="__('Country')" /><span class="text-danger">*</span>
-                            <select class="form-control select2" style="width: 100%;" id="country" name="country_id" >
+                            <select class="form-control select2" style="width: 100%;" id="country" name="country_id">
                               <option default>Select a Country...</option>
                               @foreach($countries as $country)
                                 <option value="{{ $country->id }}" {{ old('country_id', $BusinessDetails->country_id ?? '') == $country->id ? 'selected' : '' }}>{{ $country->name }} ({{ $country->iso2 }})</option>
@@ -92,7 +92,7 @@
                         <div class="col-md-6">
                           <div class="form-group">
                             <x-input-label for="state" :value="__('Province/State')" /><span class="text-danger">*</span>
-                            <select class="form-control select2" style="width: 100%;" id="state" name="state_id" >
+                            <select class="form-control select2" style="width: 100%;" id="state" name="state_id">
                               <option default>Select a State...</option>
                               @foreach($states as $state)
                                   <option value="{{ $state->id }}" {{ $state->id == old('state_id', $BusinessDetails -> state_id ) ? 'selected' : '' }}>
@@ -157,7 +157,7 @@
                               <input type="file" name="image" accept="image/*" class="add_btn fileinput-button">
                               <span>Please upload a valid image file. Size of image should not be more than 2MB.</span>
                               @if ($BusinessDetails->bus_image ?? '')
-                                <a href="{{ url(env('IMAGE_URL').'storage/app/masteradmin/business_profile/' . $BusinessDetails->bus_image) }}" target="_blank">
+                                <a href="{{ url(env('IMAGE_URL').'masteradmin/business_profile/' . $BusinessDetails->bus_image) }}" target="_blank">
                                     <div title="{{ $BusinessDetails->bus_image }}" class="ptm pbm">{{ $BusinessDetails->bus_image }}</div>
                                 </a>
                               @endif
@@ -195,6 +195,8 @@
 
 
 @endsection
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -205,7 +207,7 @@
           // alert(countryId);
           if (countryId) {
               $.ajax({
-                  url : '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/states/' + countryId,
+                  url : '/{{ config('global.businessAdminURL') }}/states/' + countryId,  // Use relative URL
                   type: 'GET',
                   dataType: 'json',
                   success: function(data) {
@@ -223,4 +225,5 @@
       });
   });
 </script>
+
 @endif

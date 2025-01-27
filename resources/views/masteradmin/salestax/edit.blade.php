@@ -16,7 +16,7 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
-          <a href="{{route('business.salestax.index')}}"><button class="add_btn_br">Cancel</button></a>
+             <a href="{{route('business.salestax.index')}}"><button class="add_btn_br">Cancel</button></a>
           <button type="submit" form="items-form" class="add_btn">Save</button>
           </ol>
         </div><!-- /.col -->
@@ -55,8 +55,8 @@
                   <input type="text" class="form-control @error('tax_name') is-invalid @enderror" id=taxname
                     name="tax_name" placeholder="Tax Name" value="{{ $SalesTaxe->tax_name }}">
                   @error('tax_name')
-                   <div class="invalid-feedback">{{ $message }}</div>
-                 @enderror
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
                 </div>
               </div>
               <div class="col-md-4">
@@ -66,18 +66,18 @@
                     id="textabbreviation" name="tax_abbreviation" placeholder="Abbreviation"
                     value="{{ $SalesTaxe->tax_abbreviation }}">
                   @error('tax_abbreviation')
-              <div class="invalid-feedback">{{ $message }}</div>
-             @enderror
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
-                  <label for="taxnumber">Your Tax Number</label>
+                  <label for="taxnumber">Your Tax Number<span class="text-danger">*</span></label>
                   <input type="number" class="form-control  @error('tax_number') is-invalid @enderror" id="taxnumber"
                     name="tax_number" placeholder="Your Tax Number" value="{{ $SalesTaxe->tax_number }}">
                   @error('tax_number')
-              <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <div class="invalid-feedback">{{ $message }}</div>
+          @enderror
                 </div>
               </div>
               <div class="col-md-4">

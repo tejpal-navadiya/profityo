@@ -7,6 +7,7 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
+  <div id="preview-container">
   <div class="content-header">
     <div class="container-fluid">
       <div class="row mb-2 align-items-center justify-content-between">
@@ -20,8 +21,11 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
-            <a class="add_btn_br">Preview</a>
-            <button type="submit" form="items-form-invoice" class="add_btn">Save & Continue</button>
+          <button type="button" value="true" id="preview-btn-footer" class="add_btn_br">Preview</button>
+
+          <!-- Save & Continue Button -->
+          <button type="button" form="items-form-invoice" id="save-btn1" value="false" class="add_btn">Save & Continue</button>
+
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -62,7 +66,7 @@
               <div class="col-md-3 px-10">
                 <div class="business_logo_uplod_box">
                   @if($businessDetails && $businessDetails->bus_image)
-                  <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                  <img src="{{ url(env('IMAGE_URL') . '/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                   class="elevation-2 img-box" target="_blank">
                   <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
@@ -208,9 +212,9 @@
                               <i class="fa fa-calendar-alt"></i>
                           </div>
                         </div>
-                      
+                       
                       </div>
-                      <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
+                       <span class="error-message" id="error_sale_estim_date" style="color: red;"></span>
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -364,10 +368,10 @@
                                 <span class="error-message" id="error_items_0_sale_product_id" style="color: red;"></span>
                                 <input type="text" class="form-control px-10" name="items[][sale_estim_item_desc]"
                                     placeholder="Enter item description" value="{{ $item->sale_inv_item_desc }}">
-                                <span class="error-message" id="error_items_0_sale_estim_item_desc" style="color: red;"></span>
+                               <span class="error-message" id="error_items_0_sale_estim_item_desc" style="color: red;"></span>
                             </div>
                         </td>
-                        <td><input type="number" min="1" class="form-control" name="items[][sale_estim_item_qty]" value="{{ $item->sale_inv_item_qty }}" placeholder="Enter item Quantity">
+                        <td><input type="number" min="0" class="form-control" name="items[][sale_estim_item_qty]" value="{{ $item->sale_inv_item_qty }}" placeholder="Enter item Quantity">
                         <span class="error-message" id="error_items_0_sale_estim_item_qty" style="color: red;"></span>
                         </td>
                         <td>
@@ -432,7 +436,7 @@
                   <div class="table-responsive">
                   <table class="table total_table">
                       <tr>
-                      <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" style="width: 100%;" >
+                      <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2" style="width: 100%;" required>
                         @foreach($currencys as $curr)
                           <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
                           <option value="{{ $curr->id }}" {{ $curr->id == $invoices->sale_currency_id ? 'selected' : '' }} data-symbol="{{ $curr->currency_symbol }}">
@@ -498,8 +502,10 @@
 
         <div class="row py-20">
           <div class="col-md-12 text-center">
-            <a class="add_btn_br">Preview</a>
-            <button class="add_btn">Save & Continue</button>
+            <button type="button" value="true" id="preview-btn-footer" class="add_btn_br">Preview</button>
+
+            <!-- Save & Continue Button -->
+            <button type="button" id="save-btn" value="false" class="add_btn">Save & Continue</button>
           </div>
         </div><!-- /.col -->
     </div>
@@ -507,6 +513,7 @@
     </form>
   </section>
   <!-- /.content -->
+</div>
 </div>
 <!-- /.content-wrapper -->
 
@@ -532,7 +539,7 @@
           <div class="row pxy-15 px-10">
             <div class="col-md-12">
               <div class="form-group">
-              <x-input-label for="company-business" :value="__('Company/Business')" />
+                <x-input-label for="company-business" :value="__('Company/Business')" />
               <span class="text-danger">*</span>
               <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"
                             name="bus_company_name"  autofocus autocomplete="bus_company_name"
@@ -549,7 +556,7 @@
               <div class="form-group">
                 <x-input-label for="bus_address1" :value="__('Address Line 1')" />
                 <x-text-input type="text" class="form-control" id="bus_address1" placeholder="Enter A Address Line 1"
-                  name="bus_address1"  autofocus autocomplete="bus_address1" :value="old('bus_address1', $businessDetails->bus_address1 ?? '')" />
+                  name="bus_address1" required autofocus autocomplete="bus_address1" :value="old('bus_address1', $businessDetails->bus_address1 ?? '')" />
                 <x-input-error class="mt-2" :messages="$errors->get('bus_address1')" />
               </div>
             </div>
@@ -557,7 +564,7 @@
               <div class="form-group">
                 <x-input-label for="bus_address2" :value="__('Address Line 2')" />
                 <x-text-input type="text" class="form-control" id="bus_address2" placeholder="Enter A Address Line 2"
-                  name="bus_address2"  autofocus autocomplete="bus_address2" :value="old('bus_address2', $businessDetails->bus_address2 ?? '')" />
+                  name="bus_address2" required autofocus autocomplete="bus_address2" :value="old('bus_address2', $businessDetails->bus_address2 ?? '')" />
                 <x-input-error class="mt-2" :messages="$errors->get('bus_address2')" />
               </div>
             </div>
@@ -565,7 +572,7 @@
               <div class="form-group">
                 <x-input-label for="city_name" :value="__('City')" />
                 <x-text-input type="text" class="form-control" id="city_name" placeholder="Enter A City"
-                  name="city_name"  autofocus autocomplete="city_name" :value="old('city_name', $businessDetails->city_name ?? '')" />
+                  name="city_name" required autofocus autocomplete="city_name" :value="old('city_name', $businessDetails->city_name ?? '')" />
                 <x-input-error class="mt-2" :messages="$errors->get('city_name')" />
               </div>
             </div>
@@ -573,14 +580,14 @@
               <div class="form-group">
                 <x-input-label for="zipcode" :value="__('Postal/ZIP Code')" />
                 <x-text-input type="text" class="form-control" id="zipcode" placeholder="Enter a Zip Code"
-                  name="zipcode"  autofocus autocomplete="zipcode" :value="old('zipcode', $businessDetails->zipcode ?? '')" />
+                  name="zipcode" required autofocus autocomplete="zipcode" :value="old('zipcode', $businessDetails->zipcode ?? '')" />
                 <x-input-error class="mt-2" :messages="$errors->get('zipcode')" />
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
                 <x-input-label for="country" :value="__('Country')" />
-                <select class="form-control select2" style="width: 100%;" id="country" name="country_id" >
+                <select class="form-control select2" style="width: 100%;" id="country" name="country_id" required>
                   <option default>Select a Country...</option>
                   @foreach($countries as $country)
             <option value="{{ $country->id }}" {{ old('country_id', $businessDetails->country_id ?? '') == $country->id ? 'selected' : '' }}>{{ $country->name }} ({{ $country->iso2 }})</option>
@@ -592,7 +599,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <x-input-label for="state" :value="__('Province/State')" />
-                <select class="form-control select2" style="width: 100%;" id="state" name="state_id" >
+                <select class="form-control select2" style="width: 100%;" id="state" name="state_id" required>
                   <option default>Select a State...</option>
                   @foreach($states as $state)
             <option value="{{ $state->id }}" {{ $state->id == old('state_id', $businessDetails->state_id) ? 'selected' : '' }}>
@@ -610,7 +617,7 @@
               <div class="form-group">
                 <x-input-label for="bus_phone" :value="__('Phone')" />
                 <x-text-input type="text" class="form-control" id="bus_phone" placeholder="Enter a Phone"
-                  name="bus_phone"  autofocus autocomplete="bus_phone" :value="old('bus_phone', $businessDetails->bus_phone ?? '')" />
+                  name="bus_phone" required autofocus autocomplete="bus_phone" :value="old('bus_phone', $businessDetails->bus_phone ?? '')" />
                 <x-input-error class="mt-2" :messages="$errors->get('bus_phone')" />
               </div>
             </div>
@@ -618,7 +625,7 @@
               <div class="form-group">
                 <x-input-label for="bus_mobile" :value="__('Mobile')" />
                 <x-text-input type="text" class="form-control" id="bus_mobile" placeholder="Enter a Mobile"
-                  name="bus_mobile"  autofocus autocomplete="bus_mobile" :value="old('bus_mobile', $businessDetails->bus_mobile ?? '')" />
+                  name="bus_mobile" required autofocus autocomplete="bus_mobile" :value="old('bus_mobile', $businessDetails->bus_mobile ?? '')" />
                 <x-input-error class="mt-2" :messages="$errors->get('bus_mobile')" />
               </div>
             </div>
@@ -626,7 +633,7 @@
               <div class="form-group">
                 <x-input-label for="bus_website" :value="__('Website')" />
                 <x-text-input type="text" class="form-control" id="bus_website" placeholder="Enter a Website"
-                  name="bus_website"  autofocus autocomplete="bus_website" :value="old('bus_website', $businessDetails->bus_website ?? '')" />
+                  name="bus_website" required autofocus autocomplete="bus_website" :value="old('bus_website', $businessDetails->bus_website ?? '')" />
                 <x-input-error class="mt-2" :messages="$errors->get('bus_website')" />
               </div>
             </div>
@@ -817,7 +824,7 @@
                   <div class="col-md-12">
                     <div class="form-group">
                       <label for="customer">Customer <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="customer" name="sale_cus_business_name" placeholder="Business Or Person"  value="{{ $invoices->customer->sale_cus_business_name }}">
+                      <input type="text" class="form-control" id="customer" name="sale_cus_business_name" placeholder="Business Or Person" required value="{{ $invoices->customer->sale_cus_business_name }}">
                       <span class="error-message" id="error_sale_cus_business_name" style="color: red;"></span>
                     </div>
                   </div>
@@ -859,7 +866,7 @@
                   <div class="col-md-12">
                     <div class="form-group">
                       <label>Currency <span class="text-danger">*</span></label>
-                      <select name="sale_bill_currency_id" class="form-control select2" style="width: 100%;" >
+                      <select name="sale_bill_currency_id" class="form-control select2" style="width: 100%;" required>
                         <option default>Select a Currency...</option>
                           @foreach($currencys as $cur)
                             <option value="{{ $cur->id }}" @if($cur->id == $invoices->customer->sale_bill_currency_id) selected @endif>
@@ -950,7 +957,7 @@
                   <div class="col-md-6">
                     <div class="form-group">
                       <label for="customer">Ship to Contact <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" name="sale_ship_shipto" id="customer" placeholder="Business Or Person"  value="{{ $invoices->customer->sale_ship_shipto }}">
+                      <input type="text" class="form-control" name="sale_ship_shipto" id="customer" placeholder="Business Or Person" required value="{{ $invoices->customer->sale_ship_shipto }}">
                       <span class="error-message" id="error_sale_ship_shipto" style="color: red;"></span>
                     </div>
                   </div>
@@ -1079,7 +1086,7 @@
       // alert(countryId);
       if (countryId) {
         $.ajax({
-          url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/states/' + countryId,
+        url: '{{ route('business.states', ['countryId' => '__countryId__']) }}'.replace('__countryId__', countryId),
           type: 'GET',
           dataType: 'json',
           success: function (data) {
@@ -1299,7 +1306,7 @@
                                           <div class="col-md-12">
                                             <div class="form-group">
                                               <label for="customer">Customer <span class="text-danger">*</span></label>
-                                              <input type="text" class="form-control" id="customer" name="sale_cus_business_name" placeholder="Business Or Person"  value="${customer.sale_cus_business_name }">
+                                              <input type="text" class="form-control" id="customer" name="sale_cus_business_name" placeholder="Business Or Person" required value="${customer.sale_cus_business_name }">
                                             </div>
                                           </div>
                                           <div class="col-md-6">
@@ -1336,7 +1343,7 @@
                                           <div class="col-md-12">
                                             <div class="form-group">
                                               <label for="sale_bill_currency_id_${customer.sale_cus_id}">Currency</label>
-                                                <select id="sale_bill_currency_id_${customer.sale_cus_id}" name="sale_bill_currency_id" class="form-control select2" style="width: 100%;" >
+                                                <select id="sale_bill_currency_id_${customer.sale_cus_id}" name="sale_bill_currency_id" class="form-control select2" style="width: 100%;" required>
                                                     <option value="" default>Select a Currency...</option>
                                                     
                                                     @foreach($currencys as $cur)
@@ -1377,7 +1384,7 @@
                                           <div class="col-md-6">
                                             <div class="form-group">
                                               <label for="sale_bill_country_id_${customer.sale_cus_id}">Country</label>
-                                                <select id="sale_bill_country_id_${customer.sale_cus_id}" name="sale_bill_country_id" class="form-control select2 bill_country" style="width: 100%;" data-target="#sale_bill_state_id_${customer.sale_cus_id}" data-url="{{ url('business/getstates') }}" >
+                                                <select id="sale_bill_country_id_${customer.sale_cus_id}" name="sale_bill_country_id" class="form-control select2 bill_country" style="width: 100%;" data-target="#sale_bill_state_id_${customer.sale_cus_id}" data-url="{{ url('business/getstates') }}" required>
                                                     <option value="" default>Select a Country...</option>
                                                     @foreach($countries as $con)
                                                         <option value="{{ $con->id }}" ${customer.sale_bill_country_id === "{{ $cur->id }}" ? 'selected' : ''}>
@@ -1390,7 +1397,7 @@
                                           <div class="col-md-6">
                                             <div class="form-group">
                                               <label for="sale_bill_state_id_${customer.sale_cus_id}">State</label>
-                                                <select id="sale_bill_state_id_${customer.sale_cus_id}" name="sale_bill_state_id" class="form-control select2" style="width: 100%;" >
+                                                <select id="sale_bill_state_id_${customer.sale_cus_id}" name="sale_bill_state_id" class="form-control select2" style="width: 100%;" required>
                                                     <option value="" default>Select a State...</option>
                                                     @foreach($customer_states as $state)
                                                         <option value="{{ $state->id }}" ${customer.sale_bill_state_id === "{{ $cur->id }}" ? 'selected' : ''}>
@@ -1418,7 +1425,7 @@
                                           <div class="col-md-6">
                                             <div class="form-group">
                                               <label for="customer">Ship to Contact <span class="text-danger">*</span></label>
-                                              <input type="text" class="form-control" name="sale_ship_shipto" id="customer" placeholder="Business Or Person"  value="${customer.sale_ship_shipto}">
+                                              <input type="text" class="form-control" name="sale_ship_shipto" id="customer" placeholder="Business Or Person" required value="${customer.sale_ship_shipto}">
                                             </div>
                                           </div>
                                           <div class="col-md-6">
@@ -1454,7 +1461,7 @@
                                           <div class="col-md-6">
                                             <div class="form-group">
                                               <label for="sale_ship_country_id_${customer.sale_cus_id}">Country</label>
-                                                <select id="sale_ship_country_id_${customer.sale_cus_id}" name="sale_ship_country_id" class="form-control select2 ship_country" style="width: 100%;"  data-target="#sale_ship_state_id_${customer.sale_cus_id}" data-url="{{ url('business/getstates') }}">
+                                                <select id="sale_ship_country_id_${customer.sale_cus_id}" name="sale_ship_country_id" class="form-control select2 ship_country" style="width: 100%;" required data-target="#sale_ship_state_id_${customer.sale_cus_id}" data-url="{{ url('business/getstates') }}">
                                                     <option value="" default>Select a Country...</option>
                                                     @foreach($currencys as $cont)
                                                         <option value="{{ $cont->id }}" >
@@ -1845,102 +1852,162 @@
       }
     });
 
-    $('#items-form-invoice').on('submit', function (e) {
-      e.preventDefault();
+    $('#preview-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
 
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
+        formData['invoice'] = 'edit';
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
+
+    $('#preview-btn-footer').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
+        formData['invoice'] = 'edit';
+        
+
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
+
+    // Handle the click event for the Save & Continue button
+    $('#save-btn').on('click', function(e) {
+     // alert('hi');
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        formData['invoice'] = 'edit';
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    $('#save-btn1').on('click', function(e) {
+     // alert('hi');
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        formData['invoice'] = 'edit';
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    
+    function getFormData() {
       let formData = {};
 
-      $('.item-row').each(function (index) {
+        $('.item-row').each(function (index) {
         const rowIndex = index;
         formData[`items[${rowIndex}][sale_product_id]`] = $(this).find('select[name="items[][sale_product_id]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_desc]`] = $(this).find('input[name="items[][sale_estim_item_desc]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_qty]`] = $(this).find('input[name="items[][sale_estim_item_qty]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_price]`] = $(this).find('input[name="items[][sale_estim_item_price]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_tax]`] = $(this).find('select[name="items[][sale_estim_item_tax]"]').val();
-      });
-
-      formData['sale_estim_item_discount'] = $('input[name="sale_estim_item_discount"]').val();
-      formData['sale_estim_discount_type'] = $('select[name="sale_estim_discount_type"]').val();
-      formData['sale_estim_title'] = $('input[name="sale_estim_title"]').val();
-      formData['sale_estim_summary'] = $('input[name="sale_estim_summary"]').val();
-      formData['sale_cus_id'] = $('select[name="sale_cus_id"]').val();
-      formData['sale_estim_number'] = $('input[name="sale_estim_number"]').val();
-      formData['sale_estim_customer_ref'] = $('input[name="sale_estim_customer_ref"]').val();
-      formData['sale_estim_date'] = $('input[name="sale_estim_date"]').val();
-      formData['sale_estim_valid_date'] = $('input[name="sale_estim_valid_date"]').val();
-      formData['sale_estim_discount_desc'] = $('input[name="sale_estim_discount_desc"]').val();
-      formData['sale_estim_sub_total'] = $('input[name="sale_estim_sub_total"]').val();
-      formData['sale_estim_discount_total'] = $('input[name="sale_estim_discount_total"]').val();
-      formData['sale_estim_tax_amount'] = $('input[name="sale_estim_tax_amount"]').val();
-      formData['sale_estim_final_amount'] = $('input[name="sale_estim_final_amount"]').val();
-      formData['sale_estim_notes'] = $('#inputDescription[name="sale_estim_notes"]').val();
-      formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
-      formData['sale_status'] = 0;
-      formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
-      formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
-
-
-      $.ajax({
-        url: "{{ route('business.invoices.update', ['invoices_id' => $invoices->sale_inv_id]) }}",
-        method: 'PATCH',
-        data: formData,
-        success: function (response) {
-          window.location.href = response.redirect_url;
-
-          // alert('Items saved successfully!');
-
-          // $('#items-form')[0].reset();
-          // $('#dynamic_field').find('.item-row').remove();
-        },
-        error: function (xhr) {
-        if (xhr.status === 422) {
-        var errors = xhr.responseJSON.errors;
-        console.log(errors); // Debug the errors object
-
-        // Clear previous error messages
-        $('.error-message').html('');
-        $('input, select').removeClass('is-invalid');
-
-        var firstErrorField = null; // Variable to store the first error field
-
-        $.each(errors, function (field, messages) {
-          // Replace characters to match the format of your HTML IDs
-          var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
-          var errorMessageContainerId = 'error_' + fieldId;
-          var errorMessageContainer = $('#' + errorMessageContainerId);
-
-          if (errorMessageContainer.length) {
-          errorMessageContainer.html(messages.join('<br>'));
-
-          // Find the input field related to the error
-          var $field = $('[name="' + field + '"]');
-
-          if ($field.length > 0) {
-            $field.addClass('is-invalid');
-            
-            // Set first error field for scrolling
-            if (!firstErrorField) {
-            firstErrorField = $field;
-            }
-            scrollToCenter($field);
-          } else {
-            // console.log('Field not found for:', field);
-          }
-          } else {
-          // console.log('Error container not found for:', errorMessageContainerId);
-          }
         });
 
+        formData['sale_estim_item_discount'] = $('input[name="sale_estim_item_discount"]').val();
+        formData['sale_estim_discount_type'] = $('select[name="sale_estim_discount_type"]').val();
+        formData['sale_estim_title'] = $('input[name="sale_estim_title"]').val();
+        formData['sale_estim_summary'] = $('input[name="sale_estim_summary"]').val();
+        formData['sale_cus_id'] = $('select[name="sale_cus_id"]').val();
+        formData['sale_estim_number'] = $('input[name="sale_estim_number"]').val();
+        formData['sale_estim_customer_ref'] = $('input[name="sale_estim_customer_ref"]').val();
+        formData['sale_estim_date'] = $('input[name="sale_estim_date"]').val();
+        formData['sale_estim_valid_date'] = $('input[name="sale_estim_valid_date"]').val();
+        formData['sale_estim_discount_desc'] = $('input[name="sale_estim_discount_desc"]').val();
+        formData['sale_estim_sub_total'] = $('input[name="sale_estim_sub_total"]').val();
+        formData['sale_estim_discount_total'] = $('input[name="sale_estim_discount_total"]').val();
+        formData['sale_estim_tax_amount'] = $('input[name="sale_estim_tax_amount"]').val();
+        formData['sale_estim_final_amount'] = $('input[name="sale_estim_final_amount"]').val();
+        formData['sale_estim_notes'] = $('#inputDescription[name="sale_estim_notes"]').val();
+        formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
+        formData['sale_status'] = 0;
+        formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
+        formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
+        return formData;
+    }
 
-        } else {
-        // console.log('An error occurred: ' + xhr.statusText);
-        }
-      }
-     
-      });
-    });
+    function submitFormViaAjax(formData) {
+        $.ajax({
+          url: "{{ route('business.invoices.update', ['invoices_id' => $invoices->sale_inv_id]) }}",
+          method: 'PATCH',
+          data: formData,
+            success: function(response) {
+              if (response.preview_view) {
+                  // Inject the preview HTML into the container
+
+                  $('#preview-container').html(response.preview_view).fadeIn();
+
+                  // Optionally, scroll to the preview container if needed
+                  $('html, body').animate({ scrollTop: $('#preview-container').offset().top }, 500);
+
+                  if (response.preview_data && response.preview_data.items) {
+                      response.preview_data.items.forEach(function(item, index) {
+                          // Example: Update the product name in a specific element
+                          let productElement = $('#product-name-' + index); // Use an appropriate selector
+                          if (productElement.length) {
+                              productElement.text(item.product_name || 'N/A');
+                          }
+                      });
+                  }
+
+              } else if (response.redirect_url) {
+                  // Redirect for save success
+                  window.location.href = response.redirect_url;
+              }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $('.error-message').html('');
+                    $('input, select').removeClass('is-invalid');
+
+                    var firstErrorField = null;
+                    $.each(errors, function(field, messages) {
+                        var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
+                        var errorMessageContainerId = 'error_' + fieldId;
+                        var errorMessageContainer = $('#' + errorMessageContainerId);
+
+                        if (errorMessageContainer.length) {
+                            errorMessageContainer.html(messages.join('<br>'));
+                            var $field = $('[name="' + field + '"]');
+                            if ($field.length > 0) {
+                                $field.addClass('is-invalid');
+                                if (!firstErrorField) {
+                                    firstErrorField = $field;
+                                }
+                                scrollToCenter($field);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+
+
+
+
+
 
   });
+
+
+
 
   function scrollToCenter($element) {
       if ($element.length) {

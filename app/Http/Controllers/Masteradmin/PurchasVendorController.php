@@ -72,7 +72,7 @@ class PurchasVendorController extends Controller
         'purchases_vendor_currency_id' => 'nullable|string|max:255',
         'type' => 'required|string|in:Vendor,1099-NEC Contractor',
     ], [
-        'purchases_vendor_name.required' => 'Please enter name.',
+        'purchases_vendor_name.required' => 'Please enter vendor name.',
         'type.required' => 'The vendor type field is required.',
         // 'type.in' => 'The selected vendor type is invalid.',
     ]);      
@@ -202,7 +202,7 @@ public function update(Request $request, $purchases_vendor_id): RedirectResponse
         // 'purchases_contractor_type' => 'required|string|in:Individual,Business',
         // 'type' => 'required|string|in:Vendor,1099-NEC Contractor', // Add validation for type
     ],[
-        'purchases_vendor_name.required' => 'Please enter name',
+        'purchases_vendor_name.required' => 'Please enter vendor name.',
         'type.required' => 'The vendor type field is required.',
         // 'type.in' => 'The selected vendor type is invalid.',
     ]);
@@ -218,7 +218,7 @@ public function update(Request $request, $purchases_vendor_id): RedirectResponse
     $PurchasVendoru->where('purchases_vendor_id', $purchases_vendor_id)->update($validatedData);
 
     // Redirect with success message
-    return redirect()->route('business.purchasvendor.edit', ['PurchasesVendor' => $PurchasVendoru->purchases_vendor_id])
+    return redirect()->route('business.purchasvendor.index', ['PurchasesVendor' => $PurchasVendoru->purchases_vendor_id])
         ->with('purchases-vendor-edit', __('messages.masteradmin.purchases-vendor.edit_purchasesvendor_success'));
 }
 

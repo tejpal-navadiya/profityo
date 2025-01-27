@@ -16,9 +16,9 @@
                 </div>
                 <div class="col-auto">
                     <ol class="breadcrumb float-sm-right">
-                        <a href="{{ route('business.userdetail.index') }}"><button class="add_btn_br">Cancel</button></a>
+                         <a href="{{ route('business.userdetail.index') }}"><button class="add_btn_br">Cancel</button></a>
                         <button type="submit" form="items-form" class="add_btn">Save</button>
-                        </ol>
+                    </ol>
                 </div>
             </div>
         </div>
@@ -30,7 +30,7 @@
                 <div class="card-header">
                     <h3 class="card-title">New User</h3>
                 </div>
-                <form id="items-form" method="POST" action="{{ route('business.userdetail.store') }}">
+                <form id="items-form" method="POST" action="{{ route('business.userdetail.store') }}" novalidate>
                     @csrf
                     <div class="card-body2">
                         <div class="row pad-5">

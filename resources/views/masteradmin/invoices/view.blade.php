@@ -72,16 +72,16 @@
                                 <div class="form-group dropdown" id="customerInfo">
                                     <label>Customer</label>
                                     <a data-toggle="dropdown" href="#">
-                                        <p class="company_business_name"><b>{{ $invoices->customer->sale_cus_first_name }} {{ $invoices->customer->sale_cus_last_name }}</b></p>
+                                        <p class="company_business_name"><b>{{ $invoices->customer->sale_cus_first_name ?? ''}} {{ $invoices->customer->sale_cus_last_name  ?? '' }}</b></p>
                                     </a>
                                     <div class="dropdown-menu dropdown-menu-lg pad-1">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">×</span>
                                         </button>
-                                        <span class="company_business_name"><b>{{ $invoices->customer->sale_cus_first_name }} {{ $invoices->customer->sale_cus_last_name }}</b></span>
-                                        <p class="company_details_text">{{ $invoices->customer->sale_cus_business_name }}</p>
-                                        <p class="company_details_text">{{ $invoices->customer->sale_cus_email }}</p>
-                                        <p class="company_details_text">Tel: {{ $invoices->customer->sale_cus_phone }}</p>
+                                        <span class="company_business_name"><b>{{ $invoices->customer->sale_cus_first_name  ?? '' }} {{ $invoices->customer->sale_cus_last_name  ?? '' }}</b></span>
+                                        <p class="company_details_text">{{ $invoices->customer->sale_cus_business_name  ?? '' }}</p>
+                                        <p class="company_details_text">{{ $invoices->customer->sale_cus_email  ?? '' }}</p>
+                                        <p class="company_details_text">Tel: {{ $invoices->customer->sale_cus_phone ?? ''}}</p>
                                         <button class="add_btn_br px-15" data-toggle="modal"
                                             data-target="#editcustor_modal">Edit Details</button>
                                         <a href="View-customer-profile.html"><button class="add_btn_br px-15">View
@@ -94,7 +94,7 @@
                                 <div class="row justify-content-end">
                                     <div class="col-auto">
                                         <label>Amount Due</label>
-                                        <p class="company_business_name">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol }}{{ $invoices->sale_inv_final_amount }}</p>
+                                        <p class="company_business_name">{{ $currencys->find($invoices->sale_currency_id)->currency_symbol  ?? '' }}{{ $invoices->sale_inv_final_amount  ?? '' }}</p>
                                     </div>
                                     <div class="col-auto">
                                         <div class="hrdivider"></div>
@@ -180,7 +180,7 @@
                 <div class="card">
                     <div class="card-header" id="estimate-tab">
                         <h3 class="card-title">Invoice</h3>
-                        <h3 class="card-title float-sm-right">#{{ $invoices->sale_inv_id }}</h3>
+                        <h3 class="card-title float-sm-right">#{{ $invoices->sale_inv_id  ?? ''}}</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body2">
@@ -188,7 +188,7 @@
                             <div class="col-md-3 ">
                                 <!-- <img src="{{url('public/dist/img/logo.png')}}" alt="Profityo Logo" class="estimate_logo_img"> -->
                                 @if($businessDetails && $businessDetails->bus_image)
-                                <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                                <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                                 class="elevation-2 img-box" target="_blank">
                                 @endif
                             </div>
@@ -196,15 +196,15 @@
                             <div class="col-md-6">
                                 <p class="estimate_view_title text-right">Invoice</p>
                                 <p class="company_details_text text-right">Summary</p>
-                                <p class="company_business_name text-right">{{ $businessDetails->bus_company_name }}</p>
-                                <p class="company_details_text text-right">{{  $businessDetails->bus_address1 }}</p>
-                                <p class="company_details_text text-right">{{  $businessDetails->bus_address2 }}</p>
+                                <p class="company_business_name text-right">{{ $businessDetails->bus_company_name  ?? '' }}</p>
+                                <p class="company_details_text text-right">{{  $businessDetails->bus_address1  ?? ''}}</p>
+                                <p class="company_details_text text-right">{{  $businessDetails->bus_address2  ?? ''}}</p>
                                 <p class="company_details_text text-right">{{  $businessDetails->country->name ?? '' }}</p>
                                 <p class="company_details_text text-right">{{ $businessDetails->state->name ?? '' }},
-                                {{  $businessDetails->city_name }} {{ $businessDetails->zipcode }}</p>
-                                <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone }}</p>
-                                <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile }}</p>
-                                <p class="company_details_text text-right">{{  $businessDetails->bus_website }}</p>
+                                {{  $businessDetails->city_name  ?? '' }} {{ $businessDetails->zipcode }}</p>
+                                <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone  ?? ''}}</p>
+                                <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile  ?? '' }}</p>
+                                <p class="company_details_text text-right">{{  $businessDetails->bus_website  ?? '' }}</p>
                             </div>
                             <!-- /.col -->
                         </div>
@@ -213,24 +213,24 @@
                         <div class="row justify-content-between pad-2">
                             <div class="col-auto px-10" id="sale_customer">
                                 <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_cus_first_name }} {{ $invoices->customer->sale_cus_last_name }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_cus_business_name }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_cus_phone }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_cus_email }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_bill_address1 }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_bill_address2 }}</p>
-                                <p class="company_details_text"> {{ $invoices->customer->state->name }}, {{ $invoices->customer->sale_bill_city_name }} {{ $invoices->customer->sale_bill_zipcode }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->bill_country->name }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_cus_first_name  ?? '' }} {{ $invoices->customer->sale_cus_last_name  ?? '' }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_cus_business_name  ?? ''}}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_cus_phone  ?? '' }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_cus_email  ?? '' }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_bill_address1  ?? '' }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_bill_address2  ?? '' }}</p>
+                                <p class="company_details_text"> {{ $invoices->customer->state->name  ?? '' }}, {{ $invoices->customer->sale_bill_city_name  ?? '' }} {{ $invoices->customer->sale_bill_zipcode  ?? '' }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->bill_country->name  ?? '' }}</p>
                             </div>
                             <!-- /.col -->
                             <div class="col-auto px-10" id="ship_customer">
                                 <p class="company_business_name" style="text-decoration: underline;">Shipped To</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_ship_shipto }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_ship_phone }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_cus_email }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_ship_address1 }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->sale_ship_address2 }}</p>
-                                <p class="company_details_text">{{ $invoices->customer->ship_state->name }}, {{ $invoices->customer->sale_ship_city_name }} {{ $invoices->customer->sale_ship_zipcode }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_ship_shipto  ?? '' }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_ship_phone  ?? '' }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_cus_email  ?? '' }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_ship_address1  ?? ''}}</p>
+                                <p class="company_details_text">{{ $invoices->customer->sale_ship_address2  ?? '' }}</p>
+                                <p class="company_details_text">{{ $invoices->customer->ship_state->name  ?? '' }}, {{ $invoices->customer->sale_ship_city_name  ?? '' }} {{ $invoices->customer->sale_ship_zipcode  ?? '' }}</p>
                                 <p class="company_details_text">{{ $invoices->customer->country->name }}</p>
                             </div>
                             <!-- /.col -->
@@ -238,11 +238,11 @@
                                 <table class="table estimate_detail_table">
                                     <tr>
                                         <td><strong>Invoice Number:</strong></td>
-                                        <td>{{ $invoices->sale_inv_number }}</td>
+                                        <td>{{ $invoices->sale_inv_number  ?? '' }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>P.O./S.O. Number:</strong></td>
-                                        <td>{{ $invoices->sale_inv_customer_ref }}</td>
+                                        <td>{{ $invoices->sale_inv_customer_ref  ?? '' }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Invoice Date:</strong></td>

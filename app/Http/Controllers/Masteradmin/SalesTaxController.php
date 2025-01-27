@@ -12,7 +12,7 @@ use App\Models\SalesTax;
 class SalesTaxController extends Controller
 {
     //
-    public function index(Request $request)
+   public function index(Request $request)
     {
         // Get authenticated user and their role
         $user = Auth::guard('masteradmins')->user();
@@ -24,15 +24,12 @@ class SalesTaxController extends Controller
             $SalesTax = SalesTax::all();
         } else { // Non-Admin Role: Fetch limited data based on role
             $SalesTax = SalesTax::where('id', $user_id)->get(); 
-          
+            // Replace 'created_by_role' with your role-related column
         }
     
         // Pass the filtered data to the view
         return view('masteradmin.salestax.index')->with('SalesTax', $SalesTax);
     }
-
-    
-
     public function create(): View
     {
         return view('masteradmin.salestax.add');
@@ -40,7 +37,9 @@ class SalesTaxController extends Controller
 
     public function store(Request $request)
     {
+        
         $user = Auth::guard('masteradmins')->user();
+        // dd($user);
         $validatedData = $request->validate([
             'tax_name' => 'required|string|max:255',
             'tax_abbreviation' => 'required|string|max:255',
@@ -61,8 +60,9 @@ class SalesTaxController extends Controller
 
         $validatedData['id'] = $user->users_id;
         $validatedData['tax_status'] = 1;
-
-        SalesTax::create($validatedData);
+       
+      $dx  = SalesTax::create($validatedData);
+    //   dd($dx);
         \MasterLogActivity::addToLog('SalesTax is Created.');
         return redirect()->route('business.salestax.index')->with(['salestax-add' => __('messages.masteradmin.sales-tax.send_success')]);
     }
@@ -81,10 +81,11 @@ class SalesTaxController extends Controller
      */
     public function update(Request $request, $tax_id): RedirectResponse
     {
+        // dd($request->all());
         // Find the SalesTax by tax_id
         $user = Auth::guard('masteradmins')->user();
 
-        $SalesTaxu = SalesTax::where(['tax_id' => $tax_id, 'id' => $user->id])->firstOrFail();
+        $SalesTaxu = SalesTax::where(['tax_id' => $tax_id])->firstOrFail();
 
         // Validate incoming request data
         $validatedData = $request->validate([
@@ -97,10 +98,10 @@ class SalesTaxController extends Controller
             'tax_compound' => 'nullable|string',
             'tax_rate' => 'required|numeric',
         ], [
-            'tax_name.required' => 'The name field is required.',
-            'tax_abbreviation.required' => 'The abbreviation field is required.',
-            'tax_number.required' => 'The tax number field is required.',
-            'tax_rate.required' => 'The tax rate field is required.',
+           'tax_name.required' => 'Please enter name.',
+            'tax_abbreviation.required' => 'Please enter abbreviation .',
+            'tax_number.required' => 'Please enter tax number.',
+            'tax_rate.required' => 'Please enter tax rate.',
         ]);
 
         // Handle checkboxes: if not checked, they won't be present in the request
@@ -114,7 +115,7 @@ class SalesTaxController extends Controller
         // \LogActivity::addToLog('Admin SalesTax Edited.');
         \MasterLogActivity::addToLog('SalesTax is Edited.');
         // Redirect back to the edit form with a success message
-        return redirect()->route('business.salestax.edit', ['SalesTax' => $SalesTaxu->tax_id])
+        return redirect()->route('business.salestax.index', ['SalesTax' => $SalesTaxu->tax_id])
             ->with('salestax-edit', __('messages.masteradmin.sales-tax.edit_sales_success'));
     }
 
@@ -127,7 +128,7 @@ class SalesTaxController extends Controller
         //
         $user = Auth::guard('masteradmins')->user();
 
-        $SalesTax = SalesTax::where(['tax_id' => $tax_id, 'id' => $user->id])->firstOrFail();
+        $SalesTax = SalesTax::where(['tax_id' => $tax_id])->firstOrFail();
 
         // Delete the SalesTax
         $SalesTax->where('tax_id', $tax_id)->delete();

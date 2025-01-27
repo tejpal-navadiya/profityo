@@ -65,6 +65,17 @@
               Session::forget('purchases-vendor-bankdetail');
             @endphp
           @endif
+          @if(Session::has('purchases-vendor-edit'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ Session::get('purchases-vendor-edit') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        @php
+        Session::forget('purchases-vendor-edit');
+    @endphp
+    @endif
       <div class="card px-20">
         <div class="card-body1">
           <div class="col-md-12 table-responsive pad_table">
@@ -73,7 +84,7 @@
                  <tr>
                       <th>Type</th>
                       <th>Vendor Name</th>
-                      <th>Name</th>
+                      <!-- <th>Name</th> -->
                       <th>Email</th>
                       <th>Direct Deposit</th>
                       <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
@@ -85,7 +96,7 @@
               <tr>
               <td>{{ $value->purchases_vendor_type }}</td>
               <td>{{ $value->purchases_vendor_name }}</td>
-              <td>{{ $value->purchases_vendor_email }}</td>
+              <!-- <td>{{ $value->purchases_vendor_email }}</td> -->
               <td>{{ $value->purchases_vendor_email }}</td>
               <td>
                 <!-- <a href="javascript:void(0);" class="invoice_underline" data-toggle="modal" data-target="#add_bank_account" data-vendor-id="{{ $value->purchases_vendor_id }}">Add Bank Details</a></td> -->

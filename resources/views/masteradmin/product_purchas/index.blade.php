@@ -54,17 +54,28 @@
               Session::forget('purchases-product-delete');
             @endphp
           @endif
+          @if(Session::has('purchases-product-edit'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ Session::get('purchases-product-edit') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        @php
+        Session::forget('purchases-product-edit');
+    @endphp
+    @endif
       <div class="card px-20">
         <div class="card-body1">
           <div class="col-md-12 table-responsive pad_table">
-            <table id="example1" class="table table-hover text-nowrap">
+            <table id="example1" class="table table-hover">
               <thead>
                 <tr>
                   <th>Name</th>
                   <th>Description</th>
                   <th>Price</th>
                   <th>Tax</th>
-                  <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
+                  <th class="sorting_disabled text-right" data-orderable="false" style="width: 120px;">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -74,7 +85,7 @@
               <td>{{ $value->purchases_product_name }}</td>
               <td>{{ $value->purchases_product_desc }}</td>
               <td>{{ $currencys->firstWhere('id', $value->purchases_product_currency_id)->currency_symbol ?? '' }}{{ $value->purchases_product_price }}</td>
-              <td><strong>{{ $value->tax->tax_abbreviation ?? '' }} ({{ $value->tax->tax_rate ?? ''}}%)</strong> - {{ $value->tax->tax_name ??''}}</td>
+              <td><strong>{{ $value->tax->tax_abbreviation ?? ''}} ({{ $value->tax->tax_rate ?? ''}}%)</strong> - {{ $value->tax->tax_name ?? ''}}</td>
               <!-- <td><span class="overdue_text">$75.00 Overdue</span></td> -->
               <td class="text-right">
               @if(isset($access['update_product_services_purchases']) && $access['update_product_services_purchases']) 

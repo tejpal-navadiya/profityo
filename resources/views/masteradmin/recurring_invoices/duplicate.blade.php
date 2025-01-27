@@ -6,6 +6,7 @@
 
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
+<div id="preview-container">
   <!-- Content Header (Page header) -->
   <div class="content-header">
     <div class="container-fluid">
@@ -20,8 +21,8 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
-            <a class="add_btn_br">Preview</a>
-            <a href="#"><button class="add_btn">Save & Continue</button></a>
+            <button type="button" value="true" id="preview-btn" class="add_btn_br">Preview</button>
+            <button type="submit" form="items-form" id="save-btn1" class="add_btn">Save & Continue</button>
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -62,7 +63,7 @@
               <div class="col-md-3 px-10">
                 <div class="business_logo_uplod_box">
                   @if($businessDetails && $businessDetails->bus_image)
-                  <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                  <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                   class="elevation-2 img-box" target="_blank">
                   <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
@@ -139,12 +140,12 @@
               <div class="col-md-3">
                 <div id="customerInfo">
                   <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
-                  <p class="company_details_text">{{ $reinvoices->customer->sale_cus_business_name }}</p>
-                  <p class="company_details_text">{{ $reinvoices->customer->sale_cus_first_name }} {{ $reinvoices->customer->sale_cus_last_name }}</p>
-                  <p class="company_details_text">{{ $reinvoices->customer->sale_cus_email }}</p>
-                  <p class="company_details_text">{{ $reinvoices->customer->sale_cus_phone }}</p>
-                  <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_{{ $reinvoices->customer->sale_cus_id }}" data-id="{{ $reinvoices->customer->sale_cus_id }}">
-                    <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit {{ $reinvoices->customer->sale_cus_first_name }} {{ $reinvoices->customer->sale_cus_last_name }}
+                  <p class="company_details_text">{{ $reinvoices->customer->sale_cus_business_name ?? '' }}</p>
+                  <p class="company_details_text">{{ $reinvoices->customer->sale_cus_first_name ?? '' }} {{ $reinvoices->customer->sale_cus_last_name ?? '' }}</p>
+                  <p class="company_details_text">{{ $reinvoices->customer->sale_cus_email ?? '' }}</p>
+                  <p class="company_details_text">{{ $reinvoices->customer->sale_cus_phone ?? '' }}</p>
+                  <div class="edit_es_text" data-toggle="modal" data-target="#editcustor_modal_{{ $reinvoices->customer->sale_cus_id ?? '' }}" data-id="{{ $reinvoices->customer->sale_cus_id ?? '' }}">
+                    <i class="fas fa-solid fa-pen-to-square mr-2"></i>Edit {{ $reinvoices->customer->sale_cus_first_name ?? '' }} {{ $reinvoices->customer->sale_cus_last_name ?? '' }}
                   </div>
                 </div>
                 <div class="edit_es_text customer_list list2">
@@ -157,7 +158,7 @@
                       <!-- <option>Select Items</option> -->
                       @foreach($salecustomer as $customer)
                       <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
-                          {{ $customer->sale_cus_business_name }}
+                          {{ $customer->sale_cus_business_name ?? '' }}
                       </option>
                       @endforeach
                   </select>
@@ -455,8 +456,9 @@
 
         <div class="row py-20">
           <div class="col-md-12 text-center">
-            <a class="add_btn_br">Preview</a>
-            <button class="add_btn">Save & Continue</button>
+              <button type="button" value="true" id="preview-btn-footer" class="add_btn_br">Preview</button>
+              <!-- Save & Continue Button -->
+              <button type="button" id="save-btn" value="false" class="add_btn">Save & Continue</button>
           </div>
         </div><!-- /.col -->
     </div>
@@ -465,6 +467,7 @@
     
     </form>
   </section>
+  </div>
   <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
@@ -1799,11 +1802,59 @@
       }
     });
 
-    $('#items-form').on('submit', function (e) {
-      e.preventDefault();
+    $('#preview-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
+
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
+
+    $('#preview-btn-footer').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
+
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
+
+    // Handle the click event for the Save & Continue button
+    $('#save-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    $('#save-btn1').on('click', function(e) {
+     // alert('hi');
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        formData['reinvoice'] = 'edit';
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    
+    function getFormData() {
 
       let formData = {};
-
       $('.item-row').each(function (index) {
         const rowIndex = index;
         formData[`items[${rowIndex}][sale_product_id]`] = $(this).find('select[name="items[][sale_product_id]"]').val();
@@ -1820,8 +1871,8 @@
       formData['sale_cus_id'] = $('select[name="sale_cus_id"]').val();
       formData['sale_estim_number'] = $('input[name="sale_estim_number"]').val();
       formData['sale_estim_customer_ref'] = $('input[name="sale_estim_customer_ref"]').val();
-    //   formData['sale_estim_date'] = $('input[name="sale_estim_date"]').val();
-    //   formData['sale_estim_valid_date'] = $('input[name="sale_estim_valid_date"]').val();
+      formData['sale_estim_date'] = $('input[name="sale_estim_date"]').val();
+      formData['sale_estim_valid_date'] = $('input[name="sale_estim_valid_date"]').val();
       formData['sale_estim_discount_desc'] = $('input[name="sale_estim_discount_desc"]').val();
       formData['sale_estim_sub_total'] = $('input[name="sale_estim_sub_total"]').val();
       formData['sale_estim_discount_total'] = $('input[name="sale_estim_discount_total"]').val();
@@ -1831,69 +1882,72 @@
       formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
       formData['sale_status'] = 0;
       formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
+      formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
       formData['sale_re_inv_payment_due_id'] = $('select[name="sale_re_inv_payment_due_id"]').val();
 
+        return formData;
+    }
 
+    function submitFormViaAjax(formData) {
+        $.ajax({
+          url: "{{ route('business.recurring_invoices.duplicateStore', ['id' => $reinvoices->sale_re_inv_id]) }}",
+          method: 'PATCH',
+          data: formData,
+          success: function(response) {
+              if (response.preview_view) {
+                  // Inject the preview HTML into the container
 
-      $.ajax({
-        url: "{{ route('business.recurring_invoices.duplicateStore', ['id' => $reinvoices->sale_re_inv_id]) }}",
-        method: 'PATCH',
-        data: formData,
-        success: function (response) {
-          window.location.href = response.redirect_url;
+                  $('#preview-container').html(response.preview_view).fadeIn();
 
-          // alert('Items saved successfully!');
+                  
+                 
+                  // Optionally, scroll to the preview container if needed
+                  $('html, body').animate({ scrollTop: $('#preview-container').offset().top }, 500);
 
-          // $('#items-form')[0].reset();
-          // $('#dynamic_field').find('.item-row').remove();
-        },
-        error: function (xhr) {
-        if (xhr.status === 422) {
-        var errors = xhr.responseJSON.errors;
-        console.log(errors); // Debug the errors object
+                  if (response.preview_data && response.preview_data.items) {
+                      response.preview_data.items.forEach(function(item, index) {
+                          // Example: Update the product name in a specific element
+                          let productElement = $('#product-name-' + index); // Use an appropriate selector
+                          if (productElement.length) {
+                              productElement.text(item.product_name || 'N/A');
+                          }
+                      });
+                  }
 
-        // Clear previous error messages
-        $('.error-message').html('');
-        $('input, select').removeClass('is-invalid');
+              } else if (response.redirect_url) {
+                  // Redirect for save success
+                  window.location.href = response.redirect_url;
+              }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $('.error-message').html('');
+                    $('input, select').removeClass('is-invalid');
 
-        var firstErrorField = null; // Variable to store the first error field
+                    var firstErrorField = null;
+                    $.each(errors, function(field, messages) {
+                        var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
+                        var errorMessageContainerId = 'error_' + fieldId;
+                        var errorMessageContainer = $('#' + errorMessageContainerId);
 
-        $.each(errors, function (field, messages) {
-          // Replace characters to match the format of your HTML IDs
-          var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
-          var errorMessageContainerId = 'error_' + fieldId;
-          var errorMessageContainer = $('#' + errorMessageContainerId);
-
-          if (errorMessageContainer.length) {
-          errorMessageContainer.html(messages.join('<br>'));
-
-          // Find the input field related to the error
-          var $field = $('[name="' + field + '"]');
-
-          if ($field.length > 0) {
-            $field.addClass('is-invalid');
-            
-            // Set first error field for scrolling
-            if (!firstErrorField) {
-            firstErrorField = $field;
+                        if (errorMessageContainer.length) {
+                            errorMessageContainer.html(messages.join('<br>'));
+                            var $field = $('[name="' + field + '"]');
+                            if ($field.length > 0) {
+                                $field.addClass('is-invalid');
+                                if (!firstErrorField) {
+                                    firstErrorField = $field;
+                                }
+                                scrollToCenter($field);
+                            }
+                        }
+                    });
+                }
             }
-            scrollToCenter($field);
-          } else {
-            // console.log('Field not found for:', field);
-          }
-          } else {
-          // console.log('Error container not found for:', errorMessageContainerId);
-          }
         });
+    }
 
-
-        } else {
-        // console.log('An error occurred: ' + xhr.statusText);
-        }
-      }
-     
-      });
-    });
 
   });
 

@@ -18,7 +18,7 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
-            <a href="{{route('business.purchasvendor.index')}}" class="add_btn_br">Cancel</a>
+             <a href="{{route('business.purchasvendor.index')}}" class="add_btn_br">Cancel</a>
             <button type="submit" form="items-form" class="add_btn">Save</button>
             </ol>
           </div><!-- /.col -->
@@ -30,7 +30,7 @@
     <section class="content px-10">
       <div class="container-fluid">
         <!-- card -->
-        @if(Session::has('purchases-vendor-edit'))
+        <!-- @if(Session::has('purchases-vendor-edit'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ Session::get('purchases-vendor-edit') }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -40,7 +40,7 @@
         @php
         Session::forget('purchases-vendor-edit');
     @endphp
-    @endif
+    @endif -->
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Basic Information</h3>

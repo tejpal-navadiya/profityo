@@ -15,8 +15,8 @@
                 </div>
                 <div class="col-auto">
                     <ol class="breadcrumb float-sm-right">
-                        <a href="{{route('business.salestax.index')}}"><button class="add_btn_br">Cancel</button></a>
-                        <button type="submit" form="items-form" class="add_btn">Save</button>
+                         <a href="{{route('business.salestax.index')}}"><button class="add_btn_br">Cancel</button></a>
+          <button type="submit" form="items-form" class="add_btn">Save</button>
                     </ol>
                 </div>
             </div>
@@ -57,7 +57,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="taxnumber">Your Tax Number</label>
+                                    <label for="taxnumber">Your Tax Number<span class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('tax_number') is-invalid @enderror" id="taxnumber"
                                            name="tax_number" placeholder="Your Tax Number" value="{{ old('tax_number') }}">
                                     @error('tax_number')

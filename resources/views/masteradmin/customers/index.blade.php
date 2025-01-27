@@ -108,12 +108,12 @@
                     </td>
                   </tr>
                   <div class="modal fade" id="deletecustomer-{{ $value->sale_cus_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
                       <div class="modal-content">
                       <form method="POST" action="{{ route('business.salescustomers.destroy', ['SalesCustomers' => $value->sale_cus_id]) }}" id="delete-form-{{ $value->sale_cus_id }}">
                             @csrf
                             @method('DELETE')
-                        <div class="modal-body pad-1 text-center">
+                        <div class="modal-body delete-pad text-center">
                           <i class="fas fa-solid fa-trash delete_icon"></i>
                           <p class="company_business_name px-10"><b>Delete Customer</b></p>
                           <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>

@@ -29,6 +29,17 @@
     </div>
     <!-- /.content-header -->
     <!-- Main content -->
+    @if(Session::has('reinvoice-edit'))
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ Session::get('reinvoice-edit') }}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          @php
+          Session::forget('invoice-edit');
+      @endphp
+      @endif
     <section class="content px-10">
       <div class="container-fluid">
         <!-- Small boxes (Stat box) -->
@@ -83,7 +94,7 @@
                         @if (count($activereInvoices) > 0)
                         @foreach ($activereInvoices as $value)
                         <tr id="invoices-row-active-{{ $value->sale_re_inv_id }}">
-                          <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
+                          <td>{{ $value->customer->sale_cus_first_name ?? ''}} {{ $value->customer->sale_cus_last_name ?? ''}}</td>
                           <td>Repeat Monthly on The 1st<br>First invoice: 2024-05-01, Ends: 2024-05-01</td>
                           <td>-</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_re_inv_date)->format('M d, Y') }}</td>
@@ -141,7 +152,7 @@
                         @if (count($draftreInvoices) > 0)
                         @foreach ($draftreInvoices as $value)
                         <tr id="invoices-row-draft-{{ $value->sale_re_inv_id }}">
-                          <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
+                          <td>{{ $value->customer->sale_cus_first_name ?? ''}} {{ $value->customer->sale_cus_last_name ?? ''}}</td>
                           <td>Repeat Monthly on The 1st<br>First invoice: 2024-05-01, Ends: 2024-05-01</td>
                           <td>-</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_re_inv_date)->format('M d, Y') }}</td>
@@ -199,7 +210,7 @@
                         @if (count($allreInvoices) > 0)
                         @foreach ($allreInvoices as $value)
                         <tr id="invoices-row-all-{{ $value->sale_re_inv_id }}">
-                          <td>{{ $value->customer->sale_cus_first_name }} {{ $value->customer->sale_cus_last_name }}</td>
+                          <td>{{ $value->customer->sale_cus_first_name ??''}} {{ $value->customer->sale_cus_last_name ?? ''}}</td>
                           <td>Repeat Monthly on The 1st<br>First invoice: 2024-05-01, Ends: 2024-05-01</td>
                           <td>-</td>
                           <td>{{ \Carbon\Carbon::parse($value->sale_re_inv_date)->format('M d, Y') }}</td>

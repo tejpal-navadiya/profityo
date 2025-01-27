@@ -24,7 +24,6 @@
                     <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
                 </div>
             </div>
-            
             <div class="col-md-6">
                 <div class="form-group">
                     <x-input-label for="update_password_password_confirmation" :value="__('Confirm Password')" /><span class="text-danger">*</span>

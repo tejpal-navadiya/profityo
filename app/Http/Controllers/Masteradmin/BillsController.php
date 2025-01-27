@@ -135,7 +135,7 @@ class BillsController extends Controller
             'sale_bill_customer_ref' => 'nullable|string|max:255',
             'sale_bill_date' => 'required|date',
             'sale_bill_valid_date' => 'required|date',
-            'sale_currency_id' => 'required|numeric',
+            'sale_currency_id' => 'nullable|numeric',
             'sale_bill_sub_total' => 'required|numeric',
             'sale_bill_tax_amount' => 'required|numeric',
             'sale_bill_final_amount' => 'required|numeric',
@@ -150,7 +150,7 @@ class BillsController extends Controller
             'items.*.sale_bill_item_tax' => 'required|integer',
         ], [
             'sale_vendor_id.integer' => 'Please select a vendor.',
-            'sale_currency_id.required' => 'Please select a currency.',
+            // 'sale_vendor_id.integer' => 'Please select a vendor.',
             'sale_bill_number.required' => 'The bill number is required.',
             'sale_bill_date.required' => 'Please select the bill date.',
             'sale_bill_valid_date.required' => 'Please select the valid until date.',
@@ -161,14 +161,12 @@ class BillsController extends Controller
             'sale_status.required' => 'Please set the status of the bill.',
             'sale_bill_status.required' => 'Please set the bill status.',
             'items.*.sale_product_id.integer' => 'Please select item.',
-            'items.*.sale_expense_id.integer' => 'Each item must have a expense category selected.',
             'items.*.sale_bill_item_desc.required' => 'Please provide a description for each item.',
-            'items.*.sale_bill_item_qty.required' => 'Please enter the quantity for each item.',
-            'items.*.sale_bill_item_qty.min' => 'The quantity for each item must be at least 1.',
+            'items.*.sale_expense_id.required' => 'Please enter the quantity for each item.',
+            'items.*.sale_bill_item_qty.required' => 'The quantity for each item must be at least 1.',
             'items.*.sale_bill_item_price.required' => 'Please enter the price for each item.',
             'items.*.sale_bill_item_price.min' => 'The price for each item must be at least 0.',
             'items.*.sale_bill_item_tax.required' => 'Please select the tax amount for each item.',
-           
         ]);
         // \DB::enableQueryLog();
 
@@ -314,7 +312,7 @@ class BillsController extends Controller
         session()->flash('bill-edit', __('messages.masteradmin.bill.edit_success'));
 
         return response()->json([
-            'redirect_url' => route('business.bill.edit', ['id' => $bill->sale_bill_id]),
+            'redirect_url' => route('business.bill.index', ['id' => $bill->sale_bill_id]),
             'message' => __('messages.masteradmin.bill.edit_success')
         ]);
 
@@ -445,7 +443,7 @@ class BillsController extends Controller
             'sale_bill_customer_ref' => 'nullable|string|max:255',
             'sale_bill_date' => 'required|date',
             'sale_bill_valid_date' => 'required|date',
-            'sale_currency_id' => 'required|numeric',
+            'sale_currency_id' => 'nullable|numeric',
             'sale_bill_sub_total' => 'required|numeric',
             'sale_bill_tax_amount' => 'required|numeric',
             'sale_bill_final_amount' => 'required|numeric',
@@ -459,8 +457,8 @@ class BillsController extends Controller
             'items.*.sale_bill_item_price' => 'required|numeric|min:0',
             'items.*.sale_bill_item_tax' => 'required|integer',
         ], [
+            'sale_vendor_id.required' => 'Please select a vendor.',
             'sale_vendor_id.integer' => 'Please select a vendor.',
-            'sale_currency_id.required' => 'Please select a currency.',
             'sale_bill_number.required' => 'The bill number is required.',
             'sale_bill_date.required' => 'Please select the bill date.',
             'sale_bill_valid_date.required' => 'Please select the valid until date.',
@@ -470,7 +468,7 @@ class BillsController extends Controller
             'sale_bill_image.image' => 'The file uploaded must be a valid image.',
             'sale_status.required' => 'Please set the status of the bill.',
             'sale_bill_status.required' => 'Please set the bill status.',
-            'items.*.sale_product_id.integer' => 'Please select item.',
+            'items.*.sale_product_id.integer' => 'Each item must have a product selected.',
             'items.*.sale_expense_id.integer' => 'Each item must have a expense category selected.',
             'items.*.sale_bill_item_desc.required' => 'Please provide a description for each item.',
             'items.*.sale_bill_item_qty.required' => 'Please enter the quantity for each item.',
@@ -478,7 +476,6 @@ class BillsController extends Controller
             'items.*.sale_bill_item_price.required' => 'Please enter the price for each item.',
             'items.*.sale_bill_item_price.min' => 'The price for each item must be at least 0.',
             'items.*.sale_bill_item_tax.required' => 'Please select the tax amount for each item.',
-           
         ]);
         // \DB::enableQueryLog();
 
@@ -518,66 +515,7 @@ class BillsController extends Controller
         ]);
 
     }
-    // public function paymentstore(Request $request, $id)
-    // {
-    //     // Validate the form data
-    //     $user = Auth::guard('masteradmins')->user();
-        
-    //     $validatedData = $request->validate([
-    //         'payment_date' => 'required|date',
-    //         'payment_amount' => 'required|numeric',
-    //         'payment_method' => 'required|string',
-    //         'payment_account' => 'required|string',
-    //         'notes' => 'required|string',
-    //     ]);
-    
-    //     // Create a new payment record
-    //     RecordPayment::create([
-    //         'id' => $user->id,
-    //         'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
-    //         'payment_date' => $validatedData['payment_date'],
-    //         'payment_amount' => $validatedData['payment_amount'],
-    //         'payment_method' => $validatedData['payment_method'],
-    //         'payment_account' => $validatedData['payment_account'],
-    //         'notes' => $validatedData['notes'],
-    //     ]);
-    
-    //     // Fetch the relevant invoice by ID and update the sale_bill_due_amount
-    //     $invoice = Bills::where('sale_bill_id',$id)->first();
-    //     $invammount=0;
-    //     if ($invoice) {
-    //         // Deduct the payment amount from the sale_bill_due_amount
-    //        $invammount = $invoice->sale_bill_due_amount -= $validatedData['payment_amount'];
-    
-    //         // Ensure sale_bill_due_amount doesn't go below 0
-    //         if ($invoice->sale_bill_due_amount < 0) {
-               
-    //             $invammount= $invoice->sale_bill_due_amount = 0;
-    //         }
-    
-    //         // Save the updated invoice
-    //         $invoice->where('sale_bill_id', $id)->update(['sale_bill_due_amount' => $invammount]);
-    //     }
-    
-    //     // Fetch the relevant Chart of Account record by the payment account
-    //     $chartOfAccount = ChartAccount::where('chart_acc_name', $validatedData['payment_account'])->first();
-    //     $chart_amount = 0;
-    //     if ($chartOfAccount) {
-    //         // Check if the amount is null or has a value, then update accordingly
-    //         if (is_null($chartOfAccount->amount)) {
-    //             $chart_amount = $chartOfAccount->amount = $validatedData['payment_amount'];
-    //         } else {
-    //           $chart_amount =  $chartOfAccount->amount += $validatedData['payment_amount'];
-    //      }
-    
-    //         // Save the updated amount to the chart of account record
-    //         $chartOfAccount->where('chart_acc_name', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
-    //     }
-    
-    //     // Redirect or return a response
-    //     return redirect()->route('business.bill.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
-    // }
-
+   
     // 
 //     public function paymentstore(Request $request, $id)
 //     {
@@ -647,6 +585,7 @@ class BillsController extends Controller
 //         // Redirect or return a response
 //         return redirect()->route('business.bill.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
 //     }
+
 public function paymentstore(Request $request, $id)
 {
     // Validate the form data
@@ -656,7 +595,7 @@ public function paymentstore(Request $request, $id)
         'payment_date' => 'required|date',
         'payment_amount' => 'required|numeric',
         'payment_method' => 'required|string',
-        // 'payment_account' => 'required|string',
+        'payment_account' => 'required|string',
         'notes' => 'required|string',
     ]);
 
@@ -715,7 +654,6 @@ public function paymentstore(Request $request, $id)
     // Redirect or return a response
     return redirect()->route('business.bill.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
 }
-
 
 
 

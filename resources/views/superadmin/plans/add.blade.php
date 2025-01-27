@@ -62,27 +62,30 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="planamount">Amount <span class="text-danger">*</span></label>
-                                            <input type="text"
-                                                class="form-control @error('sp_amount') is-invalid @enderror"
-                                                id="planamount" name="sp_amount" placeholder="Enter Amount"
-                                                value="{{ old('sp_amount') }}">
+                                            <div class="d-flex">
+                                                <input type="text"
+                                                    class="form-control form-controltext @error('sp_amount') is-invalid @enderror"
+                                                    id="planamount" name="sp_amount" placeholder="Enter Amount"
+                                                    value="{{ old('sp_amount') }}">
+                                                <div class="form-control form-selectcurrency" style="width: auto;">$</div>
+                                            </div>
                                             @error('sp_amount')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
-                                    <!-- <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="planvalidity">Validity <span class="text-danger">*</span></label>
-                                            <input type="number"
-                                                class="form-control @error('sp_month') is-invalid @enderror"
-                                                id="planvalidity" name="sp_month" placeholder="Enter Validity"
-                                                value="{{ old('sp_month') }}">
-                                            @error('sp_month')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div> -->
+                                    <!--<div class="col-md-4">-->
+                                    <!--    <div class="form-group">-->
+                                    <!--        <label for="planvalidity">Validity <span class="text-danger">*</span></label>-->
+                                    <!--        <input type="number"-->
+                                    <!--            class="form-control @error('sp_month') is-invalid @enderror"-->
+                                    <!--            id="planvalidity" name="sp_month" placeholder="Enter Validity"-->
+                                    <!--            value="{{ old('sp_month') }}">-->
+                                    <!--        @error('sp_month')-->
+                                    <!--            <div class="invalid-feedback">{{ $message }}</div>-->
+                                    <!--        @enderror-->
+                                    <!--    </div>-->
+                                    <!--</div>-->
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="planvalidity">User</label>

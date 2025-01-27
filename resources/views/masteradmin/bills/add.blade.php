@@ -20,7 +20,7 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
-            <a href="{{route('business.bill.index')}}"><button class="add_btn_br">Cancel</button></a>
+              <a href="{{route('business.bill.index')}}"><button class="add_btn_br">Cancel</button></a>
             <button type="submit" form="items-form" class="add_btn">Save</button>
             </ol>
           </div><!-- /.col -->
@@ -59,7 +59,8 @@
                   <p class="mb-0">{{ $selected_vendor->purchases_vendor_city_name ?? '' }} {{ $selected_vendor->state->name ?? '' }} {{ $selected_vendor->purchases_vendor_zipcode ?? '' }}</p>
                   <p class="mb-0">{{ $selected_vendor->country->name ?? '' }}</p>
                   <p class="mb-0">{{ $selected_vendor->purchases_vendor_email ?? '' }}</p>
-                  <span class="error-message" id="error_sale_vendor_id" style="color: red;"></span> 
+                                  <span class="error-message" id="error_sale_vendor_id" style="color: red;"></span> 
+
                 </div>
               </div>
               <div class="col-md-4">
@@ -87,7 +88,7 @@
                   <input type="number" name="sale_bill_number" id="sale_bill_number" class="form-control" id="billnumber" placeholder="Enter Bill #">
                 </div>
               </div>
-              <div class="col-md-4"> 
+              <div class="col-md-4">
                 <div class="form-group">
                   <label for="vendor">Currency <span class="text-danger">*</span></label>
                   <select class="form-control select2" id="sale_currency_id" name="sale_currency_id"style="width: 100%;" required>
@@ -180,9 +181,12 @@
                     </td>
                     <td>
                     <div class="d-flex">
-                      <input type="text" name="items[][sale_bill_item_price]" class="form-control"
+                      <input type="text" name="items[][sale_bill_item_price]" class="form-control form-controltext"
                       aria-describedby="inputGroupPrepend" placeholder="Enter item Price">
-
+                      <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type">
+                        <option value="1">$</option>
+                        <option value="2">%</option>
+                      </select>
                     </div>
                     <span class="error-message" id="error_items_0_sale_bill_item_price" style="color: red;"></span>
                     </td>
@@ -323,7 +327,8 @@ $(document).ready(function () {
       // alert(selectedProductId);
       if (selectedProductId) {
       $.ajax({
-        url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/bill/get-product-details/' + selectedProductId,
+        // url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/bill/get-product-details/' + selectedProductId,
+            url: '{{ route('business.bill.getProductDetails', '') }}/' + selectedProductId,
         method: 'GET',
         success: function (response) {
         $row.find('input[name="items[][sale_bill_item_price]"]').val(response.purchases_product_price);

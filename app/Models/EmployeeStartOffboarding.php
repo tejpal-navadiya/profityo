@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class EmployeeStartOffboarding extends Model
 {
     use HasFactory;
-    protected $fillable = ['emp_id','id','ct_id','emp_off_ending','emp_off_last_work_date','emp_off_notice_date','emp_off_status'];
+    protected $fillable = ['emp_id','id','ct_id','emp_off_ending','emp_off_last_work_date','emp_off_notice_date','emp_off_status','emp_date_range','amount'];
    
     public function __construct(array $attributes = [])
     {

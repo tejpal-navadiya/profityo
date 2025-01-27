@@ -80,8 +80,13 @@ class UserController extends Controller
             'string',
             'email',
             'max:255',
-            // Ensure the email is unique in the 'users' table, except for the current user's email if updating
-            Rule::unique($tableName, 'users_email')->ignore($user->user_id) // Ensure unique constraint
+            Rule::unique($tableName, 'users_email')->ignore($user->user_id), // Unique constraint
+            function ($attribute, $value, $fail) {
+                // Ensure email format is strictly validated
+                if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    $fail('The email format is invalid.');
+                }
+            },
         ],
         'users_phone' => 'required|digits_between:10,15',
         'users_password' => 'nullable|string|min:8',
@@ -94,7 +99,7 @@ class UserController extends Controller
         'users_phone.required' => 'Please enter phone number.',
         'users_phone.digits_between' => 'The phone number must be between 10 and 15 digits.',
         'role_id.integer' => 'Please enter role.',
-        // 'role_id.integer' => 'Please enter role.',
+        //  'role_id.integer' => 'The role must be an integer.',
     ]);
 
         
@@ -178,7 +183,7 @@ class UserController extends Controller
         'users_phone.required' => 'Please enter phone number.',
         'users_phone.digits_between' => 'The phone number must be between 10 and 15 digits.',
         'role_id.integer' => 'Please enter role.',
-        // 'role_id.integer' => 'Please enter role.',
+            // 'role_id.integer' => 'The role must be an integer.',
         ]);
         
 
@@ -193,7 +198,7 @@ class UserController extends Controller
         \MasterLogActivity::addToLog('Admin userdetail Edited.');
 
     
-        return redirect()->route('business.userdetail.edit', ['userdetaile' => $userdetailu->users_id])->with('user-edit', __('messages.masteradmin.user.edit_user_success'));
+        return redirect()->route('business.userdetail.index', ['userdetaile' => $userdetailu->users_id])->with('user-edit', __('messages.masteradmin.user.edit_user_success'));
     }
 
 

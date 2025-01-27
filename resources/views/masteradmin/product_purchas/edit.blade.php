@@ -19,8 +19,8 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
-          <a href="{{route('business.purchasproduct.index')}}" class="add_btn_br">Cancel</a>
-          <button type="submit" form="items-form" class="add_btn">Save</button>
+             <a href="{{route('business.purchasproduct.index')}}" class="add_btn_br">Cancel</a>
+            <button type="submit" form="items-form" class="add_btn">Save</button>
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -31,7 +31,7 @@
   <section class="content px-10">
     <div class="container-fluid">
       <!-- card -->
-      @if(Session::has('purchases-product-edit'))
+      <!-- @if(Session::has('purchases-product-edit'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ Session::get('purchases-product-edit') }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -41,7 +41,7 @@
         @php
         Session::forget('purchases-product-edit');
     @endphp
-    @endif
+    @endif -->
       <div class="card">
         <div class="card-header">
           <h3 class="card-title">Edit New Product Or Service</h3>
@@ -71,7 +71,7 @@
                   <label>Price</label>
                   <div class="d-flex">
                     <input type="number" class="form-control form-controltext" name="purchases_product_price"
-                      aria-describedby="inputGroupPrepend" placeholder="0.00"
+                      aria-describedby="inputGroupPrepend" min="0" placeholder="0.00"
                       value="{{ $PurchasProducte->purchases_product_price }}">
                     <select
                       class="form-select form-selectcurrency @error('purchases_product_currency_id') is-invalid @enderror"

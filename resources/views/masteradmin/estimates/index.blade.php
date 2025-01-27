@@ -60,7 +60,27 @@
       @endphp
       @endif
 
-    
+      @if(Session::has('estimate-edit'))
+
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+
+{{ Session::get('estimate-edit') }}
+
+<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+
+<span aria-hidden="true">&times;</span>
+
+</button>
+
+</div>
+
+@php
+
+Session::forget('estimate-edit');
+
+@endphp
+
+@endif
 
       <!-- Small boxes (Stat box) -->
       <div class="col-lg-12 fillter_box">
@@ -111,7 +131,7 @@
           </div>
           <div class="col-lg-3 col-1024 col-md-6 px-10">
             <div class="input-group">
-              <input type="search" class="form-control" name="sale_estim_number"  placeholder="Enter Estimate #" id="sale_estim_number">
+              <input type="search" class="form-control form-controltext" name="sale_estim_number"  placeholder="Enter Estimate #" id="sale_estim_number">
               <div class="input-group-append" id="sale_estim_number_submit">
                 <button type="submit" class="btn btn-default" >
                   <i class="fa fa-search"></i>
@@ -125,18 +145,31 @@
       <!-- Main row -->
       <div id="filter_data">
       <div class="card-header d-flex p-0 justify-content-center px-20 tab_panal">
-        <ul class="nav nav-pills p-2 tab_box">
-          <li class="nav-item"><a class="nav-link active" href="#activeestimate" data-toggle="tab">Active <span
-                class="badge badge-toes">{{ count($activeEstimates) }}</span></a></li>
-          <li class="nav-item"><a class="nav-link" href="#draftestimate" data-toggle="tab">Draft <span
-                class="badge badge-toes">{{ count($draftEstimates) }}</span></a></li>
-          <li class="nav-item"><a class="nav-link" href="#allestimate" data-toggle="tab">All</a></li>
-        </ul>
+       @php
+    $activeTab = session('activeTab', 'activeestimate'); // Default to 'activeestimate'
+     @endphp
+      <ul class="nav nav-pills p-2 tab_box">
+    <li class="nav-item">
+        <a class="nav-link {{ $activeTab == 'activeestimate' ? 'active' : '' }}" href="#activeestimate" data-toggle="tab" onclick="setActiveTab('activeestimate')">
+            Active <span class="badge badge-toes">{{ count($activeEstimates) }}</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ $activeTab == 'draftestimate' ? 'active' : '' }}" href="#draftestimate" data-toggle="tab" onclick="setActiveTab('draftestimate')">
+            Draft <span class="badge badge-toes">{{ count($draftEstimates) }}</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {{ $activeTab == 'allestimate' ? 'active' : '' }}" href="#allestimate" data-toggle="tab" onclick="setActiveTab('allestimate')">
+            All
+        </a>
+    </li>
+</ul>
       </div><!-- /.card-header -->
       <div class="card px-20">
         <div class="card-body1">
           <div class="tab-content">
-            <div class="tab-pane active" id="activeestimate">
+            <div class="tab-pane fade {{ $activeTab == 'activeestimate' ? 'show active' : '' }}" id="activeestimate">
               <div class="col-md-12 pad_table">
                 <table id="example1" class="table table-hover text-nowrap">
                   <thead>
@@ -226,15 +259,15 @@
                         </tr>
                         
                         <div class="modal fade" id="deleteestimateapprove-{{ $value->sale_estim_id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
                       <div class="modal-content">
                       <form method="POST" action="{{ route('business.estimates.destroy', ['id' => $value->sale_estim_id]) }}" id="delete-form-{{ $value->sale_estim_id }}" data-id="{{ $value->sale_estim_id }}">
                             @csrf
                             @method('DELETE')
-                        <div class="modal-body pad-1 text-center">
+                        <div class="modal-body delete-pad text-center">
                           <i class="fas fa-solid fa-trash delete_icon"></i>
-                          <p class="company_business_name px-10"><b>Delete Customer</b></p>
-                          <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>
+                          <p class="company_business_name px-10"><b>Delete Estimate</b></p>
+                          <p class="company_details_text">Are You Sure You Want to Delete This Estimate?</p>
                          
                             <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
                           <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
@@ -252,7 +285,7 @@
               </div>
             </div>
 
-            <div class="tab-pane" id="draftestimate">
+            <div class="tab-pane fade {{ $activeTab == 'draftestimate' ? 'show active' : '' }}" id="draftestimate">
               <div class="col-md-12 pad_table">
                 <table id="example5" class="table table-hover text-nowrap">
                   <thead>
@@ -348,8 +381,8 @@
                               @method('DELETE')
                           <div class="modal-body pad-1 text-center">
                             <i class="fas fa-solid fa-trash delete_icon"></i>
-                            <p class="company_business_name px-10"><b>Delete Customer</b></p>
-                            <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>
+                            <p class="company_business_name px-10"><b>Delete Estimate</b></p>
+                            <p class="company_details_text">Are You Sure You Want to Delete This Estimate?</p>
                           
                               <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
                             <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
@@ -369,7 +402,7 @@
               </div>
             </div>
 
-            <div class="tab-pane" id="allestimate">
+            <div class="tab-pane fade {{ $activeTab == 'allestimate' ? 'show active' : '' }}" id="allestimate">
               <div class="col-md-12 pad_table">
                 <table id="example4" class="table table-hover text-nowrap">
                   <thead>
@@ -466,8 +499,8 @@
                             @method('DELETE')
                         <div class="modal-body pad-1 text-center">
                           <i class="fas fa-solid fa-trash delete_icon"></i>
-                          <p class="company_business_name px-10"><b>Delete Customer</b></p>
-                          <p class="company_details_text">Are You Sure You Want to Delete This Customer?</p>
+                          <p class="company_business_name px-10"><b>Delete Estimate</b></p>
+                          <p class="company_details_text">Are You Sure You Want to Delete This Estimate?</p>
                          
                             <!-- <input type="hidden" name="sale_cus_id" id="customer-id"> -->
                           <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
@@ -509,6 +542,19 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="{{ url('public/vendor/flatpickr/js/flatpickr.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment"></script>
+<script>
+    function setActiveTab(tab) {
+        // Use AJAX to set the active tab in session
+        fetch('{{ route('setActiveTab') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ activeTab: tab })
+        });
+    }
+</script>
 <script>
   function updateStatus(estimateId, nextStatus) {
     $.ajax({

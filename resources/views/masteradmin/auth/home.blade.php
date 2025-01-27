@@ -147,7 +147,7 @@
                       @foreach ($accounts as $payment)
                           <tr>
                           <td>{{ $payment->chart_acc_name ?? 'N/A' }}</td> 
-                              <td>{{ $payment->id }}</td>
+                          <td>{{ $payment->holder->user_first_name ?? 'N/A' }} {{ $payment->holder->user_last_name ?? '' }}</td>
                               <td class="text-right">{{ number_format($payment->amount, 2) }}</td>
                           </tr>
                       @endforeach
@@ -323,34 +323,62 @@
             </div>
           </div>
           <div class="col-lg-4">
-          <div class="card">
-            <div class="statistics-tabs">
-              <div class="tab">
-                <button class="tablinks" onclick="openTab(event, 'weekly')">Invoices Weekly Statistics</button>
-                <button class="tablinks" onclick="openTab(event, 'monthly')">Invoices Monthly Statistics</button>
-              </div>
-              <!-- Weekly Stats -->
-              <div id="weekly" class="tabcontent">
-                  <div class="col-md-12">
-                    <ul class="stats-list">
-                        <li>Total Invoice Generated <span>{{ $totalWeeklyInvoicesGenerated }}</span></li>
-                        <li>Total Paid <span>${{ number_format($totalWeeklyPaid, 2) }}</span></li>
-                        <li>Total Due <span>${{ number_format($totalWeeklyDue, 2) }}</span></li>
-                    </ul>
+            <div class="card">
+              <div class="pad-1">
+                <ul class="nav nav-pills in-bi-tab">
+                  <li class="nav-item"><a class="nav-link active" href="#in-weekly-statistics" data-toggle="tab">Invoices Weekly Statistics</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#in-monthly-statistics" data-toggle="tab">Invoices Monthly Statistics</a></li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="in-weekly-statistics">
+                    <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Invoice Generated</p>
+                      </div>
+                      <p class="in-box-total">{{ $totalWeeklyInvoicesGenerated }}</p>
+                    </div>
+                    <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Paid</p>
+                      </div>
+                      <p class="in-box-total">${{ number_format($totalWeeklyPaid, 2) }}</p>
+                    </div>
+                    <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Due</p>
+                      </div>
+                      <p class="in-box-total">${{ number_format($totalWeeklyDue, 2) }}</p>
+                    </div>
                   </div>
-              </div>
-              <!-- Monthly Stats -->
-              <div id="monthly" class="tabcontent" style="display:none;">
-                <div class="col-md-12">
-                  <ul class="stats-list">
-                      <li>Total Invoice Generated <span>{{ $totalMonthlyInvoicesGenerated }}</span></li>
-                      <li>Total Paid <span>${{ number_format($totalMonthlyPaid, 2) }}</span></li>
-                      <li>Total Due <span>${{ number_format($totalMonthlyDue, 2) }}</span></li>
-                  </ul>
+                  <div class="tab-pane" id="in-monthly-statistics">
+                  <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Invoice Generated</p>
+                      </div>
+                      <p class="in-box-total">{{ $totalMonthlyInvoicesGenerated }}</p>
+                    </div>
+                    <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Paid</p>
+                      </div>
+                      <p class="in-box-total">${{ number_format($totalMonthlyPaid, 2) }}</p>
+                    </div>
+                    <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Due</p>
+                      </div>
+                      <p class="in-box-total">${{ number_format($totalMonthlyDue, 2) }}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
           </div>
         </div>
         <div class="row">
@@ -409,6 +437,62 @@
             </div>
           </div>
           <div class="col-lg-4">
+            <div class="card">
+              <div class="pad-1">
+                <ul class="nav nav-pills in-bi-tab">
+                  <li class="nav-item"><a class="nav-link active" href="#bill-weekly-statistics" data-toggle="tab">Bills Weekly Statistics</a></li>
+                  <li class="nav-item"><a class="nav-link" href="#bill-monthly-statistics" data-toggle="tab">Bills Monthly Statistics</a></li>
+                </ul>
+                <div class="tab-content">
+                  <div class="tab-pane active" id="bill-weekly-statistics">
+                    <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Bill Generated</p>
+                      </div>
+                      <p class="in-box-total">$0.00</p>
+                    </div>
+                    <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Paid</p>
+                      </div>
+                      <p class="in-box-total">$0.00</p>
+                    </div>
+                    <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Due</p>
+                      </div>
+                      <p class="in-box-total">$0.00</p>
+                    </div>
+                  </div>
+                  <div class="tab-pane" id="bill-monthly-statistics">
+                  <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Bill Generated</p>
+                      </div>
+                      <p class="in-box-total">$0.00</p>
+                    </div>
+                    <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Paid</p>
+                      </div>
+                      <p class="in-box-total">$0.00</p>
+                    </div>
+                    <div class="in-total-box">
+                      <div class="d-flex align-items-center">
+                        <img src="https://profityo.app/public/dist/img/invoice.png" alt="invoice" class="in-box-icon">
+                        <p class="in-box-title">Total Due</p>
+                      </div>
+                      <p class="in-box-total">$0.00</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- /.row (main row) -->

@@ -1,5 +1,4 @@
 <link rel="stylesheet" href="{{ url('public/vendor/flatpickr/css/flatpickr.css') }}">
-<?php //dd($previewData); ?>
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2 align-items-center justify-content-between">
@@ -15,7 +14,9 @@
                     <button type="button" value="true" id="preview-btn" class="add_btn_br">Preview</button>
 
                     <!-- <a href="#"><button class="add_btn_br">Preview</button></a> -->
-                    <button type="submit" form="items-form1" class="add_btn">Save & Continue</button>
+                    <!-- <button type="submit" form="items-form1" class="add_btn">Save & Continue</button> -->
+                    <button type="button" form="items-form1" id="save-btn1" value="false" class="add_btn">Save & Continue</button>
+
 
                 </ol>
             </div><!-- /.col -->
@@ -40,15 +41,25 @@
                 </div>
             </div>
         </div>
-            <form id="items-form1" action="{{ route('business.estimates.store') }}" method="POST">
-                @csrf
+            <?php //dd($previewData); ?>
+            <?php if (isset($previewData['estimate_id'])): ?>
+              <form id="items-form1"
+                  action="{{ route('business.estimates.update', ['estimates_id' => $previewData['estimate_id']]) }}"
+                  method="POST">
+                  @csrf
+                  @method('Patch')
+              <?php else: ?>
+                <form id="items-form1" action="{{ route('business.estimates.store') }}" method="POST">
+                  @csrf
+              <?php endif; ?>
+
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="row justify-content-between">
                         <div class="col-md-3 px-10">
                             <div class="business_logo_uplod_box">
                                 @if($businessDetails && $businessDetails->bus_image)
-                                    <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                                    <img src="{{ url(env('IMAGE_URL') . '/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                                         class="elevation-2 img-box" target="_blank">
                                     <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
@@ -148,7 +159,6 @@
             <!-- /.card-header -->
             <div class="card-body2">
                 <div class="row justify-content-between pad-3">
-                  <?php //dd(session('previewData')); ?> 
                   @if(!empty(session('previewData.sale_cus_id')))
                     <!-- If 'sale_cus_id' exists in session -->
                     <div class="col-md-3">
@@ -194,7 +204,7 @@
                           <div class="add_customer_list" style="display: none;">
                               <label for="customerSelect">Select Customer</label>
                               <select id="customerSelect" name="sale_cus_id" required class="form-control select2" style="width: 100%;">
-                                  <option>Select Customer</option>
+                                  <option value="">Select Customer</option>
                                   @foreach($salecustomer as $customer)
                                       <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
                                           {{ $customer->sale_cus_business_name }}
@@ -285,7 +295,7 @@
                     <!-- /.col -->
                 </div>
             </div>
-            <?php// dd($sessionData); ?>
+            <?php // dd($sessionData); ?>
             <div class="row px-10">
                 <div class="col-md-12 text-right">
                     <a class="editcolum_btn" data-toggle="modal" data-target="#editcolum"><i
@@ -296,7 +306,6 @@
                     <table class="table table-hover text-nowrap dashboard_table item_table" id="dynamic_field">
                     <thead>
         <tr>
-            <?php //dD($sessionData['Items']); ?>
             <!-- Items Column -->
             @if(isset($sessionData['Items']) && $sessionData['Items'] !== '')
                 <th style="width: 30%;" id="itemsHeader" class="">
@@ -489,15 +498,15 @@
                 <!-- /.col -->
             </div>
             <br />
-            <input type="hidden" name="sale_estim_sub_total" value="0">
+            <!-- <input type="hidden" name="sale_estim_sub_total" value="0">
             <input type="hidden" name="sale_estim_discount_total" value="0">
             <input type="hidden" name="sale_estim_tax_amount" value="0">
-            <input type="hidden" name="sale_estim_final_amount" value="0">
+            <input type="hidden" name="sale_estim_final_amount" value="0"> -->
 
-            <!-- <input type="hidden" name="sale_estim_sub_total" value="{{ old('sale_estim_sub_total', $previewData['sale_estim_sub_total'] ?? 0) }}">
+             <input type="hidden" name="sale_estim_sub_total" value="{{ old('sale_estim_sub_total', $previewData['sale_estim_sub_total'] ?? 0) }}">
 <input type="hidden" name="sale_estim_discount_total" value="{{ old('sale_estim_discount_total', $previewData['sale_estim_discount_total'] ?? 0) }}">
 <input type="hidden" name="sale_estim_tax_amount" value="{{ old('sale_estim_tax_amount', $previewData['sale_estim_tax_amount'] ?? 0) }}">
-<input type="hidden" name="sale_estim_final_amount" value="{{ old('sale_estim_final_amount', $previewData['sale_estim_final_amount'] ?? 0) }}"> -->
+<input type="hidden" name="sale_estim_final_amount" value="{{ old('sale_estim_final_amount', $previewData['sale_estim_final_amount'] ?? 0) }}"> 
             <div class="row pad-2">
                 <div class="col-md-4">
                     <div class="d-flex align-items-center">
@@ -538,7 +547,7 @@
                                 </tr>
                             <tr>
                                 <select name="sale_currency_id" id="sale_currency_id"
-                                    class="form-select form-selectcurrency select2 mb-2" style="width: 100%;" required>
+                                    class="form-control form-selectcurrency select2 mb-2" style="width: 100%;" required>
                                     @foreach($currencys as $curr)
                                         <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
                                         <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
@@ -599,7 +608,7 @@
                 <button type="button" value="true" id="preview-btn-footer" class="add_btn_br">Preview</button>
 
                 <!-- Save & Continue Button -->
-                <button type="button" id="save-btn" value="false" class="add_btn">Save & Continue</button>
+                <button type="button" form="items-form" id="save-btn" value="false" class="add_btn">Save & Continue</button>
 
                 <!-- <a href="#"><button class="add_btn">Save & Continue</button></a> -->
             </div>
@@ -620,7 +629,7 @@
         <span aria-hidden="true">&times;</span>
       </button>
       </div>
-      <form method="post" id="editBusinessForm" class="mt-6 space-y-6" enctype="multipart/form-data">
+      <form method="post"  id="items-form" class="mt-6 space-y-6" enctype="multipart/form-data">
       @csrf
       @method('patch')
       <div class="modal-body">
@@ -1796,6 +1805,7 @@ $(document).ready(function () {
         // Add the preview flag to the form data
         let formData = getFormData();
         formData['preview'] = 'true';  // Set preview flag to true
+        formData['estimate'] = 'edit';
 
         // Trigger the AJAX request with the preview flag
         submitFormViaAjax(formData);
@@ -1808,7 +1818,7 @@ $(document).ready(function () {
         // Add the preview flag to the form data
         let formData = getFormData();
         formData['preview'] = 'true';  // Set preview flag to true
-
+        formData['estimate'] = 'edit';
         // Trigger the AJAX request with the preview flag
         submitFormViaAjax(formData);
         
@@ -1821,6 +1831,19 @@ $(document).ready(function () {
         // Add the preview flag to the form data
         let formData = getFormData();
         formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    $('#save-btn1').on('click', function(e) {
+     // alert('hi');
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+     
         // console.log('FormData (with preview flag):', formData);
         // Trigger the AJAX request for saving data
         submitFormViaAjax(formData);
@@ -1862,17 +1885,36 @@ $(document).ready(function () {
         formData['sale_estim_status'] = 1;
         formData['sale_status'] = 0;
         formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
-        console.log(formData);
+       // console.log(formData);
         return formData;
     }
 
     // Function to send the form data via AJAX
     function submitFormViaAjax(formData) {
         
-        //console.log(formData);
+      var url;
+      var method;
+    <?php if (isset($previewData['estimate_id'])): ?>
+        url = "{{ route('business.estimates.update', ['estimates_id' => $previewData['estimate_id']]) }}";
+        method = 'PATCH';
+    <?php else: ?>
+        url = "{{ route('business.estimates.store') }}";
+        method = 'POST';
+    <?php endif; ?>
+
+        // console.log(formData);
+        var url;
+        var method;
+        <?php if (isset($previewData['estimate_id'])): ?>
+            method = 'PATCH';
+        <?php else: ?>
+            url = "{{ route('business.estimates.store') }}";
+            method = 'POST';
+        <?php endif; ?>
+
         $.ajax({
-            url: "{{ route('business.estimates.store') }}",  // The route for your form submission
-            method: 'POST',
+            url: url,  // The route for your form submission
+            method: method,
             data: formData,
             headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

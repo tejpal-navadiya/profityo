@@ -156,7 +156,7 @@
 
                                     </button>
 
-                                    <span class="company_business_name"><b>{{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}</b></span>
+                                    <span class="company_business_name"><b>{{ $estimates->customer->sale_cus_first_name ?? '' }} {{ $estimates->customer->sale_cus_last_name }}</b></span>
 
                                     <p class="company_details_text">{{ $estimates->customer->sale_cus_business_name }}</p>
 
@@ -404,7 +404,7 @@
 
                             @if($businessDetails && $businessDetails->bus_image)
 
-                            <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                            <img src="{{ url(env('IMAGE_URL') . '/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
 
                             class="elevation-2 img-box" target="_blank">
 
@@ -420,23 +420,23 @@
 
                             <p class="company_details_text text-right">Summary</p>
 
-                            <p class="company_business_name text-right">{{ $businessDetails->bus_company_name }}</p>
+                            <p class="company_business_name text-right">{{ $businessDetails->bus_company_name ?? '' }}</p>
 
-                            <p class="company_details_text text-right">{{  $businessDetails->bus_address1 }}</p>
+                            <p class="company_details_text text-right">{{  $businessDetails->bus_address1 ?? '' }}</p>
 
-                            <p class="company_details_text text-right">{{  $businessDetails->bus_address2 }}</p>
+                            <p class="company_details_text text-right">{{  $businessDetails->bus_address2 ?? ''  }}</p>
 
                             <p class="company_details_text text-right">{{  $businessDetails->country->name ?? '' }}</p>
 
                             <p class="company_details_text text-right">{{ $businessDetails->state->name ?? '' }},
 
-                            {{  $businessDetails->city_name }} {{ $businessDetails->zipcode }}</p>
+                            {{  $businessDetails->city_name }} {{ $businessDetails->zipcode ?? '' }}</p>
 
-                            <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone }}</p>
+                            <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone ?? ''  }}</p>
 
-                            <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile }}</p>
+                            <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile ?? '' }}</p>
 
-                            <p class="company_details_text text-right">{{  $businessDetails->bus_website }}</p>
+                            <p class="company_details_text text-right">{{  $businessDetails->bus_website ?? ''  }}</p>
 
                         </div>
 
@@ -454,21 +454,21 @@
 
                             <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_cus_first_name }} {{ $estimates->customer->sale_cus_last_name }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_cus_first_name ?? ''  }} {{ $estimates->customer->sale_cus_last_name ?? ''  }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_cus_business_name }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_cus_business_name ?? '' }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_cus_phone }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_cus_phone ?? '' }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_cus_email }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_cus_email ?? ''  }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_bill_address1 }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_bill_address1 ?? ''  }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_bill_address2 }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_bill_address2 ?? ''  }}</p>
 
-                            <p class="company_details_text"> {{ $estimates->customer->state->name }}, {{ $estimates->customer->sale_bill_city_name }} {{ $estimates->customer->sale_bill_zipcode }}</p>
+                            <p class="company_details_text"> {{ $estimates->customer->state->name ?? '' }}, {{ $estimates->customer->sale_bill_city_name ?? ''  }} {{ $estimates->customer->sale_bill_zipcode ?? ''  }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->bill_country->name }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->bill_country->name ?? '' }}</p>
 
                         </div>
 
@@ -478,19 +478,19 @@
 
                             <p class="company_business_name" style="text-decoration: underline;">Shipped To</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_ship_shipto }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_ship_shipto ?? '' }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_ship_phone }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_ship_phone ?? ''  }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_cus_email }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_cus_email ?? ''  }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_ship_address1 }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_ship_address1 ?? '' }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->sale_ship_address2 }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->sale_ship_address2 ?? '' }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->ship_state->name }}, {{ $estimates->customer->sale_ship_city_name }} {{ $estimates->customer->sale_ship_zipcode }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->ship_state->name ?? '' }}, {{ $estimates->customer->sale_ship_city_name ?? ''  }} {{ $estimates->customer->sale_ship_zipcode ?? '' }}</p>
 
-                            <p class="company_details_text">{{ $estimates->customer->country->name }}</p>
+                            <p class="company_details_text">{{ $estimates->customer->country->name ?? '' }}</p>
 
                         </div>
 
@@ -504,7 +504,7 @@
 
                                     <td><strong>Estimate Number:</strong></td>
 
-                                    <td>{{ $estimates->sale_estim_number }}</td>
+                                    <td>{{ $estimates->sale_estim_number ?? '' }}</td>
 
                                 </tr>
 
@@ -512,7 +512,7 @@
 
                                     <td><strong>Customer Ref:</strong></td>
 
-                                    <td>{{ $estimates->sale_estim_customer_ref }}</td>
+                                    <td>{{ $estimates->sale_estim_customer_ref ?? '' }}</td>
 
                                 </tr>
 

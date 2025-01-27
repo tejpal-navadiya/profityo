@@ -26,7 +26,12 @@
 
             <button type="button" value="true" id="preview-btn" class="add_btn_br">Preview</button>
             <!-- <a href="#"><button class="add_btn_br">Preview</button></a> -->
-          <button type="submit" form="items-form" class="add_btn">Save & Continue</button>
+
+                    <!-- <button type="button" value="true" id="preview-btn" class="add_btn_br">Preview</button> -->
+            <button type="button" form="items-form" id="save-btn1" value="false" class="add_btn">Save & Continue</button>
+
+
+          <!-- <button type="submit" form="items-form" class="add_btn">Save & Continue</button> -->
             </ol>
           </div><!-- /.col -->
           </div><!-- /.row -->
@@ -64,14 +69,15 @@
           @method('Patch')
           <!-- /.card-header -->
           @if($errors->any())
-      <div class="alert alert-danger">
-          <ul>
-              @foreach ($errors->all() as $error)
-                  <li>{{ $error }}</li>
-              @endforeach
-          </ul>
-      </div>
-      @endif
+
+          <div class="alert alert-danger">
+              <ul>
+                  @foreach ($errors->all() as $error)
+                      <li>{{ $error }}</li>
+                  @endforeach
+              </ul>
+          </div>
+          @endif
 
 
           <div class="card-body">
@@ -79,7 +85,7 @@
             <div class="col-md-3 px-10">
             <div class="business_logo_uplod_box">
               @if($businessDetails && $businessDetails->bus_image)
-          <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+          <img src="{{ url(env('IMAGE_URL') . '/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
           class="elevation-2 img-box" target="_blank">
           <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
@@ -220,8 +226,8 @@
                   <input type="hidden" id="from-datepicker-hidden" value="{{ $estimates->sale_estim_date }}" />
 
                   @php
-            $saleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_date)->format('m/d/Y');
-            @endphp
+                    $saleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_date)->format('m/d/Y');
+                  @endphp
 
                   <x-flatpickr id="from-datepicker" name="sale_estim_date" placeholder="Select a date"
                   :value="$saleEstimDate" />
@@ -247,8 +253,8 @@
                   <input type="hidden" id="to-datepicker-hidden" value="{{ $estimates->sale_estim_valid_date }}" />
 
                   @php
-            $formattedSaleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('m/d/Y');
-            @endphp
+                  $formattedSaleEstimDate = \Carbon\Carbon::parse($estimates->sale_estim_valid_date)->format('m/d/Y');
+                  @endphp
 
                   <x-flatpickr id="to-datepicker" name="sale_estim_valid_date" placeholder="Select a date"
                   :value="$formattedSaleEstimDate" />
@@ -1934,7 +1940,7 @@
         // Add the preview flag to the form data
         let formData = getFormData();
         formData['preview'] = 'true';  // Set preview flag to true
-
+        formData['estimate'] = 'edit';
         // Trigger the AJAX request with the preview flag
         submitFormViaAjax(formData);
         
@@ -1946,6 +1952,8 @@
         // Add the preview flag to the form data
         let formData = getFormData();
         formData['preview'] = 'true';  // Set preview flag to true
+        formData['estimate'] = 'edit';
+        
 
         // Trigger the AJAX request with the preview flag
         submitFormViaAjax(formData);
@@ -1954,16 +1962,32 @@
 
     // Handle the click event for the Save & Continue button
     $('#save-btn').on('click', function(e) {
+     // alert('hi');
         e.preventDefault();  // Prevent form submission
 
         // Add the preview flag to the form data
         let formData = getFormData();
         formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        formData['estimate'] = 'edit';
         // console.log('FormData (with preview flag):', formData);
         // Trigger the AJAX request for saving data
         submitFormViaAjax(formData);
     });
 
+    $('#save-btn1').on('click', function(e) {
+     // alert('hi');
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        formData['estimate'] = 'edit';
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    
     function getFormData() {
       let formData = {};
 
@@ -2009,8 +2033,6 @@
 
                   $('#preview-container').html(response.preview_view).fadeIn();
 
-                  
-                 
                   // Optionally, scroll to the preview container if needed
                   $('html, body').animate({ scrollTop: $('#preview-container').offset().top }, 500);
 

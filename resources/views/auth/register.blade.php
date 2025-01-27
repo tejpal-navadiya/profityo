@@ -9,7 +9,6 @@
               <span class="fas fa-regular fa-user"></span>
             </div>
           </div>
-          <label for="name">Name <span class="text-danger">*</span></label>
           <input id="name" class="form-control" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" placeholder="Name">
           <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>

@@ -15,7 +15,7 @@
                     </ol>
                 </div>
                 <div class="col-auto">
-                    <ol class="breadcrumb float-sm-right">
+                     <ol class="breadcrumb float-sm-right">
                         <a href="{{route('business.salescustomers.index')}}"><button class="add_btn_br">Cancel</button></a>
                         <button type="submit" form="cust-Form" class="add_btn">Save</button>
                     </ol>
@@ -177,13 +177,13 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="bill_address1">Address Line 1</label>
-                  <input type="text" class="form-control" name="sale_bill_address1" id="bill_address1" placeholder="Enter a Address" value="{{ $SalesCustomerse->sale_bill_address1 }}">
+                  <input type="text" class="form-control" name="sale_bill_address1" id="bill_address1" placeholder="Enter a Location" value="{{ $SalesCustomerse->sale_bill_address1 }}">
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="bill_address2">Address Line 2</label>
-                  <input type="text" class="form-control" name="sale_bill_address2" id="bill_address2" placeholder="Enter a Address" value="{{ $SalesCustomerse->sale_bill_address2 }}">
+                  <input type="text" class="form-control" name="sale_bill_address2" id="bill_address2" placeholder="Enter a Location" value="{{ $SalesCustomerse->sale_bill_address2 }}">
                 </div>
               </div>
               <div class="col-md-4">
@@ -246,13 +246,13 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="ship_address1">Address Line 1</label>
-                  <input type="text" class="form-control" name="sale_ship_address1" id="ship_address1" placeholder="Enter a Address" value="{{ $SalesCustomerse->sale_ship_address1 }}">
+                  <input type="text" class="form-control" name="sale_ship_address1" id="ship_address1" placeholder="Enter a Location" value="{{ $SalesCustomerse->sale_ship_address1 }}">
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="ship_address2">Address Line 2</label>
-                  <input type="text" class="form-control" name="sale_ship_address2" id="ship_address2" placeholder="Enter a Address" value="{{ $SalesCustomerse->sale_ship_address2 }}">
+                  <input type="text" class="form-control" name="sale_ship_address2" id="ship_address2" placeholder="Enter a Location" value="{{ $SalesCustomerse->sale_ship_address2 }}">
                 </div>
               </div>
               <div class="col-md-4">
@@ -392,27 +392,6 @@
         } else {
             $('#bill_state').empty();
             $('#bill_state').append('<option value="">Select State</option>');
-        }
-    });
-
-    $('#ship_country').change(function() {
-        var country_id = $(this).val();
-        if (country_id) {
-            $.ajax({
-                url: '{{ url('business/productgetstates') }}/' + country_id,
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    $('#ship_state').empty();
-                    $('#ship_state').append('<option value="">Select State</option>');
-                    $.each(data, function(key, value) {
-                        $('#ship_state').append('<option value="'+ value.id +'">'+ value.name +'</option>');
-                    });
-                }
-            });
-        } else {
-            $('#ship_state').empty();
-            $('#ship_state').append('<option value="">Select State</option>');
         }
     });
 

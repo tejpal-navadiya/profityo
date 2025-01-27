@@ -6,6 +6,7 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
+  <div id="preview-container">
     <!-- Content Header (Page header) -->
     <div class="content-header">
     <div class="container-fluid">
@@ -19,8 +20,8 @@
       </div><!-- /.col -->
       <div class="col-auto">
         <ol class="breadcrumb float-sm-right">
-        <a href="#"><button class="add_btn_br">Preview</button></a>
-        <button type="submit" form="items-form-invoice" class="add_btn">Save & Continue</button>
+        <button type="button" value="true" id="preview-btn" class="add_btn_br">Preview</button>
+        <button type="button" form="items-form" id="save-btn1" value="false" class="add_btn">Save & Continue</button>
 
         </ol>
       </div><!-- /.col -->
@@ -41,7 +42,7 @@
         </button>
         </div>
       </div>
-      <form id="items-form-invoice" action="{{ route('business.invoices.store') }}" method="POST">
+      <form id="items-form" action="{{ route('business.invoices.store') }}" method="POST">
         @csrf
         <!-- /.card-header -->
         <div class="card-body">
@@ -49,8 +50,8 @@
           <div class="col-md-3 px-10">
           <div class="business_logo_uplod_box">
             @if($businessDetails && $businessDetails->bus_image)
-        <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
-        class="elevation-2 img-box" target="_blank">
+          <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+          class="elevation-2 img-box" target="_blank">
         <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
         <div class="modal fade" id="removebusinessimage" tabindex="-1" role="dialog"
@@ -106,16 +107,16 @@
             </div>
           </div>
           <div class="px-10">
-            <p class="company_business_name text-right">{{ $businessDetails->bus_company_name }}</p>
-            <p class="company_details_text text-right">{{  $businessDetails->bus_address1 }}</p>
-            <p class="company_details_text text-right">{{  $businessDetails->bus_address2 }}</p>
+            <p class="company_business_name text-right">{{ $businessDetails->bus_company_name ?? ''}}</p>
+            <p class="company_details_text text-right">{{  $businessDetails->bus_address1 ?? '' }}</p>
+            <p class="company_details_text text-right">{{  $businessDetails->bus_address2  ?? '' }}</p>
             <p class="company_details_text text-right">{{ $businessDetails->state->name ?? '' }},
-            {{  $businessDetails->city_name }} {{ $businessDetails->zipcode }}
+            {{  $businessDetails->city_name  ?? '' }} {{ $businessDetails->zipcode  ?? '' }}
             </p>
             <p class="company_details_text text-right">{{  $businessDetails->country->name ?? '' }}</p>
-            <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone }}</p>
-            <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile }}</p>
-            <p class="company_details_text text-right">{{  $businessDetails->bus_website }}</p>
+            <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone  ?? '' }}</p>
+            <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile  ?? '' }}</p>
+            <p class="company_details_text text-right">{{  $businessDetails->bus_website  ?? '' }}</p>
           </div>
           <h3 class="card-title float-sm-right px-10" data-toggle="modal"
             data-target="#editbusiness_companyaddress"><img src="{{url('public/dist/img/dot.png')}}"
@@ -143,10 +144,10 @@
               <label for="customerSelect">Select Customer</label>
               <select id="customerSelect" name="sale_cus_id" required class="form-control select2"
                       style="width: 100%;">
-                      <option>Select Customer</option>
+                      <option value="">Select Customer</option>
                       @foreach($salecustomer as $customer)
                   <option value="{{ $customer->sale_cus_id }}" {{ $customer->sale_cus_id == old('customer_id') ? 'selected' : '' }}>
-                  {{ $customer->sale_cus_business_name }}
+                  {{ $customer->sale_cus_business_name  ?? '' }}
                   </option>
                 @endforeach
               </select>
@@ -226,7 +227,7 @@
             <div id="customerInfo"></div>
           </div>
         </div>
-        <!-- /.col --> 
+        <!-- /.col -->
       </div>
       <div class="row px-10">
         <div class="col-md-12 text-right">
@@ -251,7 +252,7 @@
             <td>
             <div>
               <select class="form-control select2" name="items[][sale_product_id]" style="width: 100%;">
-              <option>Select Items</option>
+              <option >Select Items</option>
               @foreach($products as $product)
           <option value="{{ $product->sale_product_id }}" {{ $product->sale_product_id == old('sale_product_id') ? 'selected' : '' }}>
           {{ $product->sale_product_name }}
@@ -265,8 +266,8 @@
               <span class="error-message" id="error_items_0_sale_estim_item_desc" style="color: red;"></span>
             </div>
             </td>
-            <td><input type="number" class="form-control" name="items[][sale_estim_item_qty]"
-             min="1" placeholder="Enter item Quantity">
+            <td><input type="number" class="form-control"  name="items[][sale_estim_item_qty]"
+             min="0" placeholder="Enter item Quantity">
             <span class="error-message" id="error_items_0_sale_estim_item_qty" style="color: red;"></span>
             </td>
             <td>
@@ -282,7 +283,7 @@
               <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
                 @foreach($salestax as $salesTax)
                   <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                  {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                  {{ $salesTax->tax_name  ?? '' }} {{ $salesTax->tax_rate  ?? '' }}%
                   </option>
                 @endforeach
               </select>
@@ -290,7 +291,7 @@
               <select class="form-control select2" name="items[][sale_estim_item_tax]" style="width: 100%;">
                 @foreach($salestax as $salesTax)
                   <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}">
-                  {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                  {{ $salesTax->tax_name  ?? '' }} {{ $salesTax->tax_rate ?? '' }}%
                   </option>
                 @endforeach
               </select>
@@ -333,15 +334,15 @@
             <table class="table total_table">
               <tr>
                 <td style="width:50%">Sub Total :</td>
-                <td id="sub-total">{{ $currency->currency_symbol }}0.00</td>
+                <td id="sub-total">{{ $currency->currency_symbol  ?? '' }}0.00</td>
               </tr>
               <tr>
                 <td>Discount :</td>
-                <td id="discount">{{ $currency->currency_symbol }}0.00</td>
+                <td id="discount">{{ $currency->currency_symbol  ?? '' }}0.00</td>
               </tr>
               <tr>
                 <td>Tax :</td>
-                <td id="tax">{{ $currency->currency_symbol }}0.00</td>
+                <td id="tax">{{ $currency->currency_symbol  ?? '' }}0.00</td>
               </tr>
               <tr>
                 <select name="sale_currency_id" id="sale_currency_id" class="form-select form-selectcurrency select2"
@@ -349,7 +350,7 @@
                 @foreach($currencys as $curr)
             <!-- <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option> -->
             <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == old('sale_currency_id', $currency->id) ? 'selected' : '' }}>
-              {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
+              {{ $curr->currency  ?? '' }} ({{ $curr->currency_symbol  ?? '' }}) - {{ $curr->currency_name ?? '' }}
             </option>
           @endforeach
                 </select>
@@ -400,20 +401,21 @@
 
     <div class="row py-20">
       <div class="col-md-12 text-center">
-      <a href="#"><button class="add_btn_br">Preview</button></a>
-      <a href="#"><button class="add_btn">Save & Continue</button></a>
+      <button type="button" value="true" id="preview-btn-footer" class="add_btn_br">Preview</button>
+      <button type="button"  id="save-btn" value="false" class="add_btn">Save & Continue</button>
+
       </div>
     </div><!-- /.col -->
 
 
     </div>
-    <!-- /.card --
+    <!-- /.card -->
     
-   
-   
+  
     <!-- /.content -->
-    </form>
+      </form>
     </section>
+  </div>
   </div>
   <!-- /.content-wrapper -->
 
@@ -439,9 +441,8 @@
         <div class="row pxy-15 px-10">
         <div class="col-md-12">
           <div class="form-group">
-          <x-input-label for="company-business" :value="__('Company/Business')" />
+           <x-input-label for="company-business" :value="__('Company/Business')" />
               <span class="text-danger">*</span>
-             
               <x-text-input type="text" class="form-control" id="bus_company_name" placeholder="Enter Business Name"
                             name="bus_company_name"  autofocus autocomplete="bus_company_name"
                             :value="old('bus_company_name', $businessDetails->bus_company_name)" />
@@ -488,7 +489,7 @@
         <div class="col-md-6">
           <div class="form-group">
           <x-input-label for="country" :value="__('Country')" />
-          <select class="form-control from-select select2" style="width: 100%;" id="country" name="country_id" required>
+          <select class="form-control select2" style="width: 100%;" id="country" name="country_id" required>
             <option default>Select a Country...</option>
             @foreach($countries as $country)
         <option value="{{ $country->id }}" {{ old('country_id', $businessDetails->country_id ?? '') == $country->id ? 'selected' : '' }}>{{ $country->name }} ({{ $country->iso2 }})</option>
@@ -500,7 +501,7 @@
         <div class="col-md-6">
           <div class="form-group">
           <x-input-label for="state" :value="__('Province/State')" />
-          <select class="form-control from-select select2" style="width: 100%;" id="state" name="state_id" required>
+          <select class="form-control select2" style="width: 100%;" id="state" name="state_id" required>
             <option default>Select a State...</option>
             @foreach($states as $state)
         <option value="{{ $state->id }}" {{ $state->id == old('state_id', $businessDetails->state_id) ? 'selected' : '' }}>
@@ -583,25 +584,7 @@
           <h2 class="edit-colum_title">{{ $menu->mtitle }}</h2>
           @if($menu->children->count() > 0)
           <div class="row align-items-center justify-content-between">
-            <!-- @foreach($menu->children as $child)
-              @if($child->mtitle == 'Other')
-              <div class="col-md-3">
-                <div class="icheck-primary d-flex align-items-center">
-                  <input type="radio" id="{{ $child->mname }}" name="{{ $menu->mtitle }}" value="{{ $child->mname }}">
-                  <label for="{{ $child->mname }}">{{ $child->mtitle }}</label>
-                  <input type="text" class="form-control mar_15" placeholder="" name="{{ $menu->mtitle }}_other">
-                </div>
-              </div>
-              @else
-              <div class="col-md-3">
-                <div class="icheck-primary">
-                  <input type="radio" id="{{ $child->mtitle }}" name="{{ $menu->mtitle }}" value="{{ $child->mtitle }}">
-                  <label for="{{ $child->mtitle }}">{{ $child->mtitle }}</label>
-                </div>
-              </div>
-              @endif
-            @endforeach -->
-            @foreach($menu->children as $index => $child)
+               @foreach($menu->children as $index => $child)
     @if($child->mtitle == 'Other')
     <div class="col-md-3">
         <div class="icheck-primary d-flex align-items-center">
@@ -687,7 +670,9 @@
       // alert(countryId);
       if (countryId) {
       $.ajax({
-        url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/states/' + countryId,
+        // url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/states/' + countryId,
+         url: '{{ route('business.states', ['countryId' => '__countryId__']) }}'.replace('__countryId__', countryId),
+
         type: 'GET',
         dataType: 'json',
         success: function (data) {
@@ -706,17 +691,6 @@
     });
   </script>
   <script>
-    $(document).ready(function () {
-    // Initialize Select2 inside the modal
-    $('#editbusiness_companyaddress').on('shown.bs.modal', function () {
-        $('#country, #state').select2({
-            dropdownParent: $('#editbusiness_companyaddress'),
-            placeholder: "Select an option",
-            allowClear: true
-        });
-    });
-});
-
     $(document).ready(function () {
     $('#editBusinessForm').on('submit', function (event) {
       event.preventDefault();
@@ -768,7 +742,7 @@
         if (response.success) {
         $('.company_details_text').eq(7).remove();
         $('#removebusinessimage').modal('hide');
-        alert(response.message);
+        //alert(response.message);
         } else {
         console.log('Delete failed');
         }
@@ -1274,11 +1248,11 @@
             $('#customerSelect').focus(); // Set focus to the select element
           });
         } else {
-          alert(response.message);
+        //  alert(response.message);
         }
         },
         error: function () {
-        alert('Error retrieving customer information');
+      //  alert('Error retrieving customer information');
         }
       });
       } else {
@@ -1440,7 +1414,8 @@
 
       if (selectedProductId) {
       $.ajax({
-        url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/get-product-details/' + selectedProductId,
+        //url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/get-product-details/' + selectedProductId,
+         url: '{{ route('business.estimates.getProductDetails', '') }}/' + selectedProductId,
         method: 'GET',
         success: function (response) {
         $row.find('input[name="items[][sale_estim_item_price]"]').val(response.sale_product_price);
@@ -1545,103 +1520,158 @@
       }
     });
 
-    $('#items-form-invoice').on('submit', function (e) {
-      e.preventDefault();
 
-      let formData = {};
+    $('#preview-btn').on('click', function(e) {
+     // alert('hii')
+        e.preventDefault();  // Prevent form submission
 
-      $('.item-row').each(function (index) {
-      const rowIndex = index;
-      formData[`items[${rowIndex}][sale_product_id]`] = $(this).find('select[name="items[][sale_product_id]"]').val();
-      formData[`items[${rowIndex}][sale_estim_item_desc]`] = $(this).find('input[name="items[][sale_estim_item_desc]"]').val();
-      formData[`items[${rowIndex}][sale_estim_item_qty]`] = $(this).find('input[name="items[][sale_estim_item_qty]"]').val();
-      formData[`items[${rowIndex}][sale_estim_item_price]`] = $(this).find('input[name="items[][sale_estim_item_price]"]').val();
-      // formData[`items[${rowIndex}][sale_currency_id]`] = $(this).find('select[name="items[][sale_currency_id]"]').val();
-      formData[`items[${rowIndex}][sale_estim_item_tax]`] = $(this).find('select[name="items[][sale_estim_item_tax]"]').val();
-      formData[`items[${rowIndex}][sale_estim_item_discount]`] = $(this).find('input[name="items[][sale_estim_item_discount]"]').val();
-      });
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
 
-      formData['sale_estim_item_discount'] = $('input[name="sale_estim_item_discount"]').val();
-      formData['sale_estim_discount_type'] = $('select[name="sale_estim_discount_type"]').val();
-      formData['sale_estim_title'] = $('input[name="sale_estim_title"]').val();
-      formData['sale_estim_summary'] = $('input[name="sale_estim_summary"]').val();
-      formData['sale_cus_id'] = $('select[name="sale_cus_id"]').val();
-      formData['sale_estim_number'] = $('input[name="sale_estim_number"]').val();
-      formData['sale_estim_customer_ref'] = $('input[name="sale_estim_customer_ref"]').val();
-      formData['sale_estim_date'] = $('input[name="sale_estim_date"]').val();
-      formData['sale_estim_valid_date'] = $('input[name="sale_estim_valid_date"]').val();
-      formData['sale_estim_discount_desc'] = $('input[name="sale_estim_discount_desc"]').val();
-      formData['sale_estim_sub_total'] = $('input[name="sale_estim_sub_total"]').val();
-      formData['sale_estim_discount_total'] = $('input[name="sale_estim_discount_total"]').val();
-      formData['sale_estim_tax_amount'] = $('input[name="sale_estim_tax_amount"]').val();
-      formData['sale_estim_final_amount'] = $('input[name="sale_estim_final_amount"]').val();
-      formData['sale_estim_notes'] = $('#inputDescription[name="sale_estim_notes"]').val();
-      formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
 
-      formData['sale_estim_status'] = 1;
-      formData['sale_status'] = 0;
-      formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
-      formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
+    $('#preview-btn-footer').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
 
-      $.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
-      $.ajax({
-      url: "{{ route('business.invoices.store') }}",
-      method: 'POST',
-      data: formData,
-      success: function (response) {
-        window.location.href = response.redirect_url;
-      },
-      error: function (xhr) {
-        if (xhr.status === 422) {
-        var errors = xhr.responseJSON.errors;
-        console.log(errors); // Debug the errors object
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
 
-        // Clear previous error messages
-        $('.error-message').html('');
-        $('input, select').removeClass('is-invalid');
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
 
-        var firstErrorField = null; // Variable to store the first error field
+    // Handle the click event for the Save & Continue button
+    $('#save-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
 
-        $.each(errors, function (field, messages) {
-          // Replace characters to match the format of your HTML IDs
-          var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
-          var errorMessageContainerId = 'error_' + fieldId;
-          var errorMessageContainer = $('#' + errorMessageContainerId);
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
 
-          if (errorMessageContainer.length) {
-          errorMessageContainer.html(messages.join('<br>'));
+    $('#save-btn1').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
 
-          // Find the input field related to the error
-          var $field = $('[name="' + field + '"]');
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
 
-          if ($field.length > 0) {
-            $field.addClass('is-invalid');
-            
-            // Set first error field for scrolling
-            if (!firstErrorField) {
-            firstErrorField = $field;
-            }
-            scrollToCenter($field);
-          } else {
-            // console.log('Field not found for:', field);
-          }
-          } else {
-          // console.log('Error container not found for:', errorMessageContainerId);
-          }
+    // Function to collect form data into an object
+    function getFormData() {
+        let formData = {};
+
+        // Loop through each item row and collect the data
+        $('.item-row').each(function(index) {
+            const rowIndex = index;
+            formData[`items[${rowIndex}][sale_product_id]`] = $(this).find('select[name="items[][sale_product_id]"]').val();
+            formData[`items[${rowIndex}][sale_estim_item_desc]`] = $(this).find('input[name="items[][sale_estim_item_desc]"]').val();
+            formData[`items[${rowIndex}][sale_estim_item_qty]`] = $(this).find('input[name="items[][sale_estim_item_qty]"]').val();
+            formData[`items[${rowIndex}][sale_estim_item_price]`] = $(this).find('input[name="items[][sale_estim_item_price]"]').val();
+            formData[`items[${rowIndex}][sale_estim_item_tax]`] = $(this).find('select[name="items[][sale_estim_item_tax]"]').val();
+            formData[`items[${rowIndex}][sale_estim_item_discount]`] = $(this).find('input[name="items[][sale_estim_item_discount]"]').val();
         });
 
+        // Collect the rest of the form data
+        formData['sale_estim_item_discount'] = $('input[name="sale_estim_item_discount"]').val();
+        formData['sale_estim_discount_type'] = $('select[name="sale_estim_discount_type"]').val();
+        formData['sale_estim_title'] = $('input[name="sale_estim_title"]').val();
+        formData['sale_estim_summary'] = $('input[name="sale_estim_summary"]').val();
+        formData['sale_cus_id'] = $('select[name="sale_cus_id"]').val();
+        formData['sale_estim_number'] = $('input[name="sale_estim_number"]').val();
+        formData['sale_estim_customer_ref'] = $('input[name="sale_estim_customer_ref"]').val();
+        formData['sale_estim_date'] = $('input[name="sale_estim_date"]').val();
+        formData['sale_estim_valid_date'] = $('input[name="sale_estim_valid_date"]').val();
+        formData['sale_estim_discount_desc'] = $('input[name="sale_estim_discount_desc"]').val();
+        formData['sale_estim_sub_total'] = $('input[name="sale_estim_sub_total"]').val();
+        formData['sale_estim_discount_total'] = $('input[name="sale_estim_discount_total"]').val();
+        formData['sale_estim_tax_amount'] = $('input[name="sale_estim_tax_amount"]').val();
+        formData['sale_estim_final_amount'] = $('input[name="sale_estim_final_amount"]').val();
+        formData['sale_estim_notes'] = $('#inputDescription[name="sale_estim_notes"]').val();
+        formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
+        formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
+        formData['sale_estim_status'] = 1;
+        formData['sale_status'] = 0;
+        formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
 
-        } else {
-        // console.log('An error occurred: ' + xhr.statusText);
-        }
-      }
-      });
-    });
-    });
+        return formData;
+    }
+
+    // Function to send the form data via AJAX
+    function submitFormViaAjax(formData) {
+        $.ajax({
+            url: "{{ route('business.invoices.store') }}",  // The route for your form submission
+            method: 'POST',
+            data: formData,
+            success: function(response) {
+              if (response.preview_view) {
+                  // Inject the preview HTML into the container
+
+                  $('#preview-container').html(response.preview_view).fadeIn();
+
+                  
+                 
+                  // Optionally, scroll to the preview container if needed
+                  $('html, body').animate({ scrollTop: $('#preview-container').offset().top }, 500);
+
+                  if (response.preview_data && response.preview_data.items) {
+                      response.preview_data.items.forEach(function(item, index) {
+                          // Example: Update the product name in a specific element
+                          let productElement = $('#product-name-' + index); // Use an appropriate selector
+                          if (productElement.length) {
+                              productElement.text(item.product_name || 'N/A');
+                          }
+                      });
+                  }
+
+              } else if (response.redirect_url) {
+                  // Redirect for save success
+                  window.location.href = response.redirect_url;
+              }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $('.error-message').html('');
+                    $('input, select').removeClass('is-invalid');
+
+                    var firstErrorField = null;
+                    $.each(errors, function(field, messages) {
+                        var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
+                        var errorMessageContainerId = 'error_' + fieldId;
+                        var errorMessageContainer = $('#' + errorMessageContainerId);
+
+                        if (errorMessageContainer.length) {
+                            errorMessageContainer.html(messages.join('<br>'));
+                            var $field = $('[name="' + field + '"]');
+                            if ($field.length > 0) {
+                                $field.addClass('is-invalid');
+                                if (!firstErrorField) {
+                                    firstErrorField = $field;
+                                }
+                                scrollToCenter($field);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+  });  
+   
 
 
     function scrollToCenter($element) {
@@ -1678,11 +1708,11 @@
                       $('#editcolum').modal('hide');
                       // alert(response.message);
                   } else {
-                      alert('An unexpected error occurred.');
+                     // alert('An unexpected error occurred.');
                   }
               },
               error: function(xhr) {
-                  alert('An error occurred while updating the menu.');
+                 // alert('An error occurred while updating the menu.');
               }
           });
         });
@@ -1788,7 +1818,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
     </script>
-<script>
+ <script>
 $(document).ready(function() {
     // Form submit event
     $('#editBusinessForm').on('submit', function(e) {

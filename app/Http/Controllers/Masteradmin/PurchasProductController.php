@@ -40,7 +40,7 @@ class PurchasProductController extends Controller
             'purchases_product_name' => 'required|string|max:255',
             'purchases_product_price' => 'nullable|string|max:255',
             'purchases_product_desc' => 'nullable|string|max:255',
-        ], [
+        ],[
             'purchases_product_name.required' => 'Please enter item name.',
             'purchases_product_price.required' => 'The Price field is required.',
             'purchases_product_tax.required' => 'The Tax field is required.',
@@ -123,7 +123,7 @@ class PurchasProductController extends Controller
 
         $PurchasProductu->where('purchases_product_id', $purchases_product_id)->update($validatedData);
 
-        return redirect()->route('business.purchasproduct.edit', ['PurchasesProduct' => $PurchasProductu->purchases_product_id])
+        return redirect()->route('business.purchasproduct.index', ['PurchasesProduct' => $PurchasProductu->purchases_product_id])
             ->with('purchases-product-edit', __('messages.masteradmin.purchases-product.edit_purchasesproduct_success'));
     }
 

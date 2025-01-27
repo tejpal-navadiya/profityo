@@ -16,7 +16,7 @@
                 </div>
                 <div class="col-auto">
                     <ol class="breadcrumb float-sm-right">
-                        <a href="{{ route('business.userdetail.index') }}"><button class="add_btn_br">Cancel</button></a>
+                       <a href="{{ route('business.userdetail.index') }}"><button class="add_btn_br">Cancel</button></a>
                         <button type="submit" form="items-form" class="add_btn">Save</button>
                     </ol>
                 </div>
@@ -26,7 +26,7 @@
 
     <section class="content px-10">
         <div class="container-fluid">
-        @if(Session::has('user-edit'))
+        <!-- @if(Session::has('user-edit'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ Session::get('user-edit') }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -36,7 +36,7 @@
         @php
         Session::forget('user-edit');
       @endphp
-    @endif
+    @endif -->
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Edit User</h3>
@@ -69,7 +69,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="users_phone">Phone</label>
+                                    <label for="users_phone">Phone<span class="text-danger">*</span></label>
                                     <input type="number" class="form-control @error('users_phone') is-invalid @enderror" id="taxnumber"
                                            name="users_phone" placeholder="Phone" value="{{ $userdetaile->users_phone }}">
                                     @error('users_phone')
@@ -80,7 +80,7 @@
                             @if($userdetaile->role_id)
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>User Role</label>
+                                    <label>User Role<span class="text-danger">*</span></label>
                                     <select class="form-control from-select select2 {{ $errors->has('role_id') ? 'is-invalid' : '' }}" name="role_id" style="width: 100%;">
                                         <option>Select User Role</option>
                                         @foreach($roles as $role)

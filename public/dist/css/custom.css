@@ -1229,7 +1229,7 @@ label {
 .login-card-body .input-group-append {
   margin-left: 0;
   margin-right: -1px;
-  width: 40px;
+  width: auto;
 }
 .login-card-body .input-group .input-group-text, .register-card-body .input-group .input-group-text{
   border-right: 0;
@@ -1780,6 +1780,42 @@ hr {
   font-weight: 600;
 }
 
+.login-card-body .input-group .input-group-text, .register-card-body .input-group .input-group-text{
+  padding: .375rem .0rem .375rem .75rem;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/*--------------------------------------------------------------
+# 11-01-2025
+--------------------------------------------------------------*/
+.planrow{
+  padding: 0;
+} 
+.planrow .plancheckbox{
+  border-bottom: 1px solid #dee2e6;
+  padding: 0px 15px;
+}
+.planrow .form-check {
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+.delete-pad{
+  padding: 25px;
+}
+.danger-icon-e{
+  margin-right: 10px;
+}
+
+.start-offboarding-bgbox{
+  position: relative;
+  width: 100%;
+  padding: 15px;
+  background: #FBEFFF;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
 /*--------------------------------------------------------------
 # Responsive Css
 --------------------------------------------------------------*/
@@ -1858,7 +1894,10 @@ hr {
   }
   .selectall_icon_btn{
     font-size: 11px;
-    padding: 5px 7px;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
   }
   .tab_panal .nav-pills .nav-link{
     padding: 5px 10px;
@@ -1943,6 +1982,10 @@ hr {
     padding: 6px;
     font-size: 10px;
   }
+  label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 500;
+    font-size: 14px;
+  }
 
 }
 @media only screen and (min-width: 992px) and (max-width: 1199px){
@@ -2008,7 +2051,10 @@ hr {
   }
   .selectall_icon_btn{
     font-size: 11px;
-    padding: 5px 7px;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
   }
   .tab_panal .nav-pills .nav-link{
     padding: 5px 10px;
@@ -2192,7 +2238,10 @@ hr {
   }
   .selectall_icon_btn{
     font-size: 11px;
-    padding: 5px 7px;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
   }
   .tab_panal .nav-pills .nav-link{
     padding: 5px 10px;
@@ -2352,7 +2401,10 @@ hr {
   }
   .selectall_icon_btn{
     font-size: 11px;
-    padding: 5px 7px;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
   }
   .tab_panal .nav-pills .nav-link{
     padding: 5px 10px;
@@ -2497,5 +2549,8 @@ hr {
   .profile_details_box td {
     font-size: 14px;
     padding: 10px 10px 10px 10px;
-  } 
+  }
+  .forgot_text {
+    font-size: 14px;
+  }
 }

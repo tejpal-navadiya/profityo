@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class UserRole extends Model
 {
     use HasFactory;
-    protected $fillable = ['id','role_name', 'role_status'];
+    protected $fillable = ['id','role_name', 'role_status','description'];
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);

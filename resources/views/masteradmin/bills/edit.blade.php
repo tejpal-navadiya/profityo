@@ -20,8 +20,8 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
-              <a href="#"><button class="add_btn_br">cancel</button></a>
-              <a href="#"><button class="add_btn">Save</button></a>
+               <a href="{{route('business.bill.index')}}"><button class="add_btn_br">Cancel</button></a>
+            <button type="submit" form="items-form" class="add_btn">Save</button>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -61,18 +61,17 @@
                     <option>Select a Vendor...</option>
                     @foreach($salevendor as $vendor)
                         <option value="{{ $vendor->purchases_vendor_id }}" {{ $bill->sale_vendor_id == $vendor->purchases_vendor_id ? 'selected' : '' }}>
-                        {{ $vendor->purchases_vendor_name }}
+                        {{ $vendor->purchases_vendor_name ?? ''}}
                         </option>
                     @endforeach
                   </select>
-                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_name }}</p>
-                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_address1 }}</p>
-                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_address2 }}</p>
-                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_city_name }}, {{ $bill->vendor->state->name }} {{ $bill->vendor->purchases_vendor_zipcode }}</p>
-                  <p class="mb-0">{{ $bill->vendor->country->name }}</p>
-                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_email }}</p>
-                  <span class="error-message" id="error_sale_vendor_id" style="color: red;"></span> 
-
+                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_name ?? '' }}</p>
+                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_address1 ?? ''}}</p>
+                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_address2 ?? '' }}</p>
+                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_city_name ?? '' }}, {{ $bill->vendor->state->name ?? '' }} {{ $bill->vendor->purchases_vendor_zipcode ?? '' }}</p>
+                  <p class="mb-0">{{ $bill->vendor->country->name ?? '' }}</p>
+                  <p class="mb-0">{{ $bill->vendor->purchases_vendor_email ?? '' }}</p>
+                  
                 </div>
 
               </div>
@@ -112,11 +111,10 @@
                     <option>Select a Currency...</option>
                     @foreach($currencys as $curr)
                         <option value="{{ $curr->id }}" data-symbol="{{ $curr->currency_symbol }}" {{ $curr->id == $bill->sale_currency_id ? 'selected' : '' }}>
-                        {{ $curr->currency }} ({{ $curr->currency_symbol }}) - {{ $curr->currency_name }}
+                        {{ $curr->currency ?? '' }} ({{ $curr->currency_symbol ?? '' }}) - {{ $curr->currency_name ?? '' }}
                         </option>
                     @endforeach
                   </select>
-                  <span class="error-message" id="error_sale_currency_id" style="color: red;"></span> 
                 </div>
               </div>
               <div class="col-md-4">
@@ -175,7 +173,7 @@
                       <option>Select Items</option>
                       @foreach($products as $product)
                   <option value="{{ $product->purchases_product_id }}" {{ $product->purchases_product_id == $item->sale_product_id ? 'selected' : '' }}>
-                  {{ $product->purchases_product_name }}
+                  {{ $product->purchases_product_name ?? '' }}
                   </option>
                 @endforeach
                       </select>
@@ -191,7 +189,7 @@
                       <option>Select Category</option>
                       @foreach($ExpenseAccounts as $accounts)
                         <option value="{{ $accounts->chart_acc_id }}" {{ $accounts->chart_acc_id == $item->sale_expense_id ? 'selected' : '' }}>
-                        {{ $accounts->chart_acc_name }}
+                        {{ $accounts->chart_acc_name ?? '' }}
                         </option>
                       @endforeach
                       </select>
@@ -203,9 +201,12 @@
                     </td>
                     <td>
                     <div class="d-flex">
-                      <input type="text" name="items[][sale_bill_item_price]" class="form-control"
+                      <input type="text" name="items[][sale_bill_item_price]" class="form-control form-controltext"
                       aria-describedby="inputGroupPrepend" placeholder="Enter item Price" value="{{ $item->sale_bill_item_price }}">
-
+                      <select class="form-select form-selectcurrency" id="sale_estim_discount_type" name="sale_estim_discount_type">
+                        <option value="1">$</option>
+                        <option value="2">%</option>
+                      </select>
                     </div>
                     <span class="error-message" id="error_items_0_sale_bill_item_price" style="color: red;"></span>
                     </td>
@@ -224,7 +225,7 @@
                       @foreach($salestax as $salesTax)
                         <option data-tax-rate="{{ $salesTax->tax_rate }}" value="{{ $salesTax->tax_id }}"
                         {{ $salesTax->tax_id == $item->sale_bill_item_tax ? 'selected' : '' }} >
-                        {{ $salesTax->tax_name }} {{ $salesTax->tax_rate }}%
+                        {{ $salesTax->tax_name ?? '' }} {{ $salesTax->tax_rate ?? '' }}%
                         </option>
                       @endforeach
                     </select>
@@ -247,23 +248,23 @@
                   <table class="table total_table">
                     <tr>
                       <td style="width:50%">Sub Total :</td>
-                      <td id="sub-total">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_sub_total }}</td>
+                      <td id="sub-total">{{ $currencys->find($bill->sale_currency_id)->currency_symbol ?? '' }}{{ $bill->sale_bill_sub_total ?? '' }}</td>
                     </tr>
                     <tr>
                       <td>Tax :</td>
-                      <td id="tax">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_tax_amount }}</td>
+                      <td id="tax">{{ $currencys->find($bill->sale_currency_id)->currency_symbol ?? '' }}{{ $bill->sale_bill_tax_amount ?? '' }}</td>
                     </tr>
                     <tr>
                       <td>Total :</td>
-                      <td id="total">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_final_amount }}</td>
+                      <td id="total">{{ $currencys->find($bill->sale_currency_id)->currency_symbol ?? '' }}{{ $bill->sale_bill_final_amount ?? '' }}</td>
                     </tr>
                     <tr>
                       <td>Total Paid :</td>
-                      <td id="total-paid">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_paid_amount }}</td>
+                      <td id="total-paid">{{ $currencys->find($bill->sale_currency_id)->currency_symbol ?? '' }}{{ $bill->sale_bill_paid_amount ?? '' }}</td>
                     </tr>
                     <tr>
                       <td>Amount Due :</td>
-                      <td id="amount-due">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_due_amount }}</td>
+                      <td id="amount-due">{{ $currencys->find($bill->sale_currency_id)->currency_symbol ?? '' }}{{ $bill->sale_bill_due_amount ?? '' }}</td>
                     </tr>
                   </table>
                 </div>
@@ -348,7 +349,8 @@ $(document).ready(function () {
       // alert(selectedProductId);
       if (selectedProductId) {
       $.ajax({
-        url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/bill/get-product-details/' + selectedProductId,
+        // url: '{{ env('APP_URL') }}{{ config('global.businessAdminURL') }}/bill/get-product-details/' + selectedProductId,
+     url: '{{ route('business.bill.getProductDetails', '') }}/' + selectedProductId,
         method: 'GET',
         success: function (response) {
         $row.find('input[name="items[][sale_bill_item_price]"]').val(response.purchases_product_price);

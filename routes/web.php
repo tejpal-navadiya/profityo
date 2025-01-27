@@ -29,6 +29,8 @@ use App\Http\Controllers\Masteradmin\ChartOfAccountController;
 use App\Http\Controllers\Masteradmin\RecurringInvoicesController;
 use App\Http\Controllers\Masteradmin\BillsController;
 use App\Http\Controllers\Masteradmin\TransectionController;
+use App\Http\Controllers\Masteradmin\TimeSheetController;
+
 
 
 /*
@@ -81,7 +83,7 @@ Route::group(['prefix' => $adminRoute], function () {
 });
 
 Route::group(['prefix' => $busadminRoute], function () {
-    
+      Route::get('/', [LoginController::class, 'create'])->name('business.login');
     Route::middleware(['masteradmin'])->group(function () {
         //login and register
         Route::get('login', [LoginController::class, 'create'])->name('business.login');
@@ -118,7 +120,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('/profile', [ProfilesController::class, 'edit'])->name('business.profile.edit');
         Route::patch('/profile', [ProfilesController::class, 'update'])->name('business.profile.update');
         Route::delete('/profile', [ProfilesController::class, 'destroy'])->name('business.profile.destroy');
-        Route::get('states/{countryId}', [ProfilesController::class, 'getStates'])->name('business.profile.destroy');
+        Route::get('states/{countryId}', [ProfilesController::class, 'getStates'])->name('business.states');
         Route::put('password', [MasterPasswordController::class, 'update'])->name('business.password.update');
         Route::post('logout', [LoginController::class, 'destroy'])->name('business.logout');
         //create alter database
@@ -142,7 +144,7 @@ Route::group(['prefix' => $busadminRoute], function () {
         Route::get('roleedit/{role}', [UserRoleController::class, 'edit'])->name('business.role.edit');
         Route::patch('roleupdate/{role}', [UserRoleController::class, 'update'])->name('business.role.update');
         Route::delete('roledestroy/{role}', [UserRoleController::class, 'destroy'])->name('business.role.destroy');
-        Route::get('userrole/{userrole}', [UserRoleController::class, 'userrole'])->name('business.role.userrole');
+          Route::get('userrole/{userrole}', [UserRoleController::class, 'userrole'])->name('business.role.userrole');
         Route::put('updaterole/{userrole}', [UserRoleController::class, 'updaterole'])->name('business.role.updaterole');
                
         //saletax
@@ -198,8 +200,8 @@ Route::post('/userrole/{id}/update-status', [UserController::class, 'updateStatu
         Route::get('/preview-estimates', [EstimatesController::class, 'preview'])->name('business.estimates.preview');
         Route::get('/estimate/send/views/{id}/{slug}', [EstimatesController::class, 'authsendView'])
         ->name('business.estimate.sendviews');
-        Route::get('/get-tax-names', [EstimatesController::class, 'getTaxNames']);
-
+        
+        Route::post('/set-active-tab', [EstimatesController::class, 'setActiveTab'])->name('setActiveTab');
 
         //sales product
         Route::get('/salesproduct', [SalesProductController::class, 'index'])->name('business.salesproduct.index');
@@ -243,6 +245,10 @@ Route::post('/userrole/{id}/update-status', [UserController::class, 'updateStatu
             Route::Patch('/employees/{id}/compensation', [EmployeesController::class, 'storeCompensation'])->name('employees.storeCompensation');
             Route::post('/employees/{emp_id}/taxdetails', [EmployeesController::class, 'storeTaxDetails'])->name('employees.storeTaxDetails');
 // routes/web.php
+Route::Patch('/employees/{id}/vacation', [EmployeesController::class, 'storeVacation'])->name('employees.storeVacation');
+Route::Patch('/employees/{id}/benefit', [EmployeesController::class, 'storeBenefitDeduction'])->name('employees.storeBenefit');
+Route::patch('employee/{emp_id}/storeVacation', [EmployeesController::class, 'storeVacationBalance'])->name('employees.storeVacationbalance');
+
 
 Route::post('employee/{emp_id}/offboarding/store', [EmployeesController::class, 'storeOffboarding'])
     ->name('employee.offboarding.store');
@@ -252,9 +258,13 @@ Route::post('employee/{emp_id}/offboarding/store', [EmployeesController::class, 
 Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 'storeLeaveData'])
     ->name('employee.offboarding.leave');
     Route::delete('employee/{id}', [EmployeesController::class, 'destroy'])->name('business.employee.destroy');
+    Route::delete('employeebenefit/{emp_benefit_id}', [EmployeesController::class, 'destroyBenefitDeduction'])->name('business.employee.benefitdestroy');
+Route::post('/employee/file/store', [EmployeesController::class, 'storeFile'])->name('employee.file.store');
+    Route::delete('employeefile/{emp_file_id}', [EmployeesController::class, 'destroyfile'])->name('business.employee.filedestroy');
+    Route::get('/timesheet', [TimeSheetController::class, 'index'])->name('business.timesheet.index');
+    Route::post('/timesheet', [TimeSheetController::class, 'store'])->name('timesheet.store');
+           Route::post('/timesheet-data', [TimeSheetController::class, 'fetchTimesheetData'])->name('timesheet.data');
 
-
-           
 
         //invoice
         Route::get('/edit-invoice/{id}', [EstimatesController::class, 'viewInvoice'])->name('business.estimates.viewInvoice');
@@ -317,9 +327,14 @@ Route::post('employee/offboarding/leave/{emp_id}', [EmployeesController::class, 
 //transection...
 Route::get('/transection-list', [TransectionController::class, 'index'])->name('business.transection.index');
 Route::get('/transactions/filter', [TransectionController::class, 'filterTransactions'])->name('transactions.filter');
-Route::get('/edit-transactions', [TransectionController::class, 'edit'])->name('business.transactions.edit');
+Route::get('/edit-transactions/{record_payment_id}', [TransectionController::class, 'edit'])->name('business.transactions.edit');
 
+Route::post('/transactions/income/store', [TransectionController::class, 'storeIncome'])->name('transactions.storeIncome');
 
+Route::post( '/transactions/expens/store', [TransectionController::class, 'storeExpense'])->name('transactions.storeExpens');
+Route::POST('/transaction/update/{record_payment_id}', [TransectionController::class, 'updateTransactiondata'])->name('business.transaction.update');
+// Route::post('/update-transaction/{id}', [TransectionController::class, 'updateTransaction']);
+Route::POST('/update-transaction/{paymentId}', [TransectionController::class, 'updateTransaction'])->name('transactions.updateTransection');
 });
 
 require __DIR__.'/auth.php';

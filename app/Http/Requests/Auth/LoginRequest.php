@@ -66,7 +66,7 @@ class LoginRequest extends FormRequest
             Cookie::queue(Cookie::forget('password'));
             Cookie::queue(Cookie::forget('remember'));
         }
-        \LogActivity::addToLog("Super Admin is is Logged in");
+         \LogActivity::addToLog("Super Admin is is Logged in");
         RateLimiter::clear($this->throttleKey());
     }
 

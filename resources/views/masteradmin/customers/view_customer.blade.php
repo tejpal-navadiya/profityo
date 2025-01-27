@@ -35,7 +35,7 @@
             </div><!-- /.col -->
             <div class="col-auto">
               <ol class="breadcrumb float-sm-right">
-                <a href="#" data-toggle="modal" data-target="#deletecustomer-{{ $SalesCustomers->sale_cus_id }}"><button
+                <a href="#" data-toggle="modal" data-target="#deletecustomer-{{ $SalesCustomers->sale_cus_id ?? '' }}"><button
                     class="add_btn_br"><i class="fas fa-solid fa-trash mr-2"></i>Delete</button></a>
                 <a href="#"><button class="add_btn_br"><i class="fas fa-solid fa-file-invoice mr-2"></i>Send
                     Statement</button></a>
@@ -203,7 +203,8 @@
             $dueMessage = 'Today'; // Message for today
             $dueMessageColor = 'black'; // Set default color
             } elseif ($daysDifference < 0) {
-            $dueMessage = 'Due in ' . $daysDifference . ' Days'; // Upcoming message
+          //  $dueMessage = 'Due in ' . $daysDifference . ' Days'; // Upcoming message
+           $dueMessage = 'Due in ' .abs($daysDifference - 1) . ' Days';
             $dueMessageColor = 'black'; // Set default color
 
             } else {
@@ -652,7 +653,7 @@
                       <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_final_amount }}</td>
                       <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_due_amount }}</td>
                       <td>
-                      @php
+                      <!-- @php
             // Calculate the due date
             $dueDate = \Carbon\Carbon::parse($value->sale_inv_valid_date);
             $currentDate = \Carbon\Carbon::now();
@@ -663,6 +664,25 @@
             $dueMessageColor = 'black'; // Set default color
             } elseif ($daysDifference < 0) {
             $dueMessage = 'Due in ' . $daysDifference . ' Days'; // Upcoming message
+            $dueMessageColor = 'black'; // Set default color
+
+            } else {
+            $dueMessage = abs($daysDifference) . ' Days ago'; // Overdue message
+            $dueMessageColor = 'red'; // Overdue color
+            }
+          @endphp -->
+          @php
+            // Calculate the due date
+            $dueDate = \Carbon\Carbon::parse($value->sale_inv_valid_date);
+            $currentDate = \Carbon\Carbon::now();
+            $daysDifference = $dueDate->diffInDays($currentDate, false);
+
+            if ($daysDifference == 0) {
+            $dueMessage = 'Today'; // Message for today
+            $dueMessageColor = 'black'; // Set default color
+            } elseif ($daysDifference < 0) {
+          //  $dueMessage = 'Due in ' . $daysDifference . ' Days'; // Upcoming message
+           $dueMessage = 'Due in ' .abs($daysDifference - 1) . ' Days';
             $dueMessageColor = 'black'; // Set default color
 
             } else {
@@ -1171,36 +1191,36 @@
                     @if($log->log_type == 1 && $log->estimate)
             <tr>
               <td><strong>Date</strong></td>
-              <td>{{ $log->estimate->sale_estim_date }}</td>
+              <td>{{ $log->estimate->sale_estim_date ?? '' }}</td>
             </tr>
             <tr>
               <td><strong>Due Date</strong></td>
-              <td>{{ $log->estimate->sale_estim_valid_date }}</td>
+              <td>{{ $log->estimate->sale_estim_valid_date ?? '' }}</td>
             </tr>
             <tr>
               <td><strong>P.O/S.O</strong></td>
-              <td>{{ $log->estimate->sale_estim_customer_ref }}</td>
+              <td>{{ $log->estimate->sale_estim_customer_ref ?? '' }}</td>
             </tr>
             <tr>
               <td><strong>Items</strong></td>
-              <td>{{ $log->estimate->sale_estim_date }}</td>
+              <td>{{ $log->estimate->sale_estim_date ?? '' }}</td>
             </tr>
             <tr>
               <td><strong>Total</strong></td>
-              <td>{{ $log->estimate->sale_estim_final_amount }}</td>
+              <td>{{ $log->estimate->sale_estim_final_amount ?? '' }}</td>
             </tr>
           @elseif($log->log_type == 2 && $log->invoice)
       <tr>
         <td><strong>Date</strong></td>
-        <td>{{ $log->invoice->sale_inv_date }}</td>
+        <td>{{ $log->invoice->sale_inv_date ?? '' }}</td>
       </tr>
       <tr>
         <td><strong>Due Date</strong></td>
-        <td>{{ $log->invoice->sale_inv_valid_date }}</td>
+        <td>{{ $log->invoice->sale_inv_valid_date ?? '' }}</td>
       </tr>
       <tr>
         <td><strong>P.O/S.O</strong></td>
-        <td>{{ $log->invoice->sale_inv_customer_ref }}</td>
+        <td>{{ $log->invoice->sale_inv_customer_ref ?? '' }}</td>
       </tr>
       <tr>
         <td><strong>Items</strong></td>
@@ -1221,7 +1241,7 @@
                     <a href="#"><button class="add_btn_br">View related events</button></a>
 
                     @if($log->log_type == 1)
-            <a href="{{ route('business.estimates.view', $log->estimate->sale_estim_id) }}"><button
+            <a href="{{ route('business.estimates.view', $log->estimate->sale_estim_id ?? '') }}"><button
               class="add_btn">View Estimate</button></a>
           @elseif($log->log_type == 2 && $log->invoice)
       <a href="{{ route('business.invoices.view', $log->invoice->sale_inv_id) }}">

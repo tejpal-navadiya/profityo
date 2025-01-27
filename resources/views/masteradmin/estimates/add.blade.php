@@ -24,8 +24,7 @@
         <button type="button" value="true" id="preview-btn" class="add_btn_br">Preview</button>
 
         <!-- <a href="#"><button class="add_btn_br">Preview</button></a> -->
-               <button type="submit" form="items-form" class="add_btn">Save & Continue</button>
-
+               <button type="button" form="items-form" id="save-btn1" value="false" class="add_btn">Save & Continue</button>
         </ol>
       </div><!-- /.col -->
       </div><!-- /.row -->
@@ -56,7 +55,7 @@
           <div class="col-md-3 px-10">
           <div class="business_logo_uplod_box">
             @if($businessDetails && $businessDetails->bus_image)
-        <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+        <img src="{{ url(env('IMAGE_URL') . '/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
         class="elevation-2 img-box" target="_blank">
         <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
@@ -405,7 +404,9 @@
           <button type="button" value="true" id="preview-btn-footer" class="add_btn_br">Preview</button>
 
           <!-- Save & Continue Button -->
-          <button type="button" id="save-btn" value="false" class="add_btn">Save & Continue</button>
+          <button type="button" form="items-form" id="save-btn" value="false" class="add_btn">Save & Continue</button>
+
+          <!-- <button type="button" id="save-btn" value="false" class="add_btn">Save & Continue</button> -->
 
           <!-- <a href="#"><button class="add_btn">Save & Continue</button></a> -->
         </div>
@@ -1274,7 +1275,7 @@
             var countryId = $countryDropdown.val();
             var targetSelector = $countryDropdown.data('target');
             var url = $countryDropdown.data('url');
-            var $stateDropdown = $(targetSelector);
+            var stateDropdown = $(targetSelector);
 
             if (countryId) {
             $.ajax({
@@ -1283,15 +1284,15 @@
               dataType: 'json',
               success: function (response) {
               if (response) {
-                $stateDropdown.empty();
-                $stateDropdown.append('<option value="">Select State...</option>');
+                stateDropdown.empty();
+                stateDropdown.append('<option value="">Select State...</option>');
                 $.each(response, function (key, state) {
-                $stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
+                stateDropdown.append('<option value="' + state.id + '">' + state.name + '</option>');
                 });
                 if (selectedStateId) {
-                $stateDropdown.val(selectedStateId).trigger('change');
+                stateDropdown.val(selectedStateId).trigger('change');
                 }
-                $stateDropdown.select2();
+                stateDropdown.select2();
               }
               },
               error: function (xhr, status, error) {
@@ -1299,8 +1300,8 @@
               }
             });
             } else {
-            $stateDropdown.empty();
-            $stateDropdown.append('<option value="">Select State...</option>');
+            stateDropdown.empty();
+            stateDropdown.append('<option value="">Select State...</option>');
             }
           }
           // Bind change event for bill_country
@@ -1640,6 +1641,17 @@
 
     // Handle the click event for the Save & Continue button
     $('#save-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    $('#save-btn1').on('click', function(e) {
         e.preventDefault();  // Prevent form submission
 
         // Add the preview flag to the form data

@@ -9,7 +9,7 @@
       <li class="nav-item dropdown">
         <a class="nav-link" href="#" data-toggle="dropdown"><i class="fas fa-plus"></i></a>
         <div class="dropdown-menu">
-          <a href="#" class="dropdown-item">Transaction</a>
+        <a href="#" class="dropdown-item">Transaction</a>
           <a href="{{ route('business.estimates.index') }}" class="dropdown-item">Estimate</a>
           <a href="{{ route('business.invoices.index') }}" class="dropdown-item">Invoice</a>
           <a href="{{ route('business.recurring_invoices.index') }}" class="dropdown-item">Recurring Invoice</a>
@@ -21,7 +21,7 @@
       </li>
     </ul>
 
-    <!-- Right navbar links --> 
+    <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <li class="nav-item dropdown">
         <a class="nav-link user_nav" data-toggle="dropdown" href="#">

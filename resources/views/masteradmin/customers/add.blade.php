@@ -16,9 +16,9 @@
                 </div>
                 <div class="col-auto">
                     <ol class="breadcrumb float-sm-right">
-                        <a href="{{route('business.salescustomers.index')}}"><button class="add_btn_br">Cancel</button></a>
+                         <a href="{{route('business.salescustomers.index')}}"><button class="add_btn_br">Cancel</button></a>
                         <button type="submit" form="cust-Form" class="add_btn">Save</button>
-                        </ol>
+                    </ol>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@
               <div class="col-md-12">
                 <div class="form-group">
                   <label for="customertitle">Customer <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control @error('sale_cus_business_name') is-invalid @enderror" name="sale_cus_business_name" id="customertitle" placeholder="Business Or Person" value="{{ old('sale_cus_business_name') }}">
+                  <input type="text" class="form-control @error('sale_cus_business_name') is-invalid @enderror" name="sale_cus_business_name" id="customertitle" placeholder="Name of a Business or person" value="{{ old('sale_cus_business_name') }}">
                   @error('sale_cus_business_name')
                         <div class="invalid-feedback">{{ $message }}</div>
                  @enderror
@@ -97,7 +97,7 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="customeraccountnumber">Account Number</label>
-                  <input type="number" class="form-control" name="sale_cus_account_number" id="customeraccountnumber" placeholder="Enter Account Number" value="{{ old('sale_cus_account_number') }}">
+                  <input type="number" class="form-control" min="0" name="sale_cus_account_number" id="customeraccountnumber" placeholder="Enter Account Number" value="{{ old('sale_cus_account_number') }}">
                 </div>
               </div>
               <div class="col-md-4">

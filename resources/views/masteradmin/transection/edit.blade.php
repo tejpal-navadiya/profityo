@@ -47,101 +47,146 @@
           </div>
           <!-- /.card-header -->
           <div class="card-body">
-            <div class="row"> 
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="itemname">Date</label>
-                  <div class="input-group date" id="date1" data-target-input="nearest">
-                    <input type="text" class="form-control datetimepicker-input" placeholder="2024-04-29" data-target="#date1">
-                    <div class="input-group-append" data-target="#date1" data-toggle="datetimepicker">
-                        <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
+       
+
+  <div class="row"> 
+  <form action="{{ route('business.transaction.update', $payment->record_payment_id) }}" method="POST">
+
+    @csrf
+    @method('POST')
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Date<span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <x-flatpickr 
+                        id="from-datepicker" 
+                        name="payment_date" 
+                        placeholder="Select a date" 
+                        class="form-control"
+                        value="{{ \Carbon\Carbon::parse($payment->payment_date)->format('Y-m-d') }}"
+                    />
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <i class="fa fa-calendar-alt"></i>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label for="inputDescription">Description</label>
-                  <textarea id="inputDescription" class="form-control" rows="1" placeholder="Enter your text here"></textarea>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Account</label>
-                  <select class="form-select form-control">
-                    <option selected>Cash on Hand</option>
-                    <option>INR for Cash (INR)</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Type</label>
-                  <select class="form-select form-control">
-                    <option selected>Withdrawal</option>
-                    <option>Deposit</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Amount</label>
-                  <div class="d-flex">
-                    <input type="text" class="form-control form-controltext" aria-describedby="inputGroupPrepend" placeholder="0.00">
-                    <div class="form-control form-selectcurrency" style="width: auto;">$</div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>Category</label>
-                  <select class="form-select form-control">
-                    <option selected>Uncategorized Income</option>
-                    <option>Sales Discounts</option>
-                    <option>Sales</option>
-                    <option>Program Income - Program Service Fees</option>
-                  </select>
-                </div>
-              </div>
+                @error('payment_date')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
-            <!-- /.row -->
-            <div class="row align-items-center">
-              <div class="col-auto">
-                <h3 class="card-title card-title_2" data-toggle="modal" data-target="#salestax">Include Sales Tax</h3>
-              </div>
-              <div class="col-auto">
-                <span class="card-title card-title_2 pxy-10">•</span>
-              </div>
-              <div class="col-auto">
-                <h3 class="card-title card-title_2">Add Customer</h3>
-              </div>
-              <div class="col-auto">
-                <a href="#" data-toggle="modal" data-target="#split-transaction"><button class="add_btn_br mar_15">Split Transaction</button></a>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <label for="inputDescription">Notes</label>
-                  <textarea id="inputDescription" class="form-control" rows="3" placeholder="Write a note here..."></textarea>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="business_logo_uplod_box">
-                  <img src="dist/img/upload_icon.png" class="upload_icon_img">
-                  <p class="upload_text">Drag Your File Here Or <span class="link_text">Select a File</span> To Upload</p>
-                  <p class="upload_text">Files Must be 6MB or Smaller, and in one of These Formats: JPG, JPEG, GIF, TIFF, TIF, BMP, PNG, PDF, or HEIC</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row py-20">
-            <div class="col-md-12 text-center">
-              <a href="#"><button class="add_btn_br">Cancel</button></a>
-              <a href="#"><button class="add_btn">Save</button></a>
-            </div>
-          </div><!-- /.col -->
         </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="inputDescription">Description</label>
+                <textarea id="description" class="form-control" name="description" rows="1"
+                placeholder="Write a description">{{ $payment->description }}</textarea>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Account</label>
+                <select class="form-control form-select" name="payment_account" placeholder="Enter your text here">
+                    <option>Select a Payment Account...</option>
+                    @foreach($accounts as $account)
+                        <option value="{{ $account->chart_acc_id }}" {{ $payment->payment_account == $account->chart_acc_id ? 'selected' : '' }}>
+                            {{ $account->chart_acc_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Type</label>
+                <select class="form-control form-select" name="type" data-placeholder="Choose Option..." style="width: 100%;">
+                    <option value="1" {{ $payment->type == 1 ? 'selected' : '' }}>Deposit</option>
+                    <option value="2" {{ $payment->type == 2 ? 'selected' : '' }}>Withdrawal</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Amount</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" name="payment_amount" value="{{ $payment->payment_amount }}" placeholder="0.00">
+                    <div class="input-group-append">
+                        <span class="input-group-text">$</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select name="category" class="form-control">
+                    @foreach ($tabs as $tab)
+                        <optgroup label="{{ $tab->chart_menu_title }}">
+                            @foreach ($subMenus[$tab->chart_menu_id] ?? [] as $submenu)
+                                <option value="{{ $submenu->chart_menu_id }}" {{ (string)$payment->category === (string)$submenu->chart_menu_id ? 'selected' : '' }}>
+                                    {{ $submenu->chart_menu_title }}
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col-auto">
+            <h3 class="card-title card-title_2" data-toggle="modal" data-target="#salestax">Include Sales Tax</h3>
+        </div>
+        <div class="col-auto">
+            <span class="card-title card-title_2 pxy-10">•</span>
+        </div>
+        <div class="col-auto">
+            <h3 class="card-title card-title_2">Add Customer</h3>
+        </div>
+        <div class="col-auto">
+            <a href="#" data-toggle="modal" data-target="#split-transaction">
+                <button type="button" class="add_btn_br mar_15">Split Transaction</button>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="inputDescription">Notes</label>
+                <textarea id="inputDescription" class="form-control" name="notes" rows="3" placeholder="Write a note here...">{{ $payment->notes }}</textarea>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="business_logo_uplod_box text-center">
+                <img src="https://profityo.app/public/dist/img/upload_icon.png" class="upload_icon_img mb-2">
+                <p class="upload_text">Drag Your File Here Or <span class="link_text">Select a File</span> To Upload</p>
+                <p class="upload_text">Files Must be 6MB or Smaller, and in one of These Formats: JPG, JPEG, GIF, TIFF, TIF, BMP, PNG, PDF, or HEIC</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row py-20">
+        <div class="col-md-12 text-center">
+            <a href="#"><button type="button" class="add_btn_br">Cancel</button></a>
+            <button type="submit" class="add_btn">Save</button>
+        </div>
+    </div>
+</form>
+
+  </div>
+  
+</div>
+
         <!-- /.card -->
       </div><!-- /.container-fluid -->
     </section>
@@ -186,6 +231,63 @@
       }
     });
   });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
 
+        var fromdatepicker = flatpickr("#from-datepicker", {
+            locale: 'en',
+            altInput: true,
+            dateFormat: "m/d/Y",
+            altFormat: "d/m/Y",
+            allowInput: true,
+            onChange: calculateDays
+        });
+
+        var todatepicker = flatpickr("#to-datepicker", {
+            locale: 'en',
+            altInput: true,
+            dateFormat: "m/d/Y",
+            altFormat: "d/m/Y",
+            allowInput: true,
+            onChange: calculateDays
+        });
+
+        document.getElementById('from-calendar-icon').addEventListener('click', function() {
+            fromdatepicker.open(); 
+        });
+
+        document.getElementById('to-calendar-icon').addEventListener('click', function() {
+            todatepicker.open(); 
+        });
+
+        function calculateDays() {
+        var sdate = fromdatepicker.input.value;  
+        var edate = todatepicker.input.value;  
+        var totalDays = 0;   
+
+        if(sdate && edate) {
+            var startDate = new Date(sdate);
+            var endDate = new Date(edate);
+
+            var timeDifference = endDate.getTime() - startDate.getTime();
+
+            var totalDays = timeDifference / (1000 * 3600 * 24); 
+
+            if (totalDays < 0) {
+            document.getElementById("total-days").innerText = "Invalid date range"; 
+            document.getElementById("hidden-total-days").value = ''; 
+
+          } else {
+              document.getElementById("total-days").innerText = totalDays; 
+              document.getElementById("hidden-total-days").value = totalDays; 
+          }
+
+        }
+
+      }
+});
+
+    </script>
 @endsection
 @endif

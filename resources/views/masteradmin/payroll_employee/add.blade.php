@@ -12,7 +12,7 @@
           <div class="col-auto">
             <h1 class="m-0">New Employee</h1>
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+              <li class="breadcrumb-item"><a href="{{ route('business.home') }}">Dashboard</a></li>
               <li class="breadcrumb-item active">New Employee</li>
             </ol>
           </div><!-- /.col -->
@@ -123,130 +123,173 @@
      
 
         <div class="modal_sub_title">Work Information</div>
-<div class="row pad-5">
-    <!-- Date of Hire -->
-    <div class="col-md-4">
-        <div class="form-group @error('emp_doh') is-invalid @enderror">
-            <label>Date of hire <span class="text-danger">*</span></label>
-            <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
-                <x-flatpickr 
-                    id="to-datepicker" 
-                    name="emp_doh" 
-                    placeholder="Select a date" 
-                />
-                <div class="input-group-append">
-                    <div class="input-group-text" id="to-calendar-icon">
-                        <i class="fa fa-calendar-alt"></i>
+          <div class="row pad-5">
+              <!-- Date of Hire -->
+              <div class="col-md-4">
+                  <div class="form-group @error('emp_doh') is-invalid @enderror">
+                      <label>Date of hire <span class="text-danger">*</span></label>
+                      <div class="input-group date" id="estimatevaliddate" data-target-input="nearest">
+                          <x-flatpickr 
+                              id="to-datepicker" 
+                              name="emp_doh" 
+                              placeholder="Select a date" 
+                          />
+                          <div class="input-group-append">
+                              <div class="input-group-text" id="to-calendar-icon">
+                                  <i class="fa fa-calendar-alt"></i>
+                              </div>
+                          </div>
+                      </div>
+                      @error('emp_doh')
+                          <div class="invalid-feedback">{{ $message }}</div>
+                      @enderror
+                  </div>
+              </div>
+
+              <!-- Work Location -->
+              <div class="col-md-4">
+                  <div class="form-group @error('emp_work_location') is-invalid @enderror">
+                      <label>Work Location <span class="text-danger">*</span></label>
+                      <select class="form-control" name="emp_work_location" id="emp_work_location">
+                          <option value="">Select Work Location</option>
+                          <option value="1">Employee always works from business location</option>
+                          <option value="2">Employee always works from home</option>
+                      </select>
+                      @error('emp_work_location')
+                          <div class="invalid-feedback">{{ $message }}</div>
+                      @enderror
+                  </div>
+              </div>
+
+              <!-- Wage Type -->
+              <div class="col-md-4">
+                  <div class="form-group @error('emp_wage_type') is-invalid @enderror">
+                      <label for="emp_wage_type">Wage Type <span class="text-danger">*</span></label>
+                      <select class="form-control" id="emp_wage_type" name="emp_wage_type">
+                          <option value="{{ old('emp_wage_amount') }}">Select</option>
+                          <option value="Hourly">Hourly</option>
+                          <option value="Annual">Annual</option>
+                      </select>
+                      @error('emp_wage_type')
+                          <div class="invalid-feedback">{{ $message }}</div>
+                      @enderror
+                  </div>
+
+                  <!-- Work Hours -->
+                  <div id="work-hours-container" class="form-group" style="display: none;">
+                      <label for="emp_work_hours">Work Hours Per Week</label>
+                      <input type="number" id="emp_work_hours" name="emp_work_hours" min="0"
+                            class="form-control" value="{{ old('emp_work_hours') }}">
+                  </div>
+              </div>
+
+              <!-- Wages Amount -->
+              <div class="col-md-4">
+                  <div class="form-group @error('emp_wage_amount') is-invalid @enderror">
+                      <label for="wagesamount">Wages Amount <span class="text-danger">*</span></label>
+                      <input type="number" class="form-control" id="wagesamount" name="emp_wage_amount" 
+                            value="{{ old('emp_wage_amount') }}" placeholder="0.00">
+                      @error('emp_wage_amount')
+                          <div class="invalid-feedback">{{ $message }}</div>
+                      @enderror
+                  </div>
+              </div>
+
+              <!-- Direct Deposit -->
+              <div class="col-md-8">
+                  <div class="form-group @error('emp_direct_deposit') is-invalid @enderror">
+                    <label>Direct Deposit <span class="text-danger">*</span></label>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label class="radio-inline">
+                          <input type="radio" name="emp_direct_deposit" value="1" id="radioYes" {{ old('emp_direct_deposit') == '1' ? 'checked' : '' }}> Yes
+                        </label>
+                        <small id="message1" class="text-muted d-block">This requires employee bank information.</small>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="radio-inline">
+                          <input type="radio" name="emp_direct_deposit" value="0" id="radioNo" {{ old('emp_direct_deposit') == '0' ? 'checked' : '' }}> No
+                        </label>
+                        <small id="message2" class="text-muted d-block">You can change this setting at any time.</small>
+                      </div>  
                     </div>
+                    @error('emp_direct_deposit')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                  </div>
+              </div>
+
+              <!-- Vacation Policy --> 
+              <!-- <div class="col-md-4">
+                  <div class="form-group @error('emp_vacation_policy') is-invalid @enderror">
+                      <label>Vacation Policy <span class="text-danger">*</span></label>
+                      <select class="form-control" name="emp_vacation_policy" id="emp_vacation_policy">
+                          @foreach($vacation as $policy)
+                              <option value="{{ $policy->v_id }}" {{ old('emp_vacation_policy') == $policy->v_id ? 'selected' : '' }}>{{ $policy->name }}</option>
+                          @endforeach
+                      </select>
+                      @error('emp_vacation_policy')
+                          <div class="invalid-feedback">{{ $message }}</div>
+                      @enderror
+                  </div>
+              </div>
+
+              <div class="col-md-4" id="accrual_rate_container" style="display: none;">
+                <div class="form-group">
+                    <label>Vacation Accrual Rate</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="emp_vacation_accural_rate" id="emp_vacation_accural_rate" placeholder="">
+                        <div class="input-group-append">
+                            <div class="input-group-text"><i class="fa fa-percent"></i></div>
+                        </div>
+                    </div>
+                    <small id="accrual_message" class="form-text text-muted">e.g. 4% of regular hours on a 40 hour/week payroll period translates to 80 hours/year.</small>
                 </div>
             </div>
-            @error('emp_doh')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
+            </div> -->
 
-    <!-- Work Location -->
-    <div class="col-md-4">
-        <div class="form-group @error('emp_work_location') is-invalid @enderror">
-            <label>Work Location <span class="text-danger">*</span></label>
-            <select class="form-control" name="emp_work_location" id="emp_work_location">
-                <option value="">Select Work Location</option>
-                <option value="1">Employee always works from business location</option>
-                <option value="2">Employee always works from home</option>
-            </select>
-            @error('emp_work_location')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
 
-    <!-- Wage Type -->
-    <div class="col-md-4">
-        <div class="form-group @error('emp_wage_type') is-invalid @enderror">
-            <label for="emp_wage_type">Wage Type <span class="text-danger">*</span></label>
-            <select class="form-control" id="emp_wage_type" name="emp_wage_type">
-                <option value="{{ old('emp_wage_amount') }}">Select</option>
-                <option value="Hourly">Hourly</option>
-                <option value="Annual">Annual</option>
-            </select>
-            @error('emp_wage_type')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
 
-        <!-- Work Hours -->
-        <div id="work-hours-container" class="form-group" style="display: none;">
-            <label for="emp_work_hours">Work Hours Per Week</label>
-            <input type="text" id="emp_work_hours" name="emp_work_hours" 
-                   class="form-control" value="{{ old('emp_work_hours') }}">
-        </div>
-    </div>
 
-    <!-- Wages Amount -->
-    <div class="col-md-4">
-        <div class="form-group @error('emp_wage_amount') is-invalid @enderror">
-            <label for="wagesamount">Wages Amount <span class="text-danger">*</span></label>
-            <input type="number" class="form-control" id="wagesamount" name="emp_wage_amount" 
-                   value="{{ old('emp_wage_amount') }}" placeholder="0.00">
-            @error('emp_wage_amount')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
+     <!-- Vacation Policy --> 
+     <div class="col-md-4">
+              <div class="form-group @error('emp_vacation_policy') is-invalid @enderror">
+                  <label>Vacation Policy <span class="text-danger">*</span></label>
+                  <select class="form-control" name="emp_vacation_policy" id="emp_vacation_policy">
+                      @foreach($vacation as $policy)
+                          <option value="{{ $policy->v_id }}" {{ old('emp_vacation_policy') == $policy->v_id ? 'selected' : '' }}>{{ $policy->name }}</option>
+                      @endforeach
+                  </select>
+                  @error('emp_vacation_policy')
+                      <div class="invalid-feedback">{{ $message }}</div>
+                  @enderror
+              </div>
+          </div>
+
+          <!-- Accrual Rate Field -->
+
+          <div class="col-md-4" id="accrual_rate_container" style="display: none;">
+              <div class="form-group">
+                  <label>Vacation Accrual Rate</label>
+                  <div class="input-group">
+                      <input type="text" class="form-control" name="emp_vacation_accural_rate" id="emp_vacation_accural_rate" placeholder="">
+                      <div class="input-group-append">
+                          <div class="input-group-text"><i class="fa fa-percent"></i></div>
+                      </div>
+                  </div>
+                  <small id="accrual_message" class="form-text text-muted">e.g. 4% of regular hours on a 40 hour/week payroll period translates to 80 hours/year.</small>
+              </div>
+          </div>
 </div>
-
-
-<div class="row">
-    <!-- Direct Deposit -->
-    <div class="col-md-4">
-        <div class="form-group @error('emp_direct_deposit') is-invalid @enderror">
-            <label>Direct Deposit <span class="text-danger">*</span></label>
-            <div>
-                <label class="radio-inline">
-                    <input type="radio" name="emp_direct_deposit" value="1" id="radioYes" {{ old('emp_direct_deposit') == '1' ? 'checked' : '' }}> Yes
-                </label>
-                <small id="message1" class="text-muted d-block">This requires employee bank information.</small>
-
-                <label class="radio-inline">
-                    <input type="radio" name="emp_direct_deposit" value="0" id="radioNo" {{ old('emp_direct_deposit') == '0' ? 'checked' : '' }}> No
-                </label>
-                <small id="message2" class="text-muted d-block">You can change this setting at any time.</small>
-            </div>
-            @error('emp_direct_deposit')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
-</div>
-
-
-
-    <!-- Vacation Policy --> 
-<div class="col-md-4">
-    <div class="form-group @error('emp_vacation_policy') is-invalid @enderror">
-        <label>Vacation Policy <span class="text-danger">*</span></label>
-        <select class="form-control" name="emp_vacation_policy" id="emp_vacation_policy">
-            @foreach($vacation as $policy)
-                <option value="{{ $policy->v_id }}" {{ old('emp_vacation_policy') == $policy->v_id ? 'selected' : '' }}>{{ $policy->name }}</option>
-            @endforeach
-        </select>
-        @error('emp_vacation_policy')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-    </div>
-</div>
-
-<!-- Accrual Rate Field -->
-<div class="col-md-4" id="accrual_rate_container" style="display: none;">
-    <div class="form-group">
-        <label>Vacation Accrual Rate</label>
-        <input type="number" class="form-control" name="emp_vacation_accural_rate" id="emp_vacation_accural_rate" value="{{ old('emp_vacation_accural_rate') }}">
-    </div>
-    <small>e.g. 4% of regular hours on a 40 hour/week payroll period translates to 80 hours/year.</small>
-</div>
-
-
+              <!-- Accrual Rate Field -->
+              <!-- <div class="col-md-4" id="accrual_rate_container" style="display: none;">
+                  <div class="form-group">
+                      <label>Vacation Accrual Rate</label>
+                      <input type="number" class="form-control" name="emp_vacation_accural_rate" id="emp_vacation_accural_rate" value="{{ old('emp_vacation_accural_rate') }}">
+                  </div>
+                  <small>e.g. 4% of regular hours on a 40 hour/week payroll period translates to 80 hours/year.</small>
+              </div>
+          </div> -->
 
           <div class="row py-20 px-10">
             <div class="col-md-12 text-center">
@@ -291,27 +334,46 @@
 </script>
 
   <script>
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     const wageTypeSelect = document.getElementById('emp_wage_type');
+    //     const workHoursContainer = document.getElementById('work-hours-container');
+    //     const workHoursInput = document.getElementById('emp_work_hours');
+
+    //     function toggleWorkHoursField() {
+    //         if (wageTypeSelect.value === 'Annual') {
+    //             workHoursContainer.style.display = 'block';
+    //             workHoursInput.setAttribute('required', 'required');
+    //         } else {
+    //             workHoursContainer.style.display = 'none';
+    //             workHoursInput.removeAttribute('required');
+    //         }
+    //     }
+
+    //     // Initialize on page load
+    //     toggleWorkHoursField();
+
+    //     // Listen for changes in the wage type dropdown
+    //     wageTypeSelect.addEventListener('change', toggleWorkHoursField);
+    // });
     document.addEventListener('DOMContentLoaded', function () {
-        const wageTypeSelect = document.getElementById('emp_wage_type');
-        const workHoursContainer = document.getElementById('work-hours-container');
-        const workHoursInput = document.getElementById('emp_work_hours');
+    const wageTypeField = document.getElementById('emp_wage_type');
+    const workHoursContainer = document.getElementById('work-hours-container');
+    const workHoursField = document.getElementById('emp_work_hours');
 
-        function toggleWorkHoursField() {
-            if (wageTypeSelect.value === 'Annual') {
-                workHoursContainer.style.display = 'block';
-                workHoursInput.setAttribute('required', 'required');
-            } else {
-                workHoursContainer.style.display = 'none';
-                workHoursInput.removeAttribute('required');
-            }
+    wageTypeField.addEventListener('change', function () {
+        if (this.value === 'Annual') {
+            // Show the Work Hours Per Week field
+            workHoursContainer.style.display = 'block';
+        } else {
+            // Hide the Work Hours Per Week field and reset its value
+            workHoursContainer.style.display = 'none';
+            workHoursField.value = ''; // Clear the value
         }
-
-        // Initialize on page load
-        toggleWorkHoursField();
-
-        // Listen for changes in the wage type dropdown
-        wageTypeSelect.addEventListener('change', toggleWorkHoursField);
     });
+
+    // Trigger change event on page load to ensure proper initial state
+    wageTypeField.dispatchEvent(new Event('change'));
+});
 </script>
 
   <script>
@@ -396,5 +458,74 @@ document.querySelector('form').addEventListener('submit', function() {
 });
 
 </script>
+<script>
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     const accrualRateInput = document.getElementById("emp_vacation_accural_rate");
+    //     const accrualMessage = document.getElementById("accrual_message");
+
+    //     accrualRateInput.addEventListener("input", function () {
+    //         const rate = parseFloat(this.value);
+
+    //         // Validate range between 0 and 100
+    //         if (isNaN(rate) || rate < 0 || rate > 100) {
+    //             accrualMessage.textContent = "e.g. 4% of regular hours on a 40 hour/week payroll period translates to 80 hours/year.";
+    //             accrualMessage.style.color = "red";
+    //             return;
+    //         }
+
+    //         // Calculate hours/year based on 40-hour weeks
+    //         const hoursPerWeek = 40;
+    //         const weeksPerYear = 52; // Considering the average weeks in a year
+    //         const annualHours = (rate / 100) * hoursPerWeek * weeksPerYear;
+
+    //         accrualMessage.textContent = `e.g. ${rate}% of regular hours on a 40-hour/week payroll period translates to approximately ${annualHours.toFixed(3)} hours/year.`;
+    //         accrualMessage.style.color = "green";
+    //     });
+    // });
+    document.addEventListener("DOMContentLoaded", function () {
+    const accrualRateInput = document.getElementById("emp_vacation_accural_rate");
+    const workHoursInput = document.getElementById("emp_work_hours");
+    const accrualMessage = document.getElementById("accrual_message");
+    const totalHoursInput = document.getElementById("emp_total_hours_year");
+
+    const defaultHoursPerWeek = 40;
+    const weeksPerYear = 52;
+
+    function calculateAccrualHours(rate) {
+        const hoursPerWeek = parseFloat(workHoursInput.value) || defaultHoursPerWeek;
+        return (rate / 100) * hoursPerWeek * weeksPerYear;
+    }
+
+    function updateAccrualMessageAndHiddenField() {
+        const rate = parseFloat(accrualRateInput.value);
+
+        if (isNaN(rate) || rate < 0 || rate > 100) {
+            accrualMessage.textContent = "e.g. 4% of regular hours on a 40-hour/week payroll period translates to 80 hours/year.";
+            accrualMessage.style.color = "red";
+            totalHoursInput.value = ""; // Clear the hidden field value
+            return;
+        }
+
+        const annualHours = calculateAccrualHours(rate);
+        accrualMessage.textContent = `e.g. ${rate}% of regular hours on a 40-hour/week payroll period translates to approximately ${annualHours.toFixed(3)} hours/year.`;
+        accrualMessage.style.color = "green";
+        totalHoursInput.value = annualHours.toFixed(3); // Update hidden field value
+    }
+
+    accrualRateInput.addEventListener("input", updateAccrualMessageAndHiddenField);
+    workHoursInput.addEventListener("input", updateAccrualMessageAndHiddenField);
+
+    // Ensure calculation is updated when the Work Hours Per Week field is added or removed
+    const observer = new MutationObserver(() => {
+        updateAccrualMessageAndHiddenField();
+    });
+
+    observer.observe(workHoursInput, { attributes: true, childList: true, subtree: false });
+
+    // Trigger initial calculation
+    updateAccrualMessageAndHiddenField();
+});
+</script>
+
 @endsection
 @endif

@@ -25,7 +25,7 @@ class MasterProfileUpdateRequest extends FormRequest
     //         'state_id' => ['required', 'integer'],
     //     ];
     // }
-    public function rules(): array
+     public function rules(): array
 {
     $user = Auth::guard('masteradmins')->user();
     // Debugging the user if needed
@@ -50,9 +50,8 @@ public function messages(): array
     return [
         'users_name.required' => 'Please enter user name .',
         'country_id.integer' => 'Please enter country.',
-        'state_id.required' => 'Please enter state.',
+        'state_id.integer' => 'Please enter state.',
     ];
 }
-
     
 }

@@ -18,7 +18,7 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
-            <a href="{{ route('business.role.index') }}"><button class="add_btn_br">Cancel</button></a>
+              <a href="{{ route('business.role.index') }}"><button class="add_btn_br">Cancel</button></a>
             <button type="submit" form="items-form" class="add_btn">Save</button>
             </ol>
           </div><!-- /.col -->
@@ -29,7 +29,7 @@
     <!-- Main content -->
     <section class="content px-10">
       <div class="container-fluid">
-        @if(Session::has('role-edit'))
+        <!-- @if(Session::has('role-edit'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ Session::get('role-edit') }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -39,7 +39,7 @@
             @php
             Session::forget('role-edit');
             @endphp
-        @endif
+        @endif -->
 
         <!-- card -->
         <div class="card">
@@ -54,7 +54,7 @@
             <div class="row pad-5">
               <div class="col-md-12">
                 <div class="form-group">
-                  <label for="role_name">Role Name</label>
+                  <label for="role_name">Role Name<span class="text-danger">*</span></label>
                   <input type="text" class="form-control @error('role_name') is-invalid @enderror"
                         id="role_name" name="role_name" placeholder="Enter Role Name"
                         value="{{ old('role_name', $role->role_name) }}" />
@@ -63,7 +63,19 @@
                     @enderror
                 </div>
               </div>
-            </div>
+              <div class="col-md-12">
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea 
+            class="form-control @error('description') is-invalid @enderror" 
+            id="description" 
+            name="description" 
+            placeholder="Enter Description">{{ old('description', $role->description) }}</textarea>
+        @error('description')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+            <!-- </div> -->
             <div class="row py-20 px-10">
               <div class="col-md-12 text-center">
                 <a href="{{route('business.role.index')}}"  class="add_btn_br px-10">Cancel</a>

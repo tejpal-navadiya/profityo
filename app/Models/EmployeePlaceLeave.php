@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class EmployeePlaceLeave extends Model
 {
     use HasFactory;
-    protected $fillable = ['emp_id','id','ct_id','emp_lev_start_date','emp_lev_end_date','emp_lev_desc','emp_lev_status'];
+    protected $fillable = ['emp_id','id','ct_id','emp_lev_start_date','emp_lev_end_date','emp_lev_desc','emp_lev_status','emp_lev_date_range'];
    
     public function __construct(array $attributes = [])
     {

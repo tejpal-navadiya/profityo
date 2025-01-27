@@ -51,15 +51,26 @@
               Session::forget('role-delete');
             @endphp
           @endif
-
+          @if(Session::has('role-edit'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ Session::get('role-edit') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            @php
+            Session::forget('role-edit');
+            @endphp
+        @endif
           <!-- Main row -->
           <div class="card px-20">
             <div class="card-body1">
               <div class="col-md-12 table-responsive pad_table">
-                <table id="example1" class="table table-hover text-nowrap">
+              <table id="example1" class="table table-hover">
                     <thead>
                         <tr>
                             <th>Role Name</th>
+                            <th width="300">Description</th>
                             <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
                         </tr>
                     </thead>
@@ -68,6 +79,7 @@
                             @foreach ($roles as $role)
                                 <tr>
                                   <td>{{ $role->role_name }}</td>
+                                  <td>{{ $role->description }}</td>
                                   <td class="text-right">
                                     <a href="{{ route('business.role.userrole',$role->role_id) }}"><i class="fas ffa-solid fa-key view_icon_grid"></i></a>
                                     @if(isset($access['update_roles']) && $access['update_roles']) 

@@ -115,8 +115,7 @@ class ProfilesController extends Controller
     {
         $user = Auth::guard('masteradmins')->user();
         $BusinessDetails = BusinessDetails::where('id', $user->id)->where('bus_status', 1)->first();
-    
-        // Perform validation
+
         $validatedData = $request->validate([
             'bus_company_name' => 'required|string|max:255',
             'bus_address1' => 'nullable|string|max:255',
@@ -135,13 +134,11 @@ class ProfilesController extends Controller
             'state_id.integer' => 'Please enter state name',
        
         ]);
-    
-        // Handle Image Upload
+
         $imageFilename = $this->handleImageUpload($request, $BusinessDetails->bus_image ?? null, 'masteradmin/business_profile');
-    
-        // Currency setup
         $currency_id = Countries::where('id', 233)->first();
-    
+        // dd($currency_id);
+
         if ($BusinessDetails) {
             // Update existing record
             $validatedData['bus_image'] = $imageFilename;
@@ -155,13 +152,10 @@ class ProfilesController extends Controller
             $validatedData['bus_currency'] = $currency_id->id;
             BusinessDetails::create($validatedData);
         }
-    
         \MasterLogActivity::addToLog('Master Admin Business Profile is Edited.');
-    
-        // Redirect back to the form with a success message
+
         return redirect()->route('business.business.edit')->with('business-update', __('messages.masteradmin.business-profile.send_success'));
     }
-    
 
     public function updateBusinessDetails(Request $request)
     {
@@ -184,7 +178,7 @@ class ProfilesController extends Controller
         }
 
         $validatedData = $request->validate([
-          'bus_company_name' => 'required|string|max:255',
+            'bus_company_name' => 'required|string|max:255',
             'bus_address1' => 'nullable|string|max:255',
             'bus_address2' => 'nullable|string|max:255',
             'country_id' => 'required|integer',

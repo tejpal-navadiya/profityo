@@ -80,10 +80,11 @@ class SalesCustomersController extends Controller
             'sale_ship_delivery_desc' => 'nullable|string|max:255',
             'sale_same_address' => 'nullable|boolean',
         ],[
-            'sale_cus_business_name.required' => 'The name field is required.',
+            'sale_cus_business_name.required' => 'Please enter customer name.',
             'sale_cus_first_name.required' => 'The First name field is required.',
             'sale_cus_last_name.required' => 'The Last name field is required.',
             'sale_cus_phone.required' => 'The Phone number field is required.',
+            'sale_cus_email.email' => 'please enter valid email.',
         ]);
 
         // Prepare the data for insertion
@@ -219,6 +220,11 @@ class SalesCustomersController extends Controller
             'sale_ship_state_id' => 'nullable|numeric',
             'sale_ship_phone' => 'nullable|numeric',
             'sale_ship_delivery_desc' => 'nullable|string|max:255',
+        ],[
+            'sale_cus_business_name.required' => 'Please enter customer name.',
+            'sale_cus_first_name.required' => 'The First name field is required.',
+            'sale_cus_last_name.required' => 'The Last name field is required.',
+            'sale_cus_phone.required' => 'The Phone number field is required.',
         ]);
         
 
@@ -260,7 +266,7 @@ class SalesCustomersController extends Controller
             $customerContact->save();
         }
      
-        return redirect()->route('business.salescustomers.edit', ['SalesCustomers' => $SalesCustomersu->sale_cus_id])
+        return redirect()->route('business.salescustomers.index', ['SalesCustomers' => $SalesCustomersu->sale_cus_id])
         ->with('sales-customers-edit', __('messages.masteradmin.sales-customers.edit_salescustomers_success'));
     }
 
@@ -311,7 +317,7 @@ public function show($sale_cus_id, Request $request): View
     $sentLogs = $activityLogsQuery->get();
 
     // Existing logic for invoices
-    $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Overdue'])
+    $unpaidInvoices = InvoicesDetails::whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue'])
         ->where('sale_cus_id', $sale_cus_id)
         ->with('customer')
         ->orderBy('created_at', 'desc')
@@ -337,7 +343,6 @@ public function show($sale_cus_id, Request $request): View
 
     $filteredInvoices = $query->get();
     $allInvoices = $filteredInvoices->where('sale_cus_id', $sale_cus_id)->whereIn('sale_status', ['Unsent', 'Sent', 'Partial', 'Overdue','Paid','Over Paid','Draft']);
-    // dd($allInvoices);
     $invoicesItems = InvoicesItems::where('sale_inv_id', $sale_cus_id)->with('invoices_product', 'item_tax')->get();
     // Handle AJAX request for activities
     if ($request->ajax()) {

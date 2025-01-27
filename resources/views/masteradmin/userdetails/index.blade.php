@@ -59,6 +59,17 @@
               Session::forget('user-delete');
             @endphp
           @endif
+          @if(Session::has('user-edit'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ Session::get('user-edit') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        @php
+        Session::forget('user-edit');
+      @endphp
+    @endif
         <!-- Main row -->
         <div class="card px-20">
           <div class="card-body1">

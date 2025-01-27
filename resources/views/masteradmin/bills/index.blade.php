@@ -214,7 +214,7 @@
             </button>
             </div>
             <div class="modal-body">
-            <form method="POST" id="rcordForm"
+            <form method="POST"
             action="{{ route('business.bill.paymentsbillstore', $value->sale_bill_id) }}">
             @csrf
             <input type="hidden" name="invoice_id" value="{{ $value->sale_bill_id }}">
@@ -291,8 +291,8 @@
               </div>
               </div>
               <div class="col-md-6">
-              <label>Account <span class="text-danger">*</span></label>
-              <select class="form-control form-select" id="payment_account" name="payment_account"
+              <label>Account</label>
+              <select class="form-control form-select" name="payment_account"
               placeholder="Enter your text here">
               <option>Select a Payment Account...</option>
               @foreach($accounts as $account)
@@ -302,7 +302,6 @@
               </select>
               <p class="mb-0">Any Account Into Which You Deposit And Withdraw Funds From.
               </p>
-              <span id="payment_accountError" class="text-danger mt-2" style="display:none;">Please enter Account name.</span>
               </div>
 
               <div class="col-md-12">
@@ -352,17 +351,17 @@
 
           <div class="modal fade" id="deletebill_{{ $value->sale_bill_id }}" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
             <form method="POST"
             action="{{ route('business.bill.destroy', ['id' => $value->sale_bill_id]) }}"
             id="delete-form-{{ $value->sale_bill_id }}" data-id="{{ $value->sale_bill_id }}">
             @csrf
             @method('DELETE')
-            <div class="modal-body pad-1 text-center">
+            <div class="modal-body delete-pad text-center">
             <i class="fas fa-solid fa-trash delete_icon"></i>
             <p class="company_business_name px-10"><b>Delete Bill</b></p>
-            <p class="company_details_text px-10">Delete Bill {{ $value->sale_bill_id }}</p>
+            <p class="company_details_text px-10">Delete Bill</p>
             <p class="company_details_text">Are You Sure You Want to Delete This Bill?</p>
             <button type="button" class="add_btn px-15" data-dismiss="modal">Cancel</button>
             <button type="button" class="delete_btn px-15"
@@ -705,35 +704,7 @@
     document.getElementById('from-calendar-iconp').addEventListener('click', function () {
     fromdatepickerp.open();
     });
-    
   </script>
-<script>
-$(document).ready(function() {
-    // Form submit event
-    $('#rcordForm').on('submit', function(e) {
-        var companyField = $('#payment_account');
-        var errorField = $('#payment_accountError');
 
-        // Check if the company name field is empty
-        if (companyField.val().trim() === "") {
-            errorField.show(); // Show the error message
-            companyField.addClass("is-invalid"); // Add invalid class to highlight the field
-            e.preventDefault(); // Prevent form submission
-        } else {
-            errorField.hide(); // Hide the error message if input is valid
-            companyField.removeClass("is-invalid"); // Remove invalid class if input is valid
-        }
-    });
-
-    // Hide error message when the user starts typing
-    $('#payment_account').on('input', function() {
-        var errorField = $('#payment_accountError');
-        if ($(this).val().trim() !== "") {
-            errorField.hide(); // Hide the error message if the field is no longer empty
-            $(this).removeClass("is-invalid"); // Remove the invalid class
-        }
-    });
-});
-</script>
   @endsection
 @endif

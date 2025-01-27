@@ -104,7 +104,13 @@
             </div>
           </div>
           </div> -->
-          <div class="col-lg-4 col-1024 col-md-6 px-10 d-flex">
+          <div class="col-lg-3">
+            <select class="form-control form-select" style="width: 100%;" name="" id="">
+              <option value="">All Vendor</option>
+              <option value="">Vender1</option>
+            </select>
+          </div>
+          <div class="col-lg-4 col-1024 col-md-6 d-flex">
             <div class="input-group date" id="fromdate" data-target-input="nearest">
             <x-flatpickr id="from-datepicker" placeholder="From" />
             <div class="input-group-append">

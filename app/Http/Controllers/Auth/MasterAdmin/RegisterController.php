@@ -30,7 +30,6 @@ class RegisterController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-      
         $request->validate([
             'user_first_name' => ['required', 'string', 'max:255'],
             'user_phone' => ['required', 'string', 'max:255'],
@@ -38,6 +37,7 @@ class RegisterController extends Controller
             'user_email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.MasterUser::class],
             'user_password' => ['required', 'string', '', Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
             'password_confirmation' => ['required', 'string', '', Password::min(8)->mixedCase()->letters()->numbers()->symbols()],
+
         ],[
             'user_first_name.required' => 'The First Name field is required.',
             'user_phone.required' => 'The Phone field is required.',
@@ -46,10 +46,10 @@ class RegisterController extends Controller
             'user_email.email' => 'The Email must be a valid email address.',
             'user_email.unique' => 'The Email has already been taken.',
             'user_password.required' => 'The Password field is required.',
-            'password_confirmation.required' => 'The Confirm Password field is required.'
+             'password_confirmation.required' => 'The Confirm Password field is required.'
         ]);
 
-        $plan = Plan::where('sp_id', '20')->firstOrFail();
+        $plan = Plan::where('sp_id', '35')->firstOrFail();
 
         $startDate = Carbon::now();
         $months = $plan->sp_month;
@@ -71,7 +71,7 @@ class RegisterController extends Controller
             'user_city_name' => '',
             'user_pincode' => '',
             'isActive' => 1,
-            'user_status' => 1
+             'user_status' => 1
         ]);
 
         // Generate the unique buss_unique_id

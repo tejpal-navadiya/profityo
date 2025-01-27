@@ -123,9 +123,9 @@
                                         <label class="form-check-label" for="chk_reports">Reports</label>
                                     </div>
                                 </div>
-                                <div class="row report_row justify-content-between">
+                                <div class="row report_row planrow">
                                     @foreach ($reports as $report)
-                                        <div class="col-auto mb-2">
+                                        <div class="col-lg-3 col-md-4 plancheckbox">
                                             <div class="form-check">
                                                 <label class="form-check-label" for="chk_{{ $report->mname }}">{{ $report->mtitle }}</label>
                                                 <input class="form-check-input child-checkbox report-child-checkbox" type="checkbox" {{ $report->is_access ? 'checked' : '' }} name="{{ $report->mname }}" id="chk_{{ $report->mname }}" value="1">
@@ -147,7 +147,7 @@
     </div><!-- /.wrapper -->
 
     @include('layouts.footerlink')
-    <script>
+    <!-- <script>
         $(document).ready(function() {
             function updateParentCheckboxes(parentSelector, childSelector) {
                 $(childSelector).change(function() {
@@ -183,9 +183,54 @@
                 parentRow.find('.parent-checkbox').prop('checked', allChecked);
             });
         });
-    </script>
+    </script> -->
 
-      
+      <script>
+         $(document).ready(function() {
+        $('.parent-checkbox').change(function() {
+            var isChecked = $(this).is(':checked');
+            $(this).closest('tr').find('.child-checkbox').prop('checked', isChecked);
+        });
+
+        $('.child-checkbox').change(function() {
+            var parentRow = $(this).closest('tr');
+            var allChecked = parentRow.find('.child-checkbox').length === parentRow.find('.child-checkbox:checked').length;
+            parentRow.find('.parent-checkbox').prop('checked', allChecked);
+
+            if (parentRow.find('.child-checkbox:checked').length > 0) {
+                parentRow.find('.parent-checkbox').prop('indeterminate', false).prop('checked', true);
+            } else {
+                parentRow.find('.parent-checkbox').prop('indeterminate', false).prop('checked', false);
+            }
+        });
+
+        // $('#chk_reports').change(function() {
+        //     var isChecked = $(this).is(':checked');
+        //     $('.report_row').find('.child-checkbox').prop('checked', isChecked);
+        // });
+
+        // $('.report_row .child-checkbox').change(function() {
+        //     var allChecked = $('.report_row .child-checkbox').length === $('.report_row .child-checkbox:checked').length;
+        //     $('#chk_reports').prop('checked', allChecked);
+        // });
+        // Specific for the Reports section
+        $('#chk_reports').change(function() {
+            var isChecked = $(this).is(':checked');
+            $('.report_row').find('.child-checkbox').prop('checked', isChecked);
+        });
+
+        $('.report_row .child-checkbox').change(function() {
+            var allChecked = $('.report_row .child-checkbox').length === $('.report_row .child-checkbox:checked').length;
+            $('#chk_reports').prop('checked', allChecked);
+
+            if ($('.report_row .child-checkbox:checked').length > 0) {
+                $('#chk_reports').prop('indeterminate', false).prop('checked', true);
+            } else {
+                $('#chk_reports').prop('indeterminate', false).prop('checked', false);
+            }
+        });
+    });
+      </script>
 
 </body>
 </html>

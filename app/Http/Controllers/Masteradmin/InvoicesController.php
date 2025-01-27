@@ -36,7 +36,118 @@ class InvoicesController extends Controller
     //
     public function invoiceStore(Request $request)
     {
+         $user = Auth::guard('masteradmins')->user();
+         
+        if ($request->has('preview') && $request->input('preview') === 'true') {
+
+            // Retrieve all data from the request
+            $previewData = $request->all();
+            //dd($previewData);
+            // Ensure items are part of the request
+            $previewData['items'] = $request->input('items'); 
+
+
+            session()->put('previewData', $previewData);
+            // Loop through the items and add the product_name
+            foreach ($previewData['items'] as &$item) {
+                // Fetch the product based on the sale_product_id
+                $product = SalesProduct::where('sale_product_id',$item['sale_product_id'])->first();
+                
+                // If product is found, add the product_name to the item
+                if ($product) {
+                    $item['product_name'] = $product->sale_product_name; // Assign the product name
+                } else {
+                    // If no product is found, set 'product_name' to 'N/A'
+                    $item['product_name'] = '';
+                }
+            }
         
+            // Now previewData['items'] will have the 'product_name' field
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+            $salecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+            $currencys = Countries::where('id', $previewData['sale_currency_id'])->first();
+        
+            // Pass the data to the view
+            $view = view('masteradmin.estimates.preview', compact('previewData', 'businessDetails', 'salecustomer', 'currencys'))->render();
+        
+            return response()->json(['preview_view' => $view, 'preview_data' => $previewData]);
+        }
+        
+
+
+         // Handle redirect back with input data if the user clicks "Back to Edit"
+    if ($request->has('back_to')) {
+        // $previewData = $request->all();
+        $previewData = session('previewData');
+        // dd($previewData);
+        // dD($previewData);
+        $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+        $countries = Countries::all();
+        $states = collect();
+        $currency = null;
+        if (isset($businessDetails->bus_currency)) {
+            $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+        }
+        // dD($currency);
+
+        if ($businessDetails && $businessDetails->country_id) {
+            $states = States::where('country_id', $businessDetails->country_id)->get();
+        }
+
+        $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+        $products = SalesProduct::where('id', $user->id)->get();
+        $currencys = Countries::get();
+      
+        
+        $salestax = SalesTax::all();
+
+        $customers = SalesCustomers::where('id', $user->id)->first();
+
+        $singlecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+
+        // dD($salecustomer1);
+        $specificMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [1, 2, 3, 4])
+        ->get();
+
+        $HideMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [5, 6, 7, 8])
+        ->get();
+
+        $HideSettings = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [10])
+        ->get();
+        
+        $HideDescription = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [9])
+        ->get();
+
+       
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
+
+        $lastEstimate = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
+
+        $newId = $lastEstimate ? $lastEstimate->sale_inv_id + 1 : 1;
+        $sessionData = session('form_data') ?? [];
+
+
+        $view = view('masteradmin.estimates.create_edit_preview', compact('previewData','businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId','singlecustomer','sessionData'))->render();
+
+        return response()->json(['preview_view' => $view,'form_data' => $previewData]);
+
+        // Pass form data back to the form
+    }
+    
         $user = Auth::guard('masteradmins')->user();
 
         $dynamicId = $user->user_id; 
@@ -53,7 +164,7 @@ class InvoicesController extends Controller
         'sale_estim_date' => 'required|date',
         'sale_estim_valid_date' => 'required|date',
         'sale_estim_discount_desc' => 'nullable|string',
-        'sale_estim_discount_type' => 'required|in:1,2', // 1 for $, 2 for %
+        'sale_estim_discount_type' => 'nullable|in:1,2', // 1 for $, 2 for %
         'sale_currency_id' => 'required|integer',
         'sale_estim_sub_total' => 'required|numeric',
         'sale_estim_discount_total' => 'required|numeric',
@@ -65,41 +176,15 @@ class InvoicesController extends Controller
         'sale_status' => 'required|integer',
         'sale_estim_item_discount' => 'nullable|integer',
         'sale_total_days' => 'required|integer',
-        'items.*.sale_product_id' => 'required|integer',
-        'items.*.sale_estim_item_desc' => 'required|string',
-        'items.*.sale_estim_item_qty' => 'required|integer|min:1',
-        'items.*.sale_estim_item_price' => 'required|numeric|min:0',
-        'items.*.sale_estim_item_tax' => 'required|integer',
+       
       ],[
-        'sale_estim_title.max' => 'The title may not exceed 255 characters.',
-        'sale_cus_id.required' => 'Please select a customer.',
-        'sale_cus_id.integer' => 'Please select a customer.',
-        'sale_estim_number.required' => 'The estimate number is required.',
-        'sale_estim_number.unique' => 'An estimate with this number already exists. Estimate numbers must be unique.',
-        'sale_estim_date.required' => 'Please select the estimate date.',
-        'sale_estim_valid_date.required' => 'Please select the valid until date.',
-        'sale_estim_discount_type.required' => 'Please select a discount type.',
-        'sale_estim_discount_type.in' => 'The discount type must be either Dollar ($) or Percentage (%).',
-        'sale_estim_sub_total.required' => 'Please enter the sub-total amount.',
-        'sale_estim_discount_total.required' => 'Please enter the total discount amount.',
-        'sale_estim_tax_amount.required' => 'Please enter the tax amount.',
-        'sale_estim_final_amount.required' => 'Please enter the final amount.',
-        'sale_estim_image.image' => 'The file uploaded must be a valid image.',
-        'sale_status.required' => 'Please set the status of the estimate.',
-        'sale_estim_status.required' => 'Please set the estimate status.',
-        'sale_total_days.required' => 'Please set valid date range.',
-        'items.*.sale_product_id.integer' => 'Please select item.',
-        'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
-        'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
-        'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
-        'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
-        'items.*.sale_estim_item_price.min' => 'The price for each item must be at least 0.',
-        'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
-    ]);
+        'sale_estim_number.required' => 'The invoice number is required.',
+        'sale_estim_number.unique' => 'An invoice with this number already exists. Invoice numbers must be unique.',
+      ]);
 
 
         $invoice = new InvoicesDetails();
-        $user = Auth::guard('masteradmins')->user();
+       
         $invoice->fill([
             'sale_inv_title' => $request->sale_estim_title,
             'sale_inv_summary' => $request->sale_estim_summary,
@@ -212,9 +297,9 @@ class InvoicesController extends Controller
     public function view($id, Request $request): View
     {
         $user = Auth::guard('masteradmins')->user();
-        
+       
         $user_id = $user->user_id;
-        
+       
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -232,19 +317,19 @@ class InvoicesController extends Controller
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
         $customers = SalesCustomers::where('id', $user->id)->first();
-        
+       
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
-      
+        
         
         $salestax = SalesTax::all();
-       
+        
 
         $invoices = InvoicesDetails::where('sale_inv_id', $id)->with('customer')->firstOrFail();
 
         $invoicesItems = InvoicesItems::where('sale_inv_id', $id)->with('invoices_product', 'item_tax')->get();
-      
+       
         $customer_states = collect();
         if ($customers && $customers->sale_bill_country_id) {
             $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
@@ -257,7 +342,7 @@ class InvoicesController extends Controller
 
         // $states = States::get();
 
-        
+       
         return view('masteradmin.invoices.view', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state','user_id'));
 
     }
@@ -265,6 +350,7 @@ class InvoicesController extends Controller
     public function edit($id, Request $request): View
     {
         $user = Auth::guard('masteradmins')->user();
+      
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -282,12 +368,14 @@ class InvoicesController extends Controller
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
         $customers = SalesCustomers::where('id', $user->id)->first();
+       
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
+       
         
         $salestax = SalesTax::all();
-       
+        
 
         $invoices = InvoicesDetails::where('sale_inv_id', $id)->with('customer')->firstOrFail();
 
@@ -334,9 +422,121 @@ class InvoicesController extends Controller
 
     public function update(Request $request, $invoice_id)
     {
-       
+      
+
         $user = Auth::guard('masteradmins')->user();
 
+       // dd($request->all());
+        if ($request->has('preview') && $request->input('preview') === 'true') {
+
+            // Retrieve all data from the request
+            $previewData = $request->all();
+            //dd($previewData);
+            // Ensure items are part of the request
+            $previewData['items'] = $request->input('items'); 
+            $previewData['invoices_id'] = $invoice_id; 
+            
+            session()->put('previewData', $previewData);
+            // Loop through the items and add the product_name
+            foreach ($previewData['items'] as &$item) {
+                // Fetch the product based on the sale_product_id
+                $product = SalesProduct::where('sale_product_id',$item['sale_product_id'])->first();
+                
+                // If product is found, add the product_name to the item
+                if ($product) {
+                    $item['product_name'] = $product->sale_product_name; // Assign the product name
+                } else {
+                    // If no product is found, set 'product_name' to 'N/A'
+                    $item['product_name'] = '';
+                }
+            }
+
+            // Now previewData['items'] will have the 'product_name' field
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+            $salecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+            $currencys = Countries::where('id', $previewData['sale_currency_id'])->first();
+
+            // Pass the data to the view
+            $view = view('masteradmin.invoices.preview', compact('previewData', 'businessDetails', 'salecustomer', 'currencys'))->render();
+
+            return response()->json(['preview_view' => $view, 'preview_data' => $previewData]);
+        }
+
+
+
+        // Handle redirect back with input data if the user clicks "Back to Edit"
+        if ($request->has('back_to')) {
+            // $previewData = $request->all();
+            $previewData = session('previewData');
+            // dd($previewData);
+            // dD($previewData);
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+            $countries = Countries::all();
+            $states = collect();
+            $currency = null;
+            if (isset($businessDetails->bus_currency)) {
+                $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+            }
+            // dD($currency);
+
+            if ($businessDetails && $businessDetails->country_id) {
+                $states = States::where('country_id', $businessDetails->country_id)->get();
+            }
+
+            $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+            $products = SalesProduct::where('id', $user->id)->get();
+            $currencys = Countries::get();
+
+
+            $salestax = SalesTax::all();
+
+            $customers = SalesCustomers::where('id', $user->id)->first();
+
+            $singlecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+
+            // dD($salecustomer1);
+            $specificMenus = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [1, 2, 3, 4])
+            ->get();
+
+            $HideMenus = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [5, 6, 7, 8])
+            ->get();
+
+            $HideSettings = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [10])
+            ->get();
+
+            $HideDescription = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [9])
+            ->get();
+
+
+            $customer_states = collect();
+            if ($customers && $customers->sale_bill_country_id) {
+                $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+            }
+
+            $ship_state = collect();
+            if ($customers && $customers->sale_ship_country_id) {
+                $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+            }
+
+            $lastEstimate = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
+
+            $newId = $lastEstimate ? $lastEstimate->sale_inv_id + 1 : 1;
+            $sessionData = session('form_data') ?? [];
+
+
+            $view = view('masteradmin.invoices.create_edit_preview', compact('previewData','businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId','singlecustomer','sessionData'))->render();
+
+            return response()->json(['preview_view' => $view,'form_data' => $previewData]);
+            // sale_estim_id
+            // Pass form data back to the form
+        }
+        
         $dynamicId = $user->user_id; 
 
         $tableName = $dynamicId . '_py_invoices_details'; 
@@ -355,7 +555,7 @@ class InvoicesController extends Controller
             'sale_estim_date' => 'required|date',
             'sale_estim_valid_date' => 'required|date',
             'sale_estim_discount_desc' => 'nullable|string',
-            'sale_estim_discount_type' => 'required|in:1,2', // 1 for $, 2 for %
+            'sale_estim_discount_type' => 'nullable|in:1,2', // 1 for $, 2 for %
             'sale_currency_id' => 'required|integer',
             'sale_estim_sub_total' => 'required|numeric',
             'sale_estim_discount_total' => 'required|numeric',
@@ -367,7 +567,7 @@ class InvoicesController extends Controller
             'sale_status' => 'required|integer',
             'sale_estim_item_discount' => 'nullable|integer',
             'sale_total_days' => 'required|integer',
-            'items.*.sale_product_id' => 'required|integer',
+             'items.*.sale_product_id' => 'required|integer',
             'items.*.sale_estim_item_desc' => 'required|string',
             'items.*.sale_estim_item_qty' => 'required|integer|min:1',
             'items.*.sale_estim_item_price' => 'required|numeric|min:0',
@@ -380,7 +580,7 @@ class InvoicesController extends Controller
             'sale_estim_number.unique' => 'An estimate with this number already exists. Estimate numbers must be unique.',
             'sale_estim_date.required' => 'Please select the invoice date.',
             'sale_estim_valid_date.required' => 'Please select the valid until date.',
-            'sale_estim_discount_type.required' => 'Please select a discount type.',
+            'sale_estim_discount_type.nullable' => 'Please select a discount type.',
             'sale_estim_discount_type.in' => 'The discount type must be either Dollar ($) or Percentage (%).',
             'sale_estim_sub_total.required' => 'Please enter the sub-total amount.',
             'sale_estim_discount_total.required' => 'Please enter the total discount amount.',
@@ -391,7 +591,7 @@ class InvoicesController extends Controller
             'sale_estim_status.required' => 'Please set the estimate status.',
             'sale_total_days.required' => 'Please set valid date range.',
             'items.*.sale_product_id.integer' => 'Please select item.',
-            'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
+            'items.*.sale_estim_item_desc.required' => 'Please enter a description for each item.',
             'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
             'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
             'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
@@ -499,7 +699,7 @@ class InvoicesController extends Controller
         session()->flash('invoice-edit', __('messages.masteradmin.invoice.edit_success'));
 
         return response()->json([
-            'redirect_url' => route('business.invoices.edit', ['id' => $invoice_id]),
+            'redirect_url' => route('business.invoices.index', ['id' => $invoice_id]),
             'message' => __('messages.masteradmin.invoice.send_success')
         ]);
 
@@ -508,6 +708,7 @@ class InvoicesController extends Controller
     public function create(): View
     {
         $user = Auth::guard('masteradmins')->user();
+       
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -525,6 +726,7 @@ class InvoicesController extends Controller
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
+      
         
         $salestax = SalesTax::all();
 
@@ -559,12 +761,127 @@ class InvoicesController extends Controller
         $lastInvoice = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
 
         $newId = $lastInvoice ? $lastInvoice->sale_inv_id + 1 : 1;
+      
         return view('masteradmin.invoices.add', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId'));
     }
 
     public function store(Request $request)
     {
         $user = Auth::guard('masteradmins')->user();
+        
+        
+
+       // dd($request->all());
+        if ($request->has('preview') && $request->input('preview') === 'true') {
+
+            // Retrieve all data from the request
+            $previewData = $request->all();
+            //dd($previewData);
+            // Ensure items are part of the request
+            $previewData['items'] = $request->input('items'); 
+
+            
+            session()->put('previewData', $previewData);
+            // Loop through the items and add the product_name
+            foreach ($previewData['items'] as &$item) {
+                // Fetch the product based on the sale_product_id
+                $product = SalesProduct::where('sale_product_id',$item['sale_product_id'])->first();
+                
+                // If product is found, add the product_name to the item
+                if ($product) {
+                    $item['product_name'] = $product->sale_product_name; // Assign the product name
+                } else {
+                    // If no product is found, set 'product_name' to 'N/A'
+                    $item['product_name'] = '';
+                }
+            }
+        
+            // Now previewData['items'] will have the 'product_name' field
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+            $salecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+            $currencys = Countries::where('id', $previewData['sale_currency_id'])->first();
+        
+            // Pass the data to the view
+            $view = view('masteradmin.invoices.preview', compact('previewData', 'businessDetails', 'salecustomer', 'currencys'))->render();
+        
+            return response()->json(['preview_view' => $view, 'preview_data' => $previewData]);
+        }
+        
+
+
+         // Handle redirect back with input data if the user clicks "Back to Edit"
+    if ($request->has('back_to')) {
+        // $previewData = $request->all();
+        $previewData = session('previewData');
+        // dd($previewData);
+        // dD($previewData);
+        $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+        $countries = Countries::all();
+        $states = collect();
+        $currency = null;
+        if (isset($businessDetails->bus_currency)) {
+            $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+        }
+        // dD($currency);
+
+        if ($businessDetails && $businessDetails->country_id) {
+            $states = States::where('country_id', $businessDetails->country_id)->get();
+        }
+
+        $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+        $products = SalesProduct::where('id', $user->id)->get();
+        $currencys = Countries::get();
+      
+        
+        $salestax = SalesTax::all();
+
+        $customers = SalesCustomers::where('id', $user->id)->first();
+
+        $singlecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+
+        // dD($salecustomer1);
+        $specificMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [1, 2, 3, 4])
+        ->get();
+
+        $HideMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [5, 6, 7, 8])
+        ->get();
+
+        $HideSettings = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [10])
+        ->get();
+        
+        $HideDescription = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [9])
+        ->get();
+
+       
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
+
+        $lastEstimate = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
+
+        $newId = $lastEstimate ? $lastEstimate->sale_inv_id + 1 : 1;
+        $sessionData = session('form_data') ?? [];
+
+
+        $view = view('masteradmin.invoices.create_edit_preview', compact('previewData','businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId','singlecustomer','sessionData'))->render();
+
+        return response()->json(['preview_view' => $view,'form_data' => $previewData]);
+       // sale_estim_id
+        // Pass form data back to the form
+    }
+       
 
         $dynamicId = $user->user_id; 
 
@@ -579,7 +896,7 @@ class InvoicesController extends Controller
             'sale_estim_date' => 'required|date',
             'sale_estim_valid_date' => 'required|date',
             'sale_estim_discount_desc' => 'nullable|string',
-            'sale_estim_discount_type' => 'required|in:1,2', // 1 for $, 2 for %
+            'sale_estim_discount_type' => 'nullable|in:1,2', // 1 for $, 2 for %
             'sale_currency_id' => 'required|integer',
             'sale_estim_sub_total' => 'required|numeric',
             'sale_estim_discount_total' => 'required|numeric',
@@ -591,55 +908,56 @@ class InvoicesController extends Controller
             'sale_status' => 'required|integer',
             'sale_estim_item_discount' => 'nullable|integer',
             'sale_total_days' => 'required|integer',
-            'items.*.sale_product_id' => 'required|integer',
-        'items.*.sale_estim_item_desc' => 'required|string',
-        'items.*.sale_estim_item_qty' => 'required|integer|min:1',
-        'items.*.sale_estim_item_price' => 'required|numeric|min:0',
-        'items.*.sale_estim_item_tax' => 'required|integer',
+             'items.*.sale_product_id' => 'required|integer',
+            'items.*.sale_estim_item_desc' => 'required|string',
+            'items.*.sale_estim_item_qty' => 'required|integer|min:1',
+            'items.*.sale_estim_item_price' => 'required|numeric|min:0',
+            'items.*.sale_estim_item_tax' => 'required|integer',
+           
             ],[
-                'sale_estim_title.max' => 'The title may not exceed 255 characters.',
-                'sale_cus_id.required' => 'Please select a customer.',
-                'sale_cus_id.integer' => 'Please select a customer.',
-                'sale_estim_number.required' => 'The estimate number is required.',
-                'sale_estim_number.unique' => 'An estimate with this number already exists. Estimate numbers must be unique.',
-                'sale_estim_date.required' => 'Please select the estimate date.',
-                'sale_estim_valid_date.required' => 'Please select the valid until date.',
-                'sale_estim_discount_type.required' => 'Please select a discount type.',
-                'sale_estim_discount_type.in' => 'The discount type must be either Dollar ($) or Percentage (%).',
-                'sale_estim_sub_total.required' => 'Please enter the sub-total amount.',
-                'sale_estim_discount_total.required' => 'Please enter the total discount amount.',
-                'sale_estim_tax_amount.required' => 'Please enter the tax amount.',
-                'sale_estim_final_amount.required' => 'Please enter the final amount.',
-                'sale_estim_image.image' => 'The file uploaded must be a valid image.',
-                'sale_status.required' => 'Please set the status of the estimate.',
-                'sale_estim_status.required' => 'Please set the estimate status.',
-                'sale_total_days.required' => 'Please set valid date range.',
-                'items.*.sale_product_id.integer' => 'Please select item.',
-                'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
-                'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
-                'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
-                'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
-                'items.*.sale_estim_item_price.min' => 'The price for each item must be at least 0.',
-                'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
-            ]);
+            'sale_estim_title.max' => 'The title may not exceed 255 characters.',
+            'sale_cus_id.required' => 'Please select a customer.',
+            'sale_cus_id.integer' => 'Please select a customer.',
+            'sale_estim_number.required' => 'The estimate number is required.',
+            'sale_estim_number.unique' => 'An estimate with this number already exists. Estimate numbers must be unique.',
+            'sale_estim_date.required' => 'Please select the invoice date.',
+            'sale_estim_valid_date.required' => 'Please select the valid until date.',
+            'sale_estim_discount_type.required' => 'Please select a discount type.',
+            'sale_estim_discount_type.in' => 'The discount type must be either Dollar ($) or Percentage (%).',
+            'sale_estim_sub_total.required' => 'Please enter the sub-total amount.',
+            'sale_estim_discount_total.required' => 'Please enter the total discount amount.',
+            'sale_estim_tax_amount.required' => 'Please enter the tax amount.',
+            'sale_estim_final_amount.required' => 'Please enter the final amount.',
+            'sale_estim_image.image' => 'The file uploaded must be a valid image.',
+            'sale_status.required' => 'Please set the status of the estimate.',
+            'sale_estim_status.required' => 'Please set the estimate status.',
+            'sale_total_days.required' => 'Please set valid date range.',
+            'items.*.sale_product_id.integer' => 'Please select item.',
+            'items.*.sale_estim_item_desc.required' => 'Please enter a description for each item.',
+            'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
+            'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
+            'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
+            'items.*.sale_estim_item_price.min' => 'The price for each item must be at least 0.',
+            'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
+        ]);
     
     
             $invoice = new InvoicesDetails();
             $user = Auth::guard('masteradmins')->user();
-                // Calculate the due days
-                $dueDate = Carbon::parse($request->sale_estim_valid_date); // Due date from the request
-                $currentDate = Carbon::now(); // Today's date
-                $dueDays = $dueDate->diffInDays($currentDate, false); // The second argument 'false' ensures negative values if overdue
-                if ($dueDate->isPast()) {
-                    // If the due date is in the past
-                    $dueMessage = $dueDays === 1 ? '1 day ago' : "$dueDays days ago";
-                } else {
-                    // If the due date is in the future or today
-                    $dueMessage = $dueDays === 1 ? 'Due in 1 day' : "Due in $dueDays days";
-                }
+// Calculate the due days
+$dueDate = Carbon::parse($request->sale_estim_valid_date); // Due date from the request
+$currentDate = Carbon::now(); // Today's date
+$dueDays = $dueDate->diffInDays($currentDate, false); // The second argument 'false' ensures negative values if overdue
+if ($dueDate->isPast()) {
+    // If the due date is in the past
+    $dueMessage = $dueDays === 1 ? '1 day ago' : "$dueDays days ago";
+} else {
+    // If the due date is in the future or today
+    $dueMessage = $dueDays === 1 ? 'Due in 1 day' : "Due in $dueDays days";
+}
 
-                // Format the combined string for `sale_inv_due_days`
-                $dueString = "$dueDays|$dueMessage";
+// Format the combined string for `sale_inv_due_days`
+$dueString = "$dueDays|$dueMessage";
 
             $invoice->fill([
                 'sale_inv_title' => $request->sale_estim_title,
@@ -664,12 +982,13 @@ class InvoicesController extends Controller
                 'sale_inv_status' => 1,
                 'id' => $user->id,
                 'sale_inv_due_amount' => $request->sale_estim_final_amount, 
-                // 'sale_inv_due_days' => abs($dueDays), // Store the absolute value of due days without a negative sign
+               // 'sale_inv_due_days' => abs($dueDays), // Store the absolute value of due days without a negative sign
                'sale_inv_due_message' => $dueString, // Store the friendly due message
             ]);
+            
             $invoice->save();
             $lastInsertedId = $invoice->id;
-           
+         
     
             foreach ($request->input('items') as $item) {
                 $invoiceItem = new InvoicesItems();
@@ -751,6 +1070,7 @@ class InvoicesController extends Controller
 
     public function menuUpdate(Request $request) 
     {   
+       
         Session::put('form_data', $request->all());
 
         return response()->json([
@@ -763,6 +1083,7 @@ class InvoicesController extends Controller
     public function getMenuSessionData()
     {
         $sessionData = Session::get('form_data', []);
+       
         return response()->json($sessionData);
     }
 
@@ -807,7 +1128,7 @@ class InvoicesController extends Controller
         $currencySymbol = $invoice_currency ? $invoice_currency->currency_symbol : '';
         
         $logMsg = "Invoice #{$invoice->sale_inv_number} for {$currencySymbol}{$invoice->sale_inv_final_amount}";
-        // \DB::enableQueryLog();
+     
 
         SentLog::create([
             'log_type' => '2',
@@ -835,6 +1156,7 @@ class InvoicesController extends Controller
     
             $decryptedEstimateId = Crypt::decryptString($base64EstimateId);
             $decryptedUserID = Crypt::decryptString($base64UserID);
+           
             
             $tableName = $decryptedUserID . '_py_business_details';
             
@@ -939,6 +1261,7 @@ class InvoicesController extends Controller
     public function authsendView(Request $request, $id, $slug)
     {
         try {
+           
             $id1= $id;
             $slug1 = $slug;
     
@@ -946,6 +1269,7 @@ class InvoicesController extends Controller
     
             $decryptedEstimateId = $id;
             $decryptedUserID = $slug;
+           
 
             
             $tableName = $decryptedUserID . '_py_business_details';
@@ -1069,6 +1393,7 @@ class InvoicesController extends Controller
     public function duplicate($id, Request $request): View
     {
         $user = Auth::guard('masteradmins')->user();
+       
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
         $countries = Countries::all();
@@ -1086,17 +1411,20 @@ class InvoicesController extends Controller
         $salecustomer = SalesCustomers::where('id', $user->id)->get();
 
         $customers = SalesCustomers::where('id', $user->id)->first();
+      
 
         $products = SalesProduct::where('id', $user->id)->get();
         $currencys = Countries::get();
+      
         
         $salestax = SalesTax::all();
-
+     
         $invoices = InvoicesDetails::where('sale_inv_id', $id)->with('customer')->firstOrFail();
 
         $lastInvoice = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
 
         $newId = $lastInvoice ? $lastInvoice->sale_inv_id + 1 : 1;
+    
 
         $invoicesItems = InvoicesItems::where('sale_inv_id', $id)->get();
 
@@ -1129,17 +1457,129 @@ class InvoicesController extends Controller
         ->get();
 
         $invoiceCustomizeMenu = InvoicesCustomizeMenu::where('sale_inv_id', $id)->get();
+       
 
         $invoicesCustomizeMenu = InvoicesCustomizeMenu::where('sale_inv_id', $id)->get();
       
         
 
+       
         return view('masteradmin.invoices.duplicate', compact('businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','invoices','invoicesItems','customer_states','ship_state','newId','specificMenus','HideMenus','HideSettings','HideDescription','invoiceCustomizeMenu','invoicesCustomizeMenu'));
     }
 
     public function duplicateStore(Request $request)
     {
+       
         $user = Auth::guard('masteradmins')->user();
+
+        
+        if ($request->has('preview') && $request->input('preview') === 'true') {
+
+            // Retrieve all data from the request
+            $previewData = $request->all();
+            session()->put('previewData', $previewData);
+            // Ensure items are part of the request
+            $previewData['items'] = $request->input('items'); 
+        
+            // Loop through the items and add the product_name
+            foreach ($previewData['items'] as &$item) {
+                // Fetch the product based on the sale_product_id
+                $product = SalesProduct::where('sale_product_id',$item['sale_product_id'])->first();
+                
+                // If product is found, add the product_name to the item
+                if ($product) {
+                    $item['product_name'] = $product->sale_product_name; // Assign the product name
+                } else {
+                    // If no product is found, set 'product_name' to 'N/A'
+                    $item['product_name'] = 'N/A';
+                }
+            }
+        
+            // Now previewData['items'] will have the 'product_name' field
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+            $salecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+            $currencys = Countries::where('id', $previewData['sale_currency_id'])->first();
+        
+            // Pass the data to the view
+            $view = view('masteradmin.invoices.preview', compact('previewData', 'businessDetails', 'salecustomer', 'currencys'))->render();
+        
+            return response()->json(['preview_view' => $view, 'preview_data' => $previewData]);
+        }
+        
+
+
+         // Handle redirect back with input data if the user clicks "Back to Edit"
+    if ($request->has('back_to')) {
+        // $previewData = $request->all();
+        $previewData = session('previewData');
+        // dd($previewData);
+        // dD($previewData);
+        $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+        $countries = Countries::all();
+        $states = collect();
+        $currency = null;
+        if (isset($businessDetails->bus_currency)) {
+            $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+        }
+        // dD($currency);
+
+        if ($businessDetails && $businessDetails->country_id) {
+            $states = States::where('country_id', $businessDetails->country_id)->get();
+        }
+
+        $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+        $products = SalesProduct::where('id', $user->id)->get();
+        $currencys = Countries::get();
+      
+        
+        $salestax = SalesTax::all();
+
+        $customers = SalesCustomers::where('id', $user->id)->first();
+
+        $singlecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+
+        // dD($salecustomer1);
+        $specificMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [1, 2, 3, 4])
+        ->get();
+
+        $HideMenus = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [5, 6, 7, 8])
+        ->get();
+
+        $HideSettings = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [10])
+        ->get();
+        
+        $HideDescription = CustomizeMenu::with('children')
+        ->whereIn('cust_menu_id', [9])
+        ->get();
+
+       
+        $customer_states = collect();
+        if ($customers && $customers->sale_bill_country_id) {
+            $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+        }
+
+        $ship_state = collect();
+        if ($customers && $customers->sale_ship_country_id) {
+            $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+        }
+
+        $lastEstimate = InvoicesDetails::orderBy('sale_inv_id', 'desc')->first();
+
+        $newId = $lastEstimate ? $lastEstimate->sale_inv_id + 1 : 1;
+        $sessionData = session('form_data') ?? [];
+
+
+        $view = view('masteradmin.invoices.create_edit_preview', compact('previewData','businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId','singlecustomer','sessionData'))->render();
+
+        return response()->json(['preview_view' => $view,'form_data' => $previewData]);
+
+        // Pass form data back to the form
+    }
 
         $dynamicId = $user->user_id; 
 
@@ -1154,7 +1594,7 @@ class InvoicesController extends Controller
             'sale_estim_date' => 'required|date',
             'sale_estim_valid_date' => 'required|date',
             'sale_estim_discount_desc' => 'nullable|string',
-            'sale_estim_discount_type' => 'required|in:1,2', // 1 for $, 2 for %
+            'sale_estim_discount_type' => 'nullable|in:1,2', // 1 for $, 2 for %
             'sale_currency_id' => 'required|integer',
             'sale_estim_sub_total' => 'required|numeric',
             'sale_estim_discount_total' => 'required|numeric',
@@ -1202,6 +1642,7 @@ class InvoicesController extends Controller
             
             $invoice->save();
             $lastInsertedId = $invoice->id;
+           
             
     
             foreach ($request->input('items') as $item) {
@@ -1285,16 +1726,18 @@ class InvoicesController extends Controller
     public function index(Request $request)
     {
         //
-        // dd($request->all());
+       
         $user = Auth::guard('masteradmins')->user();
+       
         $user_id = $user->user_id;
 
         $startDate = $request->input('start_date'); 
         $endDate = $request->input('end_date');   
+     
 
-        $query = InvoicesDetails::with('customer','currency')->orderBy('created_at', 'desc');
+        $query = InvoicesDetails::with(['customer', 'currency'])->orderBy('created_at', 'desc');
 
-      
+        $filteredInvoices = $query->get();
 
         // foreach ($filteredInvoices as $invoice) {
         //     $dueDate = Carbon::parse($invoice->sale_inv_valid_date);
@@ -1312,7 +1755,6 @@ class InvoicesController extends Controller
         //     }
            
         // }
-        // dd(            $invoice->dueMessage);
         // if ($request->has('start_date') && $request->start_date) {
         //     $query->whereDate('sale_inv_date', '>=', $request->start_date);
         // }
@@ -1354,7 +1796,8 @@ class InvoicesController extends Controller
         $today = Carbon::now()->format('m/d/Y'); // MM/DD/YYYY format
         $next30Days = Carbon::now()->addDays(30)->format('m/d/Y'); // MM/DD/YYYY format
 
-    
+    // Output the formatted dates
+  
 
     $invoicesDueNext30Days = InvoicesDetails::whereBetween('sale_inv_valid_date', [$today, $next30Days])->get();
 
@@ -1364,24 +1807,22 @@ class InvoicesController extends Controller
 
         //    $today = Carbon::now()->format('m/d/Y');
 
-   // Fetch overdue invoices and calculate the sum of overdue amounts 
+   // Fetch overdue invoices and calculate the sum of overdue amounts
    $overdueTotal = InvoicesDetails::where('sale_inv_valid_date', '<', $today) // Due date in the past
    ->where('sale_inv_due_amount', '>', 0)  // Only unpaid invoices
    ->sum('sale_inv_due_amount'); // Sum the overdue amounts
- 
-// Fetch unpaid invoices to display in the table
+
 // $unpaidInvoices = InvoicesDetails::where('sale_inv_due_amount', '>', 0)->get();
-// Separate unpaid, draft, and all invoices
 $unpaidInvoices = $filteredInvoices->filter(function ($invoice) {
     return $invoice->sale_inv_due_amount > 0 &&
            in_array($invoice->sale_status, ['Unsent', 'Sent', 'Partial', 'Overdue']);
 });
-   
+  
 $currencys = Countries::get();
 // $currency = $currencys->firstWhere(sale_currency_id);
 
         if ($request->ajax()) {
-          
+         
             return view('masteradmin.invoices.filtered_results', compact('unpaidInvoices', 'draftInvoices', 'allInvoices', 'user_id', 'salecustomer'))->render();
         }
       
@@ -1390,62 +1831,27 @@ $currencys = Countries::get();
 
     }
 
-    // public function statusStore(Request $request , $id)
+    // public function statusStore(Request $request, $id)
     // {
     //     $user = Auth::guard('masteradmins')->user();
-    //     // $user_id = $user->user_id;
-    //     // Fetch the invoice record for the authenticated user and provided ID
-    //     $invoices = InvoicesDetails::where([
+
+    //     $incoice = InvoicesDetails::where([
     //         'sale_inv_id' => $id,
     //         'id' => $user->id
     //     ])->firstOrFail();
 
-    //     // Define the status transition map
-    //     $statusMap = [
-    //         'Draft' => 'Unsent', // Clicking "Approve" changes "Draft" to "Saved"
-    //         'Unsent' => 'Send', // Clicking "Send" changes "Saved" to "Sent"
-    //         'Sent' => 'Record Payment', // Clicking "Convert to Invoice" changes "Sent" to "Converted"
-    //         'Partlal' => 'Record Payment', // Clicking "Duplicate" changes "Converted" to "Duplicate"
-    //         'Paid' => 'View', 
-    //     ];
-    
+    //     $validated = $request->validate([
+    //         'sale_status' => 'required|string|max:255',
+    //     ]);
 
-    // $currentStatus = $invoices->sale_status;
+    //     $incoice->where('sale_inv_id', $id)->update($validated);
 
-    // $nextStatus = $statusMap[$currentStatus] ?? null;
-
- 
-
-    //     if ($nextStatus) {
-
-        
-    //         $invoices->where('sale_inv_id', $id)->update(['sale_status' => $nextStatus]);
-         
-
-    //         $response = [
-    //             'success' => true,
-    //             'message' => "Invoice status updated to $nextStatus successfully!"
-    //         ];
-           
-    //         switch ($nextStatus) {
-               
-    //             case 'Send':
-    //                 $response['redirect_url'] = route('business.invoices.send', [$invoices->sale_inv_id, $user->user_id]);
-    //                 break;
-
-    //             case 'View':
-    //                 $response['redirect_url'] = route('business.invoices.view', [$invoices->sale_inv_id]);
-    //                 break;
-              
-    //             default:
-    //                 $response['redirect_url'] = route('business.invoices.index'); // Assuming you have an index route
-    //                 break;
-    //         }
-    //     } else {
-    //         $response = [
-    //             'success' => false,
-    //             'message' => 'No further status updates available!',
-    //         ];
+    //     $response = ['success' => true, 'message' => 'Invoice saved successfully!'];
+    //     if ($validated['sale_status'] === 'View') {
+    //         $response['redirect_url'] = route('business.invoices.view', [ $incoice->sale_inv_id]); 
+    //     }else
+    //     if ($validated['sale_status'] === 'Sent') {
+    //         $response['redirect_url'] = route('business.invoices.send', [ $incoice->sale_inv_id, $user->user_id]); 
     //     }
 
     //     return response()->json($response);
@@ -1517,7 +1923,8 @@ $currencys = Countries::get();
     
         return response()->json($response);
     }
-    
+
+
 
     // public function paymentstore(Request $request, $id)
     // {
@@ -1548,7 +1955,6 @@ $currencys = Countries::get();
     //     if ($invoice) {
     //         // Deduct the payment amount from the sale_inv_due_amount
     //         $invammount = $invoice->sale_inv_due_amount - $validatedData['payment_amount'];
-    //         $excessAmount = 0;
 
     //         // Determine the status and the excess amount if the payment is more than the due amount
     //         if ($invammount < 0) {
@@ -1574,13 +1980,10 @@ $currencys = Countries::get();
     //         // Save the updated invoice
     //         $invoice->where('sale_inv_id', $id)->update(['sale_inv_due_amount' => $invammount ,'sale_status'=>$status]);
     //     }
-    //     // \DB::enableQueryLog();
+      
 
     //     $chartOfAccount = ChartAccount::where('chart_acc_id', $validatedData['payment_account'])->first();
-    //     // dd(\DB::getQueryLog()); 
-
-
-    //     // dd($chartOfAccount);
+      
     //         if ($chartOfAccount) {
                
     //             // Update the chart account amount
@@ -1661,78 +2064,6 @@ $currencys = Countries::get();
         }
 
 
-// public function paymentstore(Request $request, $id)
-// {
-//     // Validate the form data
-//     $user = Auth::guard('masteradmins')->user();
-    
-//     $validatedData = $request->validate([
-//         'payment_date' => 'required|date',
-//         'payment_amount' => 'required|numeric',
-//         'payment_method' => 'required|string',
-//         'payment_account' => 'required|string',
-//         'notes' => 'required|string',
-//     ]);
 
-//     // Create a new payment record
-//     RecordPayment::create([
-//         'id' => $user->id,
-//         'invoice_id' => $id,  // Make sure you pass the invoice_id to this form
-//         'payment_date' => $validatedData['payment_date'],
-//         'payment_amount' => $validatedData['payment_amount'],
-//         'payment_method' => $validatedData['payment_method'],
-//         'payment_account' => $validatedData['payment_account'],
-//         'notes' => $validatedData['notes'],
-//     ]);
-
-//     // Fetch the relevant invoice by ID
-//     $invoice = InvoicesDetails::where('sale_inv_id', $id)->first();
-
-//     if ($invoice) {
-//         // Deduct the payment amount from the sale_inv_due_amount
-//         $invammount = $invoice->sale_inv_due_amount - $validatedData['payment_amount'];
-
-//         // Check if the invoice is overdue by comparing the current date with the due date
-//         $today = now();  // Get the current date
-//         $invoiceDueDate = $invoice->sale_inv_due_date;  // Assuming sale_inv_due_date is the due date field in the invoice table
-        
-//         if ($today->gt($invoiceDueDate) && $invammount > 0) {
-//             // If the current date is past the due date and the invoice is not fully paid
-//             $status = 'Overdue';
-//         } else {
-//             // Determine the status and the excess amount if the payment is more than the due amount
-//             if ($invammount < 0) {
-//                 // If the payment exceeds the due amount
-//                 $excessAmount = abs($invammount); // Calculate the excess amount
-//                 $status = 'Over Paid'; // Mark as overpaid
-//                 $invoice->sale_inv_due_amount = 0; // Set due amount to zero
-//             } elseif ($invammount == 0) {
-//                 // Fully paid
-//                 $excessAmount = 0; // No excess amount
-//                 $status = 'Paid';
-//                 $invoice->sale_inv_due_amount = 0; // Set due amount to zero
-//             } else {
-//                 // Partially paid
-//                 $excessAmount = 0; // No excess amount
-//                 $status = 'Partial';
-//                 $invoice->sale_inv_due_amount = $invammount; // Update due amount
-//             }
-//         }
-
-//         // Save the updated invoice
-//         $invoice->where('sale_inv_id', $id)->update(['sale_inv_due_amount' => $invammount, 'sale_status' => $status]);
-//     }
-
-//     // Fetch the relevant Chart of Account record by the payment account
-//     $chartOfAccount = ChartAccount::where('chart_acc_name', $validatedData['payment_account'])->first();
-//     if ($chartOfAccount) {
-//         // Update the chart account amount
-//         $chart_amount = ($chartOfAccount->amount ?? 0) + $validatedData['payment_amount'];
-//         $chartOfAccount->where('chart_acc_name', $validatedData['payment_account'])->update(['amount' => $chart_amount]);
-//     }
-
-//     // Redirect or return a response
-//     return redirect()->route('business.invoices.index')->with('success', 'Payment recorded successfully and Chart of Account updated.');
-// }
 
 }

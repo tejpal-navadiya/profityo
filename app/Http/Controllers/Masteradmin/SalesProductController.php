@@ -48,7 +48,7 @@ class SalesProductController extends Controller
             'sale_product_price' => 'nullable|string|max:255',
             'sale_product_desc' => 'nullable|string|max:255',
         ], [
-            'sale_product_name.required' => 'Please enter name.',
+            'sale_product_name.required' => 'Please item enter name.',
             'sale_product_price.required' => 'The Price field is required.',
             'sale_product_tax.required' => 'The Tax field is required.',
         ]);
@@ -110,7 +110,7 @@ class SalesProductController extends Controller
             'sale_product_desc' => 'nullable|string|max:255',
             'sale_product_tax' => 'nullable',
         ],[
-            'sale_product_name.required' => 'Please enter name.',
+            'sale_product_name.required' => 'Please item enter name.',
             'sale_product_price.required' => 'The Price field is required.',
             'sale_product_tax.required' => 'The Tax field is required.',
         ]);
@@ -130,7 +130,7 @@ class SalesProductController extends Controller
 
         $SalesProductu->where('sale_product_id', $sale_product_id)->update($validatedData);
 
-        return redirect()->route('business.salesproduct.edit', ['SalesProduct' => $SalesProductu->sale_product_id])
+        return redirect()->route('business.salesproduct.index', ['SalesProduct' => $SalesProductu->sale_product_id])
             ->with('sales-product-edit', __('messages.masteradmin.sales-product.edit_salesproduct_success'));
     }
 

@@ -42,13 +42,13 @@
               <!-- /.card-header -->
               <div class="card-body">
                  
-                <p class="company_business_name">{{ $bill->vendor->purchases_vendor_name }}</p>
-                <p class="company_details_text">{{ $bill->vendor->purchases_vendor_address1 }}</p>
-                <p class="company_details_text">{{ $bill->vendor->purchases_vendor_address2 }}</p>
-                <p class="company_details_text">{{ $bill->vendor->purchases_vendor_city_name }}, {{ $bill->vendor->state->name }} {{ $bill->vendor->purchases_vendor_zipcode }}</p>
-                <p class="company_details_text">{{ $bill->vendor->country->name }}</p>
-                <p class="company_details_text">{{ $bill->vendor->purchases_vendor_email }}</p>
-                <p class="company_details_text">{{ $bill->vendor->purchases_vendor_phone }}</p>
+                <p class="company_business_name">{{ $bill->vendor->purchases_vendor_name ?? '' }}</p>
+                <p class="company_details_text">{{ $bill->vendor->purchases_vendor_address1 ?? '' }}</p>
+                <p class="company_details_text">{{ $bill->vendor->purchases_vendor_address2 ?? '' }}</p>
+                <p class="company_details_text">{{ $bill->vendor->purchases_vendor_city_name ?? '' }}, {{ $bill->vendor->state->name ?? '' }} {{ $bill->vendor->purchases_vendor_zipcode ?? '' }}</p>
+                <p class="company_details_text">{{ $bill->vendor->country->name ?? '' }}</p>
+                <p class="company_details_text">{{ $bill->vendor->purchases_vendor_email ?? '' }}</p>
+                <p class="company_details_text">{{ $bill->vendor->purchases_vendor_phone ?? '' }}</p>
               </div>
             </div>
           </div>
@@ -72,15 +72,15 @@
                         </tr>
                         <tr>
                         <td><strong>Currency :</strong></td>
-                        <td>{{ $currency->iso2 }} - {{ $currency->currency_name }}</td>
+                        <td>{{ $currency->iso2 }} - {{ $currency->currency_name ?? '' }}</td>
                         </tr>
                         <tr>
                         <td><strong>P.O./S.O :</strong></td>
-                        <td>{{ $bill->sale_bill_customer_ref }}</td>
+                        <td>{{ $bill->sale_bill_customer_ref ?? '' }}</td>
                         </tr>
                         <tr>
                         <td><strong>Notes :</strong></td>
-                        <td>{{ $bill->sale_bill_note }}</td>
+                        <td>{{ $bill->sale_bill_note ?? '' }}</td>
                         </tr>
                     </tbody>
                     </table>
@@ -115,10 +115,10 @@
                   <tr>
                     <td>{{ $item->bill_product->purchases_product_name ?? 'No Name' }}</td>
                     <td>{{ $item->expense_category->chart_acc_name ?? 'No Name' }}</td>
-                    <td>{{ $item->sale_bill_item_desc }}</td>
-                    <td class="text-center">{{ $item->sale_bill_item_qty }}</td>
-                    <td class="text-center">{{ $item->sale_bill_item_price }}</td>
-                    <td class="text-center">{{ $item->item_tax->tax_name ?? 'No Tax Name' }} {{ $item->item_tax->tax_rate ?? 'No Tax Name' }}%</td>
+                    <td>{{ $item->sale_bill_item_desc ?? '' }}</td>
+                    <td class="text-center">{{ $item->sale_bill_item_qty ?? '' }}</td>
+                    <td class="text-center">{{ $item->sale_bill_item_price ?? '' }}</td>
+                    <td class="text-center">{{ $item->item_tax->tax_name ?? 'No Tax Name' ?? ''}} {{ $item->item_tax->tax_rate ?? 'No Tax Name' ?? ''}}%</td>
                     <td class="text-right">{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $item->sale_bill_item_qty * $item->sale_bill_item_price ?? '0'}}</td>
                   </tr>
                   @endforeach
@@ -131,23 +131,23 @@
                   <table class="table total_table">
                     <tr>
                       <td style="width:50%">Sub Total :</td>
-                      <td>{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_sub_total }}</td>
+                      <td>{{ $currencys->find($bill->sale_currency_id)->currency_symbol ?? '' }}{{ $bill->sale_bill_sub_total ?? '' }}</td>
                     </tr>
                     <tr>
                       <td>Tax1 :</td>
-                      <td>{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_tax_amount }}</td>
+                      <td>{{ $currencys->find($bill->sale_currency_id)->currency_symbol ?? '' }}{{ $bill->sale_bill_tax_amount ?? '' }}</td>
                     </tr>
                     <tr>
                       <td>Total :</td>
-                      <td>{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_final_amount }}</td>
+                      <td>{{ $currencys->find($bill->sale_currency_id)->currency_symbol ?? '' }}{{ $bill->sale_bill_final_amount ?? '' }}</td>
                     </tr>
                     <tr>
                       <td>Total Paid :</td>
-                      <td>{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_paid_amount }}</td>
+                      <td>{{ $currencys->find($bill->sale_currency_id)->currency_symbol ?? '' }}{{ $bill->sale_bill_paid_amount ?? '' }}</td>
                     </tr>
                     <tr>
                       <td>Amount Due :</td>
-                      <td>{{ $currencys->find($bill->sale_currency_id)->currency_symbol }}{{ $bill->sale_bill_due_amount }}</td>
+                      <td>{{ $currencys->find($bill->sale_currency_id)->currency_symbol ?? '' }}{{ $bill->sale_bill_due_amount ?? '' }}</td>
                     </tr>
                   </table>
                 </div>

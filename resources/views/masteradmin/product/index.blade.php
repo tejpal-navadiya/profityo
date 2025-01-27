@@ -56,14 +56,14 @@
       <div class="card px-20">
         <div class="card-body1">
           <div class="col-md-12 table-responsive pad_table">
-            <table id="example1" class="table table-hover text-nowrap">
+            <table id="example1" class="table table-hover">
               <thead>
                 <tr>
                   <th>Name</th>
                   <th>Description</th>
                   <th>Price</th>
                   <th>Tax</th>
-                  <th class="sorting_disabled text-right" data-orderable="false">Actions</th>
+                  <th class="sorting_disabled text-right" data-orderable="false" style="width: 120px;">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -90,12 +90,12 @@
 
               <div class="modal fade" id="delete-product-modal-{{ $value->sale_product_id }}" tabindex="-1" role="dialog"
               aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-              <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+              <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
                 <form id="delete-plan-form" action="{{ route('business.salesproduct.destroy', ['salesproduct' => $value->sale_product_id]) }}" method="POST">
                 @csrf
                 @method('DELETE')
-                <div class="modal-body pad-1 text-center">
+                <div class="modal-body delete-pad text-center">
                 <i class="fas fa-solid fa-trash delete_icon"></i>
                 <p class="company_business_name px-10"><b>Delete Product & services</b></p>
                 <p class="company_details_text px-10">Delete Item</p>

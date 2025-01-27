@@ -17,13 +17,13 @@
       <li class="nav-item dropdown">
         <a class="nav-link user_nav" data-toggle="dropdown" href="#">
           @if(Auth::user()->image)
-            <img src="{{ url(env('IMAGE_URL').'superadmin/profile_image/' . Auth::user()->image) }} " class="elevation-2 user_img" target="_blank">
+            <img src="{{ url(env('IMAGE_URL').'/superadmin/profile_image/' . Auth::user()->image) }} " class="elevation-2 user_img" target="_blank">
           @else
             <img src="{{url('public/dist/img/user2-160x160.jpg')}}" class="elevation-2 user_img" alt="User Image">
           @endif
           <span class="d-block dropdown-toggle" >{{ Auth::user()->name }}</span>
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <div class="dropdown-menu dropdown-menu-right">
             <x-dropdown-link :href="route('profile.edit')">
                 <i class="fas fa-user mr-2"></i> {{ __('Profile') }}
             </x-dropdown-link>

@@ -103,6 +103,17 @@
       </div>
       <!-- /.row -->
       <!-- Small boxes (Stat box) -->
+      @if(Session::has('invoice-edit'))
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ Session::get('invoice-edit') }}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          @php
+          Session::forget('invoice-edit');
+      @endphp
+      @endif
       <div class="col-lg-12 px-20 fillter_box">
       <div class="row align-items-center justify-content-between">
         <div class="col-auto">
@@ -206,7 +217,7 @@
             <td>{{ \Carbon\Carbon::parse($value->sale_inv_date)->format('M d, Y') }}</td>
             <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_final_amount }}</td>
             <td>{{ $currencys->firstWhere('id', $value->sale_currency_id)->currency_symbol ?? '' }}{{ $value->sale_inv_due_amount }}</td>
-            <td>
+           <td>
             @php
           // Calculate the due date
           $dueDate = \Carbon\Carbon::parse($value->sale_inv_valid_date);
@@ -221,7 +232,7 @@
           $dueMessageColor = 'black'; // Set default color
 
           } else {
-          $dueMessage = abs($daysDifference - 1) . ' Days ago'; // Overdue message
+          $dueMessage = abs($daysDifference - 1 +1) . ' Days ago'; // Overdue message
           $dueMessageColor = 'red'; // Overdue color
           }
       @endphp
@@ -229,9 +240,6 @@
             {{ $dueMessage }}
             </span>
             </td>
-           
-            
-
             <td>
                         @php
                             // Fetch the current due amount and original amount for this specific record
@@ -312,21 +320,7 @@
             <td>
             <ul class="navbar-nav ml-auto float-sm-right">
             <li class="nav-item dropdown d-flex align-items-center">
-            <!-- @php
-          $nextStatus = '';
-          if ($value->sale_status == 'Draft') {
-          $nextStatus = 'Approve';
-          } elseif ($value->sale_status == 'Unsent') {
-          $nextStatus = 'Send';
-          } elseif ($value->sale_status == 'Sent') {
-          $nextStatus = 'Record Payment';
-          } elseif ($value->sale_status == 'Partial') {
-          $nextStatus = 'Record Payment';
-          } elseif ($value->sale_status == 'Paid') {
-          $nextStatus = 'View';
-          }
-      @endphp -->
-      @php
+            @php
     $nextStatus = '';
     $actionUrl = '#';
 
@@ -343,19 +337,6 @@
         $actionUrl = route('business.invoices.view', $value->sale_inv_id); // View route
     }
 @endphp
-
-<!-- <td>
-    @if($nextStatus == 'View')
-        <a href="{{ $actionUrl }}" class="btn btn-primary">
-            {{ $nextStatus }}
-        </a>
-    @else
-        <button class="btn btn-secondary" disabled>
-            {{ $nextStatus }}
-        </button>
-    @endif
-</td> -->
-
 
             @if($nextStatus == 'Record Payment')
         <a href="javascript:void(0);" data-toggle="modal"
@@ -395,26 +376,27 @@
           </div>
           </div>
           </div> -->
-          <div class="col-md-3">
+          <div class="col-md-6">
           <div class="form-group">
           <label>Date</label>
           <div class="input-group date" id="estimatedate"
           data-target-input="nearest">
-          <input type="hidden" id="from-datepickerp-hidden"
+          <input type="hidden" id="unpaidfrom-datepickerp-hidden"
           value="{{ $value->sale_inv_date }}" />
           <!-- <input type="text" class="form-control datetimepicker-input" name="sale_estim_date" placeholder=""
           data-target="#estimatedate" />
           <div class="input-group-append" data-target="#estimatedate" data-toggle="datetimepicker">
           <div class="input-group-text"><i class="fa fa-calendar-alt"></i></div>
           </div> -->
-          <x-flatpickr id="from-datepickerp" name="payment_date"
+          <x-flatpickr id="unpaidfrom-datepickerp" name="payment_date"
           placeholder="Select a date"
-          value="{{ old('payment_date', $value->sale_inv_date) }}" />
+           />
           <div class="input-group-append">
-          <div class="input-group-text" id="from-calendar-iconp">
+          <div class="input-group-text" id="unpaidfrom-calendar-iconp">
           <i class="fa fa-calendar-alt"></i>
           </div>
           </div>
+          
           </div>
           <span class="error-message" id="error_payment_date"
           style="color: red;"></span>
@@ -537,14 +519,14 @@
 
             <div class="modal fade" id="deleteinvoiceunpaid-{{ $value->sale_inv_id }}" tabindex="-1"
             role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
             <form method="POST"
             action="{{ route('business.invoices.destroy', ['id' => $value->sale_inv_id]) }}"
             id="delete-form-{{ $value->sale_inv_id }}" data-id="{{ $value->sale_inv_id }}">
             @csrf
             @method('DELETE')
-            <div class="modal-body pad-1 text-center">
+            <div class="modal-body delete-pad text-center">
             <i class="fas fa-solid fa-trash delete_icon"></i>
             <p class="company_business_name px-10"><b>Delete invoice</b></p>
             <p class="company_details_text">Are You Sure You Want to Delete This invoice?</p>
@@ -1488,12 +1470,34 @@
       fromdatepickerp.open();
     });
 
+var unpaidformInput = document.getElementById('unpaidfrom-datepickerp-hidden');
+     var unpaidfromdatepickerp = flatpickr("#unpaidfrom-datepickerp", {
+        locale: 'en',
+        altInput: true,
+        dateFormat: "MM/DD/YYYY",
+        altFormat: "MM/DD/YYYY",
+        defaultDate: unpaidformInput.value || null,
+     
+      parseDate: (datestr, format) => {
+      return moment(datestr, format, true).toDate();
+      },
+      formatDate: (date, format, locale) => {
+      return moment(date).format(format);
+      }
+    });
+    
+      document.getElementById('unpaidfrom-calendar-iconp').addEventListener('click', function() {
+          //alert('joo');
+            unpaidfromdatepickerp.open();
+        });
+        
+  
 
     var todatepicker = flatpickr("#to-datepicker", {
-      locale: 'en',
-      altInput: true,
-      dateFormat: "MM/DD/YYYY",
-      altFormat: "MM/DD/YYYY",
+        locale: 'en',
+        altInput: true,
+        dateFormat: "MM/DD/YYYY",
+        altFormat: "MM/DD/YYYY",
       onChange: function (selectedDates, dateStr, instance) {
 
       fetchFilteredData();

@@ -138,14 +138,128 @@ class RecurringInvoicesController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
+        
+        // dd($request->all());
+        $user = Auth::guard('masteradmins')->user();
+        if ($request->has('preview') && $request->input('preview') === 'true') {
+
+            // Retrieve all data from the request
+            $previewData = $request->all();
+            //dd($previewData);
+            session()->put('previewData', $previewData);
+            // Ensure items are part of the request
+            $previewData['items'] = $request->input('items'); 
+        
+            // Loop through the items and add the product_name
+            foreach ($previewData['items'] as &$item) {
+                // Fetch the product based on the sale_product_id
+                $product = SalesProduct::where('sale_product_id',$item['sale_product_id'])->first();
+                
+                // If product is found, add the product_name to the item
+                if ($product) {
+                    $item['product_name'] = $product->sale_product_name; // Assign the product name
+                } else {
+                    // If no product is found, set 'product_name' to 'N/A'
+                    $item['product_name'] = 'N/A';
+                }
+            }
+
+            
+        
+            // Now previewData['items'] will have the 'product_name' field
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+            $salecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+            $currencys = Countries::where('id', $previewData['sale_currency_id'])->first();
+        
+            // Pass the data to the view
+            $view = view('masteradmin.recurring_invoices.preview', compact('previewData', 'businessDetails', 'salecustomer', 'currencys'))->render();
+        
+            return response()->json(['preview_view' => $view, 'preview_data' => $previewData]);
+        }
+        
+
+
+        // Handle redirect back with input data if the user clicks "Back to Edit"
+        if ($request->has('back_to')) {
+            // $previewData = $request->all();
+            $previewData = session('previewData');
+            // dd($previewData);
+            // dD($previewData);
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+            $countries = Countries::all();
+            $states = collect();
+            $currency = null;
+            if (isset($businessDetails->bus_currency)) {
+                $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+            }
+            // dD($currency);
+
+            if ($businessDetails && $businessDetails->country_id) {
+                $states = States::where('country_id', $businessDetails->country_id)->get();
+            }
+
+            $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+            $products = SalesProduct::where('id', $user->id)->get();
+            $currencys = Countries::get();
+        
+            
+            $salestax = SalesTax::all();
+
+            $customers = SalesCustomers::where('id', $user->id)->first();
+
+            $singlecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+
+            // dD($salecustomer1);
+            $specificMenus = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [1, 2, 3, 4])
+            ->get();
+
+            $HideMenus = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [5, 6, 7, 8])
+            ->get();
+
+            $HideSettings = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [10])
+            ->get();
+            
+            $HideDescription = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [9])
+            ->get();
+
+        
+            $customer_states = collect();
+            if ($customers && $customers->sale_bill_country_id) {
+                $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+            }
+
+            $ship_state = collect();
+            if ($customers && $customers->sale_ship_country_id) {
+                $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+            }
+
+            $lastEstimate = RecurringInvoices::orderBy('sale_re_inv_id', 'desc')->first();
+
+            $newId = $lastEstimate ? $lastEstimate->sale_re_inv_id + 1 : 1;
+            $sessionData = session('form_data') ?? [];
+
+
+            $view = view('masteradmin.recurring_invoices.create_edit_preview', compact('previewData','businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId','singlecustomer','sessionData'))->render();
+
+            return response()->json(['preview_view' => $view,'form_data' => $previewData]);
+
+            // Pass form data back to the form
+        }
+        
         $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',
             'sale_estim_summary' => 'nullable|string',
             'sale_cus_id' => 'nullable|integer',
             'sale_estim_number' => 'required|string|max:255',
-            'sale_estim_customer_ref' => 'required|string|max:255',
+            'sale_estim_customer_ref' => 'nullable|string|max:255',
             'sale_re_inv_payment_due_id' => 'required|integer',
-            'sale_estim_discount_desc' => 'required|string',
+            'sale_estim_discount_desc' => 'nullable|string',
             'sale_estim_discount_type' => 'required|in:1,2', // 1 for $, 2 for %
             'sale_currency_id' => 'required|integer',
             'sale_estim_sub_total' => 'required|numeric',
@@ -295,7 +409,7 @@ class RecurringInvoicesController extends Controller
         // dd($salecustomer['sale_cus_id']);
 
         $products = SalesProduct::where('id', $user->id)->get();
-        $currencys = Countries::get();
+        $currencys = Countries::all();
         // dd($currencys);
         
         $salestax = SalesTax::all();
@@ -349,6 +463,119 @@ class RecurringInvoicesController extends Controller
     {
         // dd($request->all());
         // \DB::enableQueryLog();
+        
+          $user = Auth::guard('masteradmins')->user();
+        if ($request->has('preview') && $request->input('preview') === 'true') {
+
+            // Retrieve all data from the request
+            $previewData = $request->all();
+            //dd($previewData);
+            session()->put('previewData', $previewData);
+            // Ensure items are part of the request
+            $previewData['items'] = $request->input('items'); 
+        
+            // Loop through the items and add the product_name
+            foreach ($previewData['items'] as &$item) {
+                // Fetch the product based on the sale_product_id
+                $product = SalesProduct::where('sale_product_id',$item['sale_product_id'])->first();
+                
+                // If product is found, add the product_name to the item
+                if ($product) {
+                    $item['product_name'] = $product->sale_product_name; // Assign the product name
+                } else {
+                    // If no product is found, set 'product_name' to 'N/A'
+                    $item['product_name'] = 'N/A';
+                }
+            }
+
+            
+        
+            // Now previewData['items'] will have the 'product_name' field
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+            $salecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+            $currencys = Countries::where('id', $previewData['sale_currency_id'])->first();
+        
+            // Pass the data to the view
+            $view = view('masteradmin.recurring_invoices.preview', compact('previewData', 'businessDetails', 'salecustomer', 'currencys'))->render();
+        
+            return response()->json(['preview_view' => $view, 'preview_data' => $previewData]);
+        }
+        
+
+
+        // Handle redirect back with input data if the user clicks "Back to Edit"
+        if ($request->has('back_to')) {
+            // $previewData = $request->all();
+            $previewData = session('previewData');
+            // dd($previewData);
+            // dD($previewData);
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+            $countries = Countries::all();
+            $states = collect();
+            $currency = null;
+            if (isset($businessDetails->bus_currency)) {
+                $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+            }
+            // dD($currency);
+
+            if ($businessDetails && $businessDetails->country_id) {
+                $states = States::where('country_id', $businessDetails->country_id)->get();
+            }
+
+            $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+            $products = SalesProduct::where('id', $user->id)->get();
+            $currencys = Countries::get();
+        
+            
+            $salestax = SalesTax::all();
+
+            $customers = SalesCustomers::where('id', $user->id)->first();
+
+            $singlecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+
+            // dD($salecustomer1);
+            $specificMenus = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [1, 2, 3, 4])
+            ->get();
+
+            $HideMenus = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [5, 6, 7, 8])
+            ->get();
+
+            $HideSettings = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [10])
+            ->get();
+            
+            $HideDescription = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [9])
+            ->get();
+
+        
+            $customer_states = collect();
+            if ($customers && $customers->sale_bill_country_id) {
+                $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+            }
+
+            $ship_state = collect();
+            if ($customers && $customers->sale_ship_country_id) {
+                $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+            }
+
+            $lastEstimate = RecurringInvoices::orderBy('sale_re_inv_id', 'desc')->first();
+
+            $newId = $lastEstimate ? $lastEstimate->sale_re_inv_id + 1 : 1;
+            $sessionData = session('form_data') ?? [];
+
+
+            $view = view('masteradmin.recurring_invoices.create_edit_preview', compact('previewData','businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId','singlecustomer','sessionData'))->render();
+
+            return response()->json(['preview_view' => $view,'form_data' => $previewData]);
+
+            // Pass form data back to the form
+        }
+
 
         $validatedData = $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',
@@ -373,26 +600,26 @@ class RecurringInvoicesController extends Controller
             'items.*.sale_estim_item_price' => 'required|numeric|min:0',
             'items.*.sale_estim_item_tax' => 'required|integer',
         ],[
-            'sale_estim_title.max' => 'The title may not exceed 255 characters.',
-            'sale_cus_id.required' => 'Please select a customer.',
-            'sale_cus_id.integer' => 'Please select a customer.',
-            'sale_estim_number.required' => 'The estimate number is required.',
-            'sale_re_inv_payment_due_id.required' => 'Please select the Payment Due.',
-            'sale_estim_discount_type.required' => 'Please select a discount type.',
-            'sale_estim_discount_type.in' => 'The discount type must be either Dollar ($) or Percentage (%).',
-            'sale_estim_sub_total.required' => 'Please enter the sub-total amount.',
-            'sale_estim_discount_total.required' => 'Please enter the total discount amount.',
-            'sale_estim_tax_amount.required' => 'Please enter the tax amount.',
-            'sale_estim_final_amount.required' => 'Please enter the final amount.',
-            'sale_estim_image.image' => 'The file uploaded must be a valid image.',
-            'items.*.sale_product_id.integer' => 'Please select item.',
-            'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
-            'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
-            'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
-            'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
-            'items.*.sale_estim_item_price.min' => 'The price for each item must be at least 0.',
-            'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
-        ]);
+                'sale_estim_title.max' => 'The title may not exceed 255 characters.',
+                'sale_cus_id.required' => 'Please select a customer.',
+                'sale_cus_id.integer' => 'Please select a customer.',
+                'sale_estim_number.required' => 'The estimate number is required.',
+                'sale_re_inv_payment_due_id.required' => 'Please select the Payment Due.',
+                'sale_estim_discount_type.required' => 'Please select a discount type.',
+                'sale_estim_discount_type.in' => 'The discount type must be either Dollar ($) or Percentage (%).',
+                'sale_estim_sub_total.required' => 'Please enter the sub-total amount.',
+                'sale_estim_discount_total.required' => 'Please enter the total discount amount.',
+                'sale_estim_tax_amount.required' => 'Please enter the tax amount.',
+                'sale_estim_final_amount.required' => 'Please enter the final amount.',
+                'sale_estim_image.image' => 'The file uploaded must be a valid image.',
+                'items.*.sale_product_id.integer' => 'Please select item.',
+                'items.*.sale_estim_item_desc.required' => 'Please provide a description for each item.',
+                'items.*.sale_estim_item_qty.required' => 'Please enter the quantity for each item.',
+                'items.*.sale_estim_item_qty.min' => 'The quantity for each item must be at least 1.',
+                'items.*.sale_estim_item_price.required' => 'Please enter the price for each item.',
+                'items.*.sale_estim_item_price.min' => 'The price for each item must be at least 0.',
+                'items.*.sale_estim_item_tax.required' => 'Please select the tax amount for each item.',
+            ]);
 
         $user = Auth::guard('masteradmins')->user();
 
@@ -496,7 +723,7 @@ class RecurringInvoicesController extends Controller
         session()->flash('reinvoice-edit', __('messages.masteradmin.re-invoice.edit_success'));
 
         return response()->json([
-            'redirect_url' => route('business.recurring_invoices.edit', ['id' => $reinvoice_id]),
+            'redirect_url' => route('business.recurring_invoices.index', ['id' => $reinvoice_id]),
             'message' => __('messages.masteradmin.re-invoice.edit_success')
         ]);
 
@@ -558,7 +785,8 @@ class RecurringInvoicesController extends Controller
 
     public function duplicate($id, Request $request): View
     {
-        $user = Auth::guard('masteradmins')->user();
+        
+          $user = Auth::guard('masteradmins')->user();
         // dd($user);
         $businessDetails = BusinessDetails::with(['state', 'country'])->first();
 
@@ -634,6 +862,120 @@ class RecurringInvoicesController extends Controller
 
     public function duplicateStore(Request $request)
     {
+          $user = Auth::guard('masteradmins')->user();
+        
+        if ($request->has('preview') && $request->input('preview') === 'true') {
+
+            // Retrieve all data from the request
+            $previewData = $request->all();
+            //dd($previewData);
+            session()->put('previewData', $previewData);
+            // Ensure items are part of the request
+            $previewData['items'] = $request->input('items'); 
+        
+            // Loop through the items and add the product_name
+            foreach ($previewData['items'] as &$item) {
+                // Fetch the product based on the sale_product_id
+                $product = SalesProduct::where('sale_product_id',$item['sale_product_id'])->first();
+                
+                // If product is found, add the product_name to the item
+                if ($product) {
+                    $item['product_name'] = $product->sale_product_name; // Assign the product name
+                } else {
+                    // If no product is found, set 'product_name' to 'N/A'
+                    $item['product_name'] = 'N/A';
+                }
+            }
+
+            
+        
+            // Now previewData['items'] will have the 'product_name' field
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+            $salecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+            $currencys = Countries::where('id', $previewData['sale_currency_id'])->first();
+        
+            // Pass the data to the view
+            $view = view('masteradmin.recurring_invoices.preview', compact('previewData', 'businessDetails', 'salecustomer', 'currencys'))->render();
+        
+            return response()->json(['preview_view' => $view, 'preview_data' => $previewData]);
+        }
+        
+
+
+        // Handle redirect back with input data if the user clicks "Back to Edit"
+        if ($request->has('back_to')) {
+            // $previewData = $request->all();
+            $previewData = session('previewData');
+            // dd($previewData);
+            // dD($previewData);
+            $businessDetails = BusinessDetails::with(['state', 'country'])->first();
+
+            $countries = Countries::all();
+            $states = collect();
+            $currency = null;
+            if (isset($businessDetails->bus_currency)) {
+                $currency = Countries::where('id', $businessDetails->bus_currency)->first();
+            }
+            // dD($currency);
+
+            if ($businessDetails && $businessDetails->country_id) {
+                $states = States::where('country_id', $businessDetails->country_id)->get();
+            }
+
+            $salecustomer = SalesCustomers::where('id', $user->id)->get();
+
+            $products = SalesProduct::where('id', $user->id)->get();
+            $currencys = Countries::get();
+        
+            
+            $salestax = SalesTax::all();
+
+            $customers = SalesCustomers::where('id', $user->id)->first();
+
+            $singlecustomer = SalesCustomers::where('sale_cus_id', $previewData['sale_cus_id'])->first();
+
+            // dD($salecustomer1);
+            $specificMenus = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [1, 2, 3, 4])
+            ->get();
+
+            $HideMenus = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [5, 6, 7, 8])
+            ->get();
+
+            $HideSettings = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [10])
+            ->get();
+            
+            $HideDescription = CustomizeMenu::with('children')
+            ->whereIn('cust_menu_id', [9])
+            ->get();
+
+        
+            $customer_states = collect();
+            if ($customers && $customers->sale_bill_country_id) {
+                $customer_states = States::where('country_id', $customers->sale_bill_country_id)->get();
+            }
+
+            $ship_state = collect();
+            if ($customers && $customers->sale_ship_country_id) {
+                $ship_state = States::where('country_id', $customers->sale_ship_country_id)->get();
+            }
+
+            $lastEstimate = RecurringInvoices::orderBy('sale_re_inv_id', 'desc')->first();
+
+            $newId = $lastEstimate ? $lastEstimate->sale_re_inv_id + 1 : 1;
+            $sessionData = session('form_data') ?? [];
+
+
+            $view = view('masteradmin.recurring_invoices.create_edit_preview', compact('previewData','businessDetails','countries','states','currency','salecustomer','products','currencys','salestax','specificMenus','HideMenus','HideSettings','HideDescription','customer_states','ship_state','newId','singlecustomer','sessionData'))->render();
+
+            return response()->json(['preview_view' => $view,'form_data' => $previewData]);
+
+            // Pass form data back to the form
+        }
+
+
         // dd($request->sale_currency_id);
         $request->validate([
             'sale_estim_title' => 'nullable|string|max:255',

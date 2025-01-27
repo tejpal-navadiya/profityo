@@ -75,8 +75,8 @@
                   <select class="form-control select2" name="purchases_product_tax" id="purchases_product_tax">
                     <option value="">Select Tax</option>
                     @foreach($SalesTax as $salesTax)
-                       <option value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }}({{ $salesTax->tax_rate }}%)</option>
-                    @endforeach
+            <option value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }}({{ $salesTax->tax_rate }}%)</option>
+          @endforeach
                   </select>
                 </div>
               </div>

@@ -19,7 +19,7 @@
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
             <a href="{{route('business.salesproduct.index')}}"><button class="add_btn_br">Cancel</button></a>
-            <a href="#"><button class="add_btn">Save</button></a>
+            <button type="submit" form="pro-Form" class="add_btn">Save</button>
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -46,7 +46,7 @@
           <h3 class="card-title">Edit New Product Or Service</h3>
         </div>
         <!-- /.card-header -->
-        <form method="POST"
+        <form method="POST" id="pro-Form"
           action="{{ route('business.salesproduct.update', ['SalesProduct' => $SalesProducte->sale_product_id]) }}">
           @csrf
           @method('Patch')
@@ -69,7 +69,7 @@
                 <div class="form-group">
                   <label>Price</label>
                   <div class="d-flex">
-                    <input type="number" class="form-control form-controltext" name="sale_product_price"
+                    <input type="number" min="0" class="form-control form-controltext" name="sale_product_price"
                       aria-describedby="inputGroupPrepend" placeholder="0.00"
                       value="{{ $SalesProducte->sale_product_price }}">
                     <select
@@ -113,11 +113,13 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" id="sale_product_sell" name="sale_product_sell" type="checkbox"
-                    value="on" @if($SalesProducte->sale_product_sell == 'on') checked @endif>
-                  <label class="form-check-label"><strong>Sell This</strong> (Allow this Product or Service to be Added
-                    to Invoices.)</label>
+                <div class="form-group">
+                  <div class="form-check d-flex align-items-baseline">
+                    <input class="form-check-input" id="sale_product_sell" name="sale_product_sell" type="checkbox"
+                      value="on" @if($SalesProducte->sale_product_sell == 'on') checked @endif>
+                    <label class="form-check-label"><strong>Sell This</strong> (Allow this Product or Service to be Added
+                      to Invoices.)</label>
+                  </div>
                 </div>
                 <div class="form-group" id="income_account_group">
                   <label>Income Account <span class="text-danger">*</span></label>
@@ -134,11 +136,13 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" id="sale_product_buy" name="sale_product_buy" type="checkbox"
-                    value="on" @if($SalesProducte->sale_product_buy == 'on') checked @endif>
-                  <label class="form-check-label"><strong>Buy This</strong> (Allow this Product or Service to be Added
-                    to Bills.)</label>
+                <div class="form-group">
+                  <div class="form-check d-flex align-items-baseline">
+                    <input class="form-check-input" id="sale_product_buy" name="sale_product_buy" type="checkbox"
+                      value="on" @if($SalesProducte->sale_product_buy == 'on') checked @endif>
+                    <label class="form-check-label"><strong>Buy This</strong> (Allow this Product or Service to be Added
+                      to Bills.)</label>
+                  </div>
                 </div>
                 <div class="form-group" id="expense_account_group">
                   <label>Expense Account <span class="text-danger">*</span></label>

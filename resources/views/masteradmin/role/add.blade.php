@@ -18,7 +18,7 @@
           </div><!-- /.col -->
           <div class="col-auto">
             <ol class="breadcrumb float-sm-right">
-            <a href="{{ route('business.role.index') }}"><button class="add_btn_br">Cancel</button></a>
+              <a href="{{ route('business.role.index') }}"><button class="add_btn_br">Cancel</button></a>
             <button type="submit" form="items-form" class="add_btn">Save</button>
             </ol>
           </div><!-- /.col -->
@@ -44,11 +44,22 @@
             <div class="row pad-5">
               <div class="col-md-12">
                 <div class="form-group">
-                  <label for="role_name">Role Name</label>
+                  <label for="role_name">Role Name<span class="text-danger">*</span></label>
                   <input type="text" class="form-control @error('role_name') is-invalid @enderror"
                         id="role_name" name="role_name" placeholder="Enter Role Name"
                         value="{{ old('role_name') }}" />
                     @error('role_name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="description">Description</label>
+                  <textarea type="text" class="form-control @error('description') is-invalid @enderror"
+                        id="description" name="description" placeholder="Enter Description"
+                        value="{{ old('description') }}"></textarea>
+                    @error('description')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

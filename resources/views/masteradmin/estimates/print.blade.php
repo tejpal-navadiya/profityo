@@ -40,7 +40,7 @@
                         <div class="row justify-content-between pad-3 print-box" style="display:flex;">
                             <div class="col-auto" style="width: 200px;">
                                 @if($businessDetails && $businessDetails->bus_image)
-                                    <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                                    <img src="{{ url(env('IMAGE_URL') . '/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                                     class="elevation-2" target="_blank">
                                 @endif
                             </div>

@@ -9,29 +9,49 @@
               
     <form method="POST" action="{{ route('business.register.store') }}">
         @csrf
-        <div>
         <div class="form-group mb-2">
-    <label for="user_first_name">First Name <span class="text-danger">*</span></label>
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text">
-                <i class="fas fa-user"></i>
-            </span>
+            <label for="user_first_name">First Name <span class="text-danger">*</span></label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fas fa-user"></i>
+                    </span>
+                </div>
+                <input 
+                    type="text" 
+                    class="form-control @error('user_first_name') is-invalid @enderror" 
+                    id="user_first_name" 
+                    name="user_first_name" 
+                    placeholder="Enter First Name" 
+                    value="{{ old('user_first_name') }}"
+                >
+            </div>
+                @error('user_first_name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
         </div>
-        <input 
-            type="text" 
-            class="form-control @error('user_first_name') is-invalid @enderror" 
-            id="user_first_name" 
-            name="user_first_name" 
-            placeholder="Enter First Name" 
-            value="{{ old('user_first_name') }}"
-        >
+
+        <div class="form-group mb-2">
+            <label for="user_first_name">Last Name</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="fas fa-user"></i>
+                    </span>
+                </div>
+                <input 
+                    type="text" 
+                    class="form-control @error('user_first_name') is-invalid @enderror" 
+                    id="user_first_name" 
+                    name="user_first_name" 
+                    placeholder="Enter Last Name" 
+                    value="{{ old('user_first_name') }}"
+                >
+            </div>
+                @error('user_first_name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
         </div>
-        @error('user_first_name')
-            <div class="invalid-feedback">{{ $message }}</div>
-        @enderror
-   
-</div>
 
 
 <div class="form-group mb-2">
@@ -152,7 +172,6 @@
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
 </div>
-
 
         <x-primary-button>
           {{ __('Register') }}

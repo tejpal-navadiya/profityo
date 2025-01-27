@@ -7,6 +7,7 @@
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
   <!-- Content Header (Page header) -->
+  <div id="preview-container">
   <div class="content-header">
     <div class="container-fluid">
       <div class="row mb-2 align-items-center justify-content-between">
@@ -20,8 +21,9 @@
         </div><!-- /.col -->
         <div class="col-auto">
           <ol class="breadcrumb float-sm-right">
-            <a class="add_btn_br">Preview</a>
-            <a href="#"><button class="add_btn">Save & Continue</button></a>
+            <button type="button" value="true" id="preview-btn" class="add_btn_br">Preview</button>
+            <button type="button" form="items-form" id="save-btn1" value="false" class="add_btn">Save & Continue</button>
+
           </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
@@ -62,7 +64,7 @@
               <div class="col-md-3 px-10">
                 <div class="business_logo_uplod_box">
                   @if($businessDetails && $businessDetails->bus_image)
-                  <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                  <img src="{{ url(env('IMAGE_URL') . '/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                   class="elevation-2" target="_blank">
                   <!-- <h3 class="card-title float-sm-right px-10" data-toggle="modal" data-target="#removebusinessimage">Remove image</h3> -->
 
@@ -498,8 +500,10 @@
 
         <div class="row py-20">
           <div class="col-md-12 text-center">
-            <a class="add_btn_br">Preview</a>
-            <button class="add_btn">Save & Continue</button>
+            <button type="button" value="true" id="preview-btn-footer" class="add_btn_br">Preview</button>
+
+            <!-- Save & Continue Button -->
+            <button type="button" id="save-btn" value="false" class="add_btn">Save & Continue</button>
           </div>
         </div><!-- /.col -->
     </div>
@@ -509,6 +513,7 @@
     </form>
   </section>
   <!-- /.content -->
+  </div>
 </div>
 <!-- /.content-wrapper -->
 
@@ -1850,101 +1855,246 @@
       }
     });
 
-    $('#items-form').on('submit', function (e) {
-      e.preventDefault();
+    // $('#items-form').on('submit', function (e) {
+    //   e.preventDefault();
 
+    //   let formData = {};
+
+    //   $('.item-row').each(function (index) {
+    //     const rowIndex = index;
+    //     formData[`items[${rowIndex}][sale_product_id]`] = $(this).find('select[name="items[][sale_product_id]"]').val();
+    //     formData[`items[${rowIndex}][sale_estim_item_desc]`] = $(this).find('input[name="items[][sale_estim_item_desc]"]').val();
+    //     formData[`items[${rowIndex}][sale_estim_item_qty]`] = $(this).find('input[name="items[][sale_estim_item_qty]"]').val();
+    //     formData[`items[${rowIndex}][sale_estim_item_price]`] = $(this).find('input[name="items[][sale_estim_item_price]"]').val();
+    //     formData[`items[${rowIndex}][sale_estim_item_tax]`] = $(this).find('select[name="items[][sale_estim_item_tax]"]').val();
+    //   });
+
+    //   formData['sale_estim_item_discount'] = $('input[name="sale_estim_item_discount"]').val();
+    //   formData['sale_estim_discount_type'] = $('select[name="sale_estim_discount_type"]').val();
+    //   formData['sale_estim_title'] = $('input[name="sale_estim_title"]').val();
+    //   formData['sale_estim_summary'] = $('input[name="sale_estim_summary"]').val();
+    //   formData['sale_cus_id'] = $('select[name="sale_cus_id"]').val();
+    //   formData['sale_estim_number'] = $('input[name="sale_estim_number"]').val();
+    //   formData['sale_estim_customer_ref'] = $('input[name="sale_estim_customer_ref"]').val();
+    //   formData['sale_estim_date'] = $('input[name="sale_estim_date"]').val();
+    //   formData['sale_estim_valid_date'] = $('input[name="sale_estim_valid_date"]').val();
+    //   formData['sale_estim_discount_desc'] = $('input[name="sale_estim_discount_desc"]').val();
+    //   formData['sale_estim_sub_total'] = $('input[name="sale_estim_sub_total"]').val();
+    //   formData['sale_estim_discount_total'] = $('input[name="sale_estim_discount_total"]').val();
+    //   formData['sale_estim_tax_amount'] = $('input[name="sale_estim_tax_amount"]').val();
+    //   formData['sale_estim_final_amount'] = $('input[name="sale_estim_final_amount"]').val();
+    //   formData['sale_estim_notes'] = $('#inputDescription[name="sale_estim_notes"]').val();
+    //   formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
+    //   formData['sale_status'] = 0;
+    //   formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
+    //   formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
+
+
+    //   $.ajax({
+    //     url: "{{ route('business.invoices.invoiceStore', ['id' => $estimates->sale_estim_id]) }}",
+    //     method: 'PATCH',
+    //     data: formData,
+    //     success: function (response) {
+    //       window.location.href = response.redirect_url;
+
+    //       // alert('Items saved successfully!');
+
+    //       // $('#items-form')[0].reset();
+    //       // $('#dynamic_field').find('.item-row').remove();
+    //     },
+    //     error: function (xhr) {
+    //     if (xhr.status === 422) {
+    //     var errors = xhr.responseJSON.errors;
+    //     console.log(errors); // Debug the errors object
+
+    //     // Clear previous error messages
+    //     $('.error-message').html('');
+    //     $('input, select').removeClass('is-invalid');
+
+    //     var firstErrorField = null; // Variable to store the first error field
+
+    //     $.each(errors, function (field, messages) {
+    //       // Replace characters to match the format of your HTML IDs
+    //       var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
+    //       var errorMessageContainerId = 'error_' + fieldId;
+    //       var errorMessageContainer = $('#' + errorMessageContainerId);
+
+    //       if (errorMessageContainer.length) {
+    //       errorMessageContainer.html(messages.join('<br>'));
+
+    //       // Find the input field related to the error
+    //       var $field = $('[name="' + field + '"]');
+
+    //       if ($field.length > 0) {
+    //         $field.addClass('is-invalid');
+            
+    //         // Set first error field for scrolling
+    //         if (!firstErrorField) {
+    //         firstErrorField = $field;
+    //         }
+    //         scrollToCenter($field);
+    //       } else {
+    //         // console.log('Field not found for:', field);
+    //       }
+    //       } else {
+    //       // console.log('Error container not found for:', errorMessageContainerId);
+    //       }
+    //     });
+
+
+    //     } else {
+    //     // console.log('An error occurred: ' + xhr.statusText);
+    //     }
+    //   }
+     
+    //   });
+    // });
+
+    $('#preview-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
+        formData['estimate'] = 'edit';
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
+
+    $('#preview-btn-footer').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'true';  // Set preview flag to true
+        formData['estimate'] = 'edit';
+        
+
+        // Trigger the AJAX request with the preview flag
+        submitFormViaAjax(formData);
+        
+    });
+
+    // Handle the click event for the Save & Continue button
+    $('#save-btn').on('click', function(e) {
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        formData['estimate'] = 'edit';
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    $('#save-btn1').on('click', function(e) {
+     // alert('hi');
+        e.preventDefault();  // Prevent form submission
+
+        // Add the preview flag to the form data
+        let formData = getFormData();
+        formData['preview'] = 'false';  // Set preview flag to false (Save & Continue)
+        formData['estimate'] = 'edit';
+        // console.log('FormData (with preview flag):', formData);
+        // Trigger the AJAX request for saving data
+        submitFormViaAjax(formData);
+    });
+
+    function getFormData() {
       let formData = {};
 
-      $('.item-row').each(function (index) {
+        $('.item-row').each(function (index) {
         const rowIndex = index;
         formData[`items[${rowIndex}][sale_product_id]`] = $(this).find('select[name="items[][sale_product_id]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_desc]`] = $(this).find('input[name="items[][sale_estim_item_desc]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_qty]`] = $(this).find('input[name="items[][sale_estim_item_qty]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_price]`] = $(this).find('input[name="items[][sale_estim_item_price]"]').val();
         formData[`items[${rowIndex}][sale_estim_item_tax]`] = $(this).find('select[name="items[][sale_estim_item_tax]"]').val();
-      });
-
-      formData['sale_estim_item_discount'] = $('input[name="sale_estim_item_discount"]').val();
-      formData['sale_estim_discount_type'] = $('select[name="sale_estim_discount_type"]').val();
-      formData['sale_estim_title'] = $('input[name="sale_estim_title"]').val();
-      formData['sale_estim_summary'] = $('input[name="sale_estim_summary"]').val();
-      formData['sale_cus_id'] = $('select[name="sale_cus_id"]').val();
-      formData['sale_estim_number'] = $('input[name="sale_estim_number"]').val();
-      formData['sale_estim_customer_ref'] = $('input[name="sale_estim_customer_ref"]').val();
-      formData['sale_estim_date'] = $('input[name="sale_estim_date"]').val();
-      formData['sale_estim_valid_date'] = $('input[name="sale_estim_valid_date"]').val();
-      formData['sale_estim_discount_desc'] = $('input[name="sale_estim_discount_desc"]').val();
-      formData['sale_estim_sub_total'] = $('input[name="sale_estim_sub_total"]').val();
-      formData['sale_estim_discount_total'] = $('input[name="sale_estim_discount_total"]').val();
-      formData['sale_estim_tax_amount'] = $('input[name="sale_estim_tax_amount"]').val();
-      formData['sale_estim_final_amount'] = $('input[name="sale_estim_final_amount"]').val();
-      formData['sale_estim_notes'] = $('#inputDescription[name="sale_estim_notes"]').val();
-      formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
-      formData['sale_status'] = 0;
-      formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
-      formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
-
-
-      $.ajax({
-        url: "{{ route('business.invoices.invoiceStore', ['id' => $estimates->sale_estim_id]) }}",
-        method: 'PATCH',
-        data: formData,
-        success: function (response) {
-          window.location.href = response.redirect_url;
-
-          // alert('Items saved successfully!');
-
-          // $('#items-form')[0].reset();
-          // $('#dynamic_field').find('.item-row').remove();
-        },
-        error: function (xhr) {
-        if (xhr.status === 422) {
-        var errors = xhr.responseJSON.errors;
-        console.log(errors); // Debug the errors object
-
-        // Clear previous error messages
-        $('.error-message').html('');
-        $('input, select').removeClass('is-invalid');
-
-        var firstErrorField = null; // Variable to store the first error field
-
-        $.each(errors, function (field, messages) {
-          // Replace characters to match the format of your HTML IDs
-          var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
-          var errorMessageContainerId = 'error_' + fieldId;
-          var errorMessageContainer = $('#' + errorMessageContainerId);
-
-          if (errorMessageContainer.length) {
-          errorMessageContainer.html(messages.join('<br>'));
-
-          // Find the input field related to the error
-          var $field = $('[name="' + field + '"]');
-
-          if ($field.length > 0) {
-            $field.addClass('is-invalid');
-            
-            // Set first error field for scrolling
-            if (!firstErrorField) {
-            firstErrorField = $field;
-            }
-            scrollToCenter($field);
-          } else {
-            // console.log('Field not found for:', field);
-          }
-          } else {
-          // console.log('Error container not found for:', errorMessageContainerId);
-          }
         });
 
+        formData['sale_estim_item_discount'] = $('input[name="sale_estim_item_discount"]').val();
+        formData['sale_estim_discount_type'] = $('select[name="sale_estim_discount_type"]').val();
+        formData['sale_estim_title'] = $('input[name="sale_estim_title"]').val();
+        formData['sale_estim_summary'] = $('input[name="sale_estim_summary"]').val();
+        formData['sale_cus_id'] = $('select[name="sale_cus_id"]').val();
+        formData['sale_estim_number'] = $('input[name="sale_estim_number"]').val();
+        formData['sale_estim_customer_ref'] = $('input[name="sale_estim_customer_ref"]').val();
+        formData['sale_estim_date'] = $('input[name="sale_estim_date"]').val();
+        formData['sale_estim_valid_date'] = $('input[name="sale_estim_valid_date"]').val();
+        formData['sale_estim_discount_desc'] = $('input[name="sale_estim_discount_desc"]').val();
+        formData['sale_estim_sub_total'] = $('input[name="sale_estim_sub_total"]').val();
+        formData['sale_estim_discount_total'] = $('input[name="sale_estim_discount_total"]').val();
+        formData['sale_estim_tax_amount'] = $('input[name="sale_estim_tax_amount"]').val();
+        formData['sale_estim_final_amount'] = $('input[name="sale_estim_final_amount"]').val();
+        formData['sale_estim_notes'] = $('#inputDescription[name="sale_estim_notes"]').val();
+        formData['sale_estim_footer_note'] = $('#inputDescription[name="sale_estim_footer_note"]').val();
+        formData['sale_status'] = 0;
+        formData['sale_currency_id'] = $('select[name="sale_currency_id"]').val();
+        formData['sale_total_days'] = $('#hidden-total-days[name="sale_total_days"]').val();
+        return formData;
+    }
 
-        } else {
-        // console.log('An error occurred: ' + xhr.statusText);
-        }
-      }
-     
-      });
-    });
+    function submitFormViaAjax(formData) {
+        $.ajax({
+          url: "{{ route('business.invoices.invoiceStore', ['id' => $estimates->sale_estim_id]) }}",
+          method: 'PATCH',
+          data: formData,
+            success: function(response) {
+              if (response.preview_view) {
+                  // Inject the preview HTML into the container
 
+                  $('#preview-container').html(response.preview_view).fadeIn();
+
+                  // Optionally, scroll to the preview container if needed
+                  $('html, body').animate({ scrollTop: $('#preview-container').offset().top }, 500);
+
+                  if (response.preview_data && response.preview_data.items) {
+                      response.preview_data.items.forEach(function(item, index) {
+                          // Example: Update the product name in a specific element
+                          let productElement = $('#product-name-' + index); // Use an appropriate selector
+                          if (productElement.length) {
+                              productElement.text(item.product_name || 'N/A');
+                          }
+                      });
+                  }
+
+              } else if (response.redirect_url) {
+                  // Redirect for save success
+                  window.location.href = response.redirect_url;
+              }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    var errors = xhr.responseJSON.errors;
+                    $('.error-message').html('');
+                    $('input, select').removeClass('is-invalid');
+
+                    var firstErrorField = null;
+                    $.each(errors, function(field, messages) {
+                        var fieldId = field.replace(/\./g, '_').replace(/\[\]/g, '_');
+                        var errorMessageContainerId = 'error_' + fieldId;
+                        var errorMessageContainer = $('#' + errorMessageContainerId);
+
+                        if (errorMessageContainer.length) {
+                            errorMessageContainer.html(messages.join('<br>'));
+                            var $field = $('[name="' + field + '"]');
+                            if ($field.length > 0) {
+                                $field.addClass('is-invalid');
+                                if (!firstErrorField) {
+                                    firstErrorField = $field;
+                                }
+                                scrollToCenter($field);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+  
   });
 
   function scrollToCenter($element) {

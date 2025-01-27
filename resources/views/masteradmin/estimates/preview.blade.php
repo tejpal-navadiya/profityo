@@ -14,7 +14,7 @@
         <!-- <a href="#"><button class="add_btn_br">Edit</button></a> -->
         <button type="button" value="true" id="back_to_edit" class="add_btn_br">Edit</button>
 
-        <button type="submit" id="save-btn"form="save-btn" class="add_btn">Save & Continue</button>
+        <button type="button" form="items-form" id="save-btn" value="false" class="add_btn">Save & Continue</button>
 
         </ol>
       </div><!-- /.col -->
@@ -28,7 +28,7 @@
             <!-- Estimates Card -->
             @php
     $previewData = session('previewData');
-    //dd($previewData);
+   //dd($previewData);
 @endphp
             <div class="card">
                 <div class="card-header">
@@ -38,9 +38,15 @@
                 <div class="card-body2">
                     <div class="row justify-content-between pad-3">
                         <div class="col-md-3">
-                            <img src="{{ asset('http://localhost/profityo2/public/dist/img/logo.png') }}" alt="Profityo Logo" class="estimate_logo_img">
-                        </div>
+                        @if($businessDetails && $businessDetails->bus_image)
+                                <img src="{{ url(env('IMAGE_URL') . '/masteradmin/business_profile/' . $businessDetails->bus_image) }}" />                       
+                                @else
+                                <img src="{{url('public/dist/img/upload_icon.png')}}" class="upload_icon_img" />
+                                @endif
+                            </div>
                         <div class="col-md-6 text-right">
+                             <h2>{{ $previewData['sale_estim_title'] ?? '' }}</h2>
+                            <p class="company_details_text">{{ $previewData['sale_estim_summary'] ?? '' }}</p>
                             <p class="estimate_view_title">Estimate</p>
                             <?php //dd($businessDetails); ?>
                             <!-- <p class="company_details_text">{{ $previewData['sale_estim_summary'] ?? 'Summary' }}</p> -->
@@ -123,7 +129,7 @@
                                     <td>{{ $previewData['sale_estim_valid_date'] ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Grand Total (USD):</strong></td>
+                                    <td><strong>Grand Total ({{ $currencys->find($previewData['sale_currency_id'])->currency }})</strong></td>
                                     <td><strong>${{ number_format($previewData['sale_estim_final_amount'] ?? 0, 2) }}</strong></td>
                                 </tr>
                             </table>
@@ -215,11 +221,11 @@
 
     $('#back_to_edit').on('click', function(e) {
         e.preventDefault();  // Prevent form submission
-
+        //alert('hii');
         // Add the preview flag to the form data
         let formData = getFormData();
         formData['back_to'] = 'true';  // Set preview flag to true
-
+        // console.log(formData);
         // Trigger the AJAX request with the preview flag
         submitFormViaAjax(formData);
         
@@ -255,6 +261,7 @@
         sale_estim_final_amount: '{{ $previewData['sale_estim_final_amount'] ?? '' }}',
         sale_estim_notes: '{{ $previewData['sale_estim_notes'] ?? '' }}',
         sale_estim_footer_note: '{{ $previewData['sale_estim_footer_note'] ?? '' }}',
+        sale_estim_item_discount: '{{ $previewData['sale_estim_item_discount'] ?? '' }}',
         sale_total_days: '{{ $previewData['sale_total_days'] ?? '' }}',
         sale_estim_status: 1,
         sale_status: 0,
@@ -265,7 +272,7 @@
             sale_estim_item_qty: item.sale_estim_item_qty ?? '',
             sale_estim_item_price: item.sale_estim_item_price ?? '',
             sale_estim_item_tax: item.sale_estim_item_tax ?? '',
-            sale_estim_item_discount: item.sale_estim_item_discount ?? ''
+            // sale_estim_item_discount: item.sale_estim_item_discount ?? ''
         }))
     };
 
@@ -276,17 +283,31 @@
 
     // Function to send the form data via AJAX
     function submitFormViaAjax(formData) {
+        var url;
+        var method;
+    <?php if (isset($previewData['estimate_id'])): ?>
+        url = "{{ route('business.estimates.update', ['estimates_id' => $previewData['estimate_id']]) }}";
+        method = 'PATCH';
+    <?php else: ?>
+        url = "{{ route('business.estimates.store') }}";
+        method = 'POST';
+    <?php endif; ?>
+
         $.ajax({
-            url: "{{ route('business.estimates.store') }}",  // The route for your form submission
-            method: 'POST',
+            
+            url: url,
+            method: method,
             data: formData,
             success: function(response) {
               if (response.preview_view) {
                   // Inject the preview HTML into the container
+               // alert('success');
+               console.log(response);
 
                   $('#preview-edit-container').html(response.preview_view).fadeIn();
-                 
+                //   $('.select2').select2();
                   initializeFlatpickr();
+                  $('.select2').select2();
                   // Optionally, scroll to the preview container if needed
                 //   $('html, body').animate({ scrollTop: $('#preview-container').offset().top }, 500);
               } else if (response.redirect_url) {
@@ -324,6 +345,9 @@
     }
     
     function initializeFlatpickr() {
+
+       // alert('hiii');
+        
     var fromInput = document.getElementById('from-datepicker-hidden');
     var toInput = document.getElementById('to-datepicker-hidden');
     let fromdatepicker1, todatepicker1;

@@ -165,7 +165,7 @@
                             <div class="col-md-3 ">
                                 <!-- <img src="{{url('public/dist/img/logo.png')}}" alt="Profityo Logo" class="estimate_logo_img"> -->
                                 @if($businessDetails && $businessDetails->bus_image)
-                                <img src="{{ url(env('IMAGE_URL') . 'storage/app/masteradmin/business_profile/' . $businessDetails->bus_image) }}"
+                                <img src="{{ url(env('IMAGE_URL') . 'masteradmin/business_profile/' . $businessDetails->bus_image) }}"
                                 class="elevation-2 img-box" target="_blank">
                                 @endif
                             </div>
@@ -173,15 +173,15 @@
                             <div class="col-md-6">
                                 <p class="estimate_view_title text-right">Invoice</p>
                                 <p class="company_details_text text-right">Summary</p>
-                                <p class="company_business_name text-right">{{ $businessDetails->bus_company_name }}</p>
-                                <p class="company_details_text text-right">{{  $businessDetails->bus_address1 }}</p>
-                                <p class="company_details_text text-right">{{  $businessDetails->bus_address2 }}</p>
+                                <p class="company_business_name text-right">{{ $businessDetails->bus_company_name ?? '' }}</p>
+                                <p class="company_details_text text-right">{{  $businessDetails->bus_address1 ?? '' }}</p>
+                                <p class="company_details_text text-right">{{  $businessDetails->bus_address2 ?? '' }}</p>
                                 <p class="company_details_text text-right">{{  $businessDetails->country->name ?? '' }}</p>
                                 <p class="company_details_text text-right">{{ $businessDetails->state->name ?? '' }},
                                 {{  $businessDetails->city_name }} {{ $businessDetails->zipcode }}</p>
-                                <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone }}</p>
-                                <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile }}</p>
-                                <p class="company_details_text text-right">{{  $businessDetails->bus_website }}</p>
+                                <p class="company_details_text text-right">Phone: {{  $businessDetails->bus_phone ?? '' }}</p>
+                                <p class="company_details_text text-right">Mobile: {{  $businessDetails->bus_mobile ?? '' }}</p>
+                                <p class="company_details_text text-right">{{  $businessDetails->bus_website ?? '' }}</p>
                             </div>
                             <!-- /.col -->
                         </div>
@@ -190,36 +190,36 @@
                         <div class="row justify-content-between pad-2">
                             <div class="col-auto px-10" id="sale_customer">
                                 <p class="company_business_name" style="text-decoration: underline;">Bill To</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_cus_first_name }} {{ $reinvoices->customer->sale_cus_last_name }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_cus_business_name }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_cus_phone }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_cus_email }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_bill_address1 }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_bill_address2 }}</p>
-                                <p class="company_details_text"> {{ $reinvoices->customer->state->name }}, {{ $reinvoices->customer->sale_bill_city_name }} {{ $reinvoices->customer->sale_bill_zipcode }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->bill_country->name }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_cus_first_name ?? '' }} {{ $reinvoices->customer->sale_cus_last_name ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_cus_business_name  ?? ''}}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_cus_phone ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_cus_email ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_bill_address1 ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_bill_address2 ?? '' }}</p>
+                                <p class="company_details_text"> {{ $reinvoices->customer->state->name ?? '' }}, {{ $reinvoices->customer->sale_bill_city_name ?? '' }} {{ $reinvoices->customer->sale_bill_zipcode ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->bill_country->name ?? '' }}</p>
                             </div>
                             <!-- /.col -->
                             <div class="col-auto px-10" id="ship_customer">
                                 <p class="company_business_name" style="text-decoration: underline;">Shipped To</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_ship_shipto }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_ship_phone }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_cus_email }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_ship_address1 }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->sale_ship_address2 }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->ship_state->name }}, {{ $reinvoices->customer->sale_ship_city_name }} {{ $reinvoices->customer->sale_ship_zipcode }}</p>
-                                <p class="company_details_text">{{ $reinvoices->customer->country->name }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_ship_shipto ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_ship_phone ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_cus_email ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_ship_address1 ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->sale_ship_address2 ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->ship_state->name ?? '' }}, {{ $reinvoices->customer->sale_ship_city_name ?? '' }} {{ $reinvoices->customer->sale_ship_zipcode ?? '' }}</p>
+                                <p class="company_details_text">{{ $reinvoices->customer->country->name ?? '' }}</p>
                             </div>
                             <!-- /.col -->
                             <div class="col-auto px-10">
                                 <table class="table estimate_detail_table">
                                     <tr>
                                         <td><strong>Invoice Number:</strong></td>
-                                        <td>{{ $reinvoices->sale_re_inv_number }}</td>
+                                        <td>{{ $reinvoices->sale_re_inv_number ?? ''}}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>P.O./S.O. Number:</strong></td>
-                                        <td>{{ $reinvoices->sale_re_inv_customer_ref }}</td>
+                                        <td>{{ $reinvoices->sale_re_inv_customer_ref ?? '' }}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Invoice Date:</strong></td>
@@ -231,7 +231,7 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Grand Total ({{ $currencys->find($reinvoices->sale_currency_id)->currency }}):</strong></td>
-                                        <td><strong>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_final_amount }}</strong></td>
+                                        <td><strong>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol ?? '' }}{{ $reinvoices->sale_re_inv_final_amount ?? '' }}</strong></td>
                                     </tr>
                                 </table>
                             </div>
@@ -254,8 +254,8 @@
                                     <tbody>
                                         <tr>
                                             <td>{{ $item->invoices_product->sale_product_name ?? 'No Product Name' }}</td>
-                                            <td class="text-center">{{ $item->sale_re_inv_item_qty }}</td>
-                                            <td class="text-center">{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $item->sale_re_inv_item_price }}</td>
+                                            <td class="text-center">{{ $item->sale_re_inv_item_qty ?? '' }}</td>
+                                            <td class="text-center">{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol ?? '' }}{{ $item->sale_re_inv_item_price ?? '' }}</td>
                                             <!-- <td class="text-center">5%</td> -->
                                             <td class="text-center">{{ $item->item_tax->tax_name ?? 'No Tax Name' }} {{ $item->item_tax->tax_rate ?? 'No Tax Name' }}%</td>
                                             <!-- <td class="text-center">{{ $item->sale_estim_item_desc ?? 'No Tax Name' }}</td> -->
@@ -273,19 +273,19 @@
                                     <table class="table total_table">
                                         <tr>
                                             <td style="width:50%">Sub Total :</td>
-                                            <td>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_sub_total }}</td>
+                                            <td>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_sub_total ?? '' }}</td>
                                         </tr>
                                         <tr>
                                             <td>Discount:</td>
-                                            <td>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_discount_total }}</td>
+                                            <td>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_discount_total ?? ''}}</td>
                                         </tr>
                                         <tr>
                                             <td>Tax :</td>
-                                            <td>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_tax_amount }}</td>
+                                            <td>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_tax_amount ?? '' }}</td>
                                         </tr>
                                         <tr>
                                             <td><strong>Total:</strong></td>
-                                            <td><strong>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_final_amount }}</strong></td>
+                                            <td><strong>{{ $currencys->find($reinvoices->sale_currency_id)->currency_symbol }}{{ $reinvoices->sale_re_inv_final_amount ?? '' }}</strong></td>
                                         </tr>
                                     </table>
                                 </div>

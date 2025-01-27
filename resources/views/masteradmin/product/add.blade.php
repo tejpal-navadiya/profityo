@@ -20,7 +20,7 @@
           <ol class="breadcrumb float-sm-right">
             <a href="{{route('business.salesproduct.index')}}" class="add_btn_br">Cancel</a>
             <button type="submit" form="pro-Form" class="add_btn">Save</button>
-            </ol>
+          </ol>
         </div><!-- /.col -->
       </div><!-- /.row -->
     </div><!-- /.container-fluid -->
@@ -60,7 +60,7 @@
                       aria-describedby="inputGroupPrepend" min="0" placeholder="0.00" value="{{ old('sale_product_price') }}">
                     <select class="form-select form-selectcurrency" name="sale_product_currency_id"
                       id="sale_product_currency_id">
-                      <!-- <option value="">Select</option> --> 
+                      <!-- <option value="">Select</option> -->
                       @foreach($Country as $curr)
               <option value="{{ $curr->id }}">{{ $curr->currency_symbol }}</option>
             @endforeach
@@ -74,18 +74,20 @@
                   <label>Tax</label>
                   <select class="form-control select2" name="sale_product_tax" id="sale_product_tax">
                     <option value="">Select Tax</option>
-                     @foreach($SalesTax as $salesTax)
-                   <option value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }}</option>
+                    @foreach($SalesTax as $salesTax)
+            <option value="{{ $salesTax->tax_id }}">{{ $salesTax->tax_name }}</option>
           @endforeach
                   </select>
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" id="sale_product_sell" name="sale_product_sell" type="checkbox"
-                    value="on" {{ old('sale_product_sell') ? 'checked' : '' }}>
-                  <label class="form-check-label"><strong>Sell This</strong> (Allow this Product or Service to be Added
-                    to Invoices.)</label>
+                <div class="form-group">
+                  <div class="form-check d-flex align-items-baseline">
+                    <input class="form-check-input" id="sale_product_sell" name="sale_product_sell" type="checkbox"
+                      value="on" {{ old('sale_product_sell') ? 'checked' : '' }}>
+                    <label class="form-check-label"><strong>Sell This</strong> (Allow this Product or Service to be Added
+                      to Invoices.)</label>
+                  </div>
                 </div>
                 <div class="form-group" id="income_account_group">
                   <label>Income Account <span class="text-danger">*</span></label>
@@ -99,11 +101,13 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input" id="sale_product_buy" name="sale_product_buy" type="checkbox"
-                    value="on" {{ old('sale_product_buy') ? 'checked' : '' }}>
-                  <label class="form-check-label"><strong>Buy This</strong> (Allow this Product or Service to be Added
-                    to Bills.)</label>
+                <div class="form-group">
+                  <div class="form-check d-flex align-items-baseline">
+                    <input class="form-check-input" id="sale_product_buy" name="sale_product_buy" type="checkbox"
+                      value="on" {{ old('sale_product_buy') ? 'checked' : '' }}>
+                    <label class="form-check-label"><strong>Buy This</strong> (Allow this Product or Service to be Added
+                      to Bills.)</label>
+                  </div>
                 </div>
                 <div class="form-group" id="expense_account_group">
                   <label>Expense Account <span class="text-danger">*</span></label>
